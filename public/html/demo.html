@@ -1,0 +1,172 @@
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="refresh" content="5;URL='http://www.google.com/'" /> <!-- redirects to a particular url after defined seconds-->
+    <title>E-Commerce</title>
+    <style>
+        tr:hover {
+            background-color: beige;
+        }
+
+        th:nth-child(even),
+        td:nth-child(even) {
+            background-color: aqua;
+        }
+
+        .frame {
+            width: 30rem;
+        }
+
+        @media screen and (max-width: 740px) {
+            .frame {
+                width: 20rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./images/logo-removebg-preview.png" alt="increff-logo" usemap="#map-logo" />
+    <map name="map-logo">
+        <area shape="rect" coords="0,0,50,50" href="https://www.google.com">
+    </map>
+    <h1>Welcome to E-Commerce Project</h1>
+    <p>A quote</p>
+    <blockquote>
+        nice quote
+    </blockquote>
+    <p>A quote: <q>Good quote</q></p>
+    <table>
+        <caption>Employee Info</caption>
+        <colgroup>
+            <col style="background-color: red; width:8rem;">
+            <col style="background-color: green;width:4rem;">
+            <col style="background-color: blue;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Person 1</th>
+                <th>Person 2</th>
+                <th>Person 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Emil</td>
+                <td>Tobias</td>
+                <td>Linus</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td>14</td>
+                <td>10</td>
+            </tr>
+        </tbody>
+    </table>
+    <div>product:Abc Price:200</div>
+    <figure>
+        <img src="./images/logo-removebg-preview.png" />
+        <figcaption>Increff logo</figcaption>
+    </figure>
+    <a href="https://www.google.com">Go to Google</a>
+    <br>
+    <iframe class="frame" src="./html/demo.html"></iframe>
+    <p>Save the document by pressing <kbd>Ctrl + S</kbd></p>
+    <section>
+        <h1>WHO</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat.</p>
+    </section>
+    <section>
+        <article>
+            <h2>WWW</h2>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Non debitis perspiciatis, deserunt unde hic
+                error blanditiis corrupti ex fugit illo quasi consequuntur ducimus, omnis saepe similique accusamus
+                eaque veritatis. Suscipit!</p>
+        </article>
+        <article>
+            <h2>YOU</h2>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat.</p>
+        </article>
+    </section>
+    <form>
+        <fieldset>
+            <legend>Input Form</legend>
+            <input type="radio" id="html" name="fav_language" value="HTML">
+            <label for="html">HTML</label><br>
+            <input type="radio" id="css" name="fav_language" value="CSS">
+            <label for="css">CSS</label><br>
+            <input type="radio" id="javascript" name="fav_language" value="JavaScript">
+            <label for="javascript">JavaScript</label>
+            <select name="cars" id="cars">
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="range rover" selected>Range Rover</option>
+            </select>
+            <br>
+            <textarea name="message" rows="10" cols="20">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+        </textarea>
+        <input type="reset">
+        </fieldset>
+    </form>
+
+    <form oninput="x.value=parseInt(a.value) + parseInt(b.value)">
+        <input type="range" value="50" name="a">
+        <input type="number" value="50" name="b">
+        <output name="x" for="a b"></output>
+    </form>
+    <video width="320" height="240" controls>
+        <source src="./videos/file.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+      </video>
+      <button id="location">Try it</button>
+      <p id="show-location"></p>
+      <div style="padding:10px" ondragover="dragover(event)" ondrop="drop(event)" width="200px" height="200px"></div>
+      <br>
+      <img id="img-1" src="./images/logo-removebg-preview.png" draggable="true" ondragstart="dragStart(event)" />
+      <details>
+        <summary>Details</summary>
+        <p>
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla officia nemo, quod hic quaerat blanditiis voluptatem illo dolore, ipsam aperiam ea iure, porro dicta doloribus illum assumenda velit consequuntur sed.
+        </p>
+      </details>
+      <script>
+        // console.log(typeof(Storage));
+        function dragStart(event){
+            event.dataTransfer.setData("text",event.target.id);
+        }
+
+
+        function drop(event){
+            event.preventDefault();
+            let data = event.dataTransfer.getData("text");
+            event.target.appendChild(document.getElementById(data));
+        }
+
+        function dragover(event){
+            event.preventDefault();
+        }
+
+        let loc = document.getElementById('location');
+
+        loc.addEventListener('click',getLocation);
+
+        function getLocation() {
+            if(navigator.geolocation)
+            {
+                navigator.geolocation.getCurrentPosition(showlocation);
+            }
+        }
+
+        function showlocation(position){
+            document.getElementById('show-location').innerHTML = position.coords.latitude + ',' + position.coords.longitude;
+        }
+      </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+        integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./css/app.css">
+</head>
+
+<body>
+    <header></header>
+    <div class="toast text-white bg-success px-3 py-1" id="success-toast">
+        <div class="toast-body p-1">
+        </div>
+    </div>
+    <div class="container-fluid mt-3 px-5">
+        <form id="search-form">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-3 col-sm-12 d-flex">
+                    <div class="input-group">
+                        <input type="text" required="true" class="form-control p-2" id="search-input"
+                            placeholder="Search Products">
+                        <button type="submit" class="btn btn-secondary"><i
+                                class="fa fa-solid fa-magnifying-glass p-2"></i></button>
+                    </div>
+                </div>
+                <div class="col-md-2 offset-md-7 col-sm-12">
+                    <div class="row">
+                        <div class="dropdown d-flex">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-rating"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Sort By
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sort-price">
+                                <li><button class="dropdown-item" id="price-high-to-low" type="button">Price : High to
+                                        Low</button></li>
+                                <li><button class="dropdown-item" id="price-low-to-high" type="button">Price : Low to
+                                        High</button></li>
+                                <li><button class="dropdown-item" id="rating-high-to-low" type="button">Rating : High to
+                                        Low</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-lg-2 d-flex flex-column">
+                <p>Filters:</p>
+                <div class="dropdown mb-3 dropend ">
+                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Brands
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="brand-list">
+                    </ul>
+                </div>
+                <div class="dropdown dropend ">
+                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton2"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Price Range
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" id="price-range-list">
+                        <li><a class="dropdown-item" href="#">0 - 1000</a></li>
+                        <li><a class="dropdown-item" href="#">1000 - 2500</a></li>
+                        <li><a class="dropdown-item" href="#">2500 - 5000</a></li>
+                        <li><a class="dropdown-item" href="#">5000+ </a></li>                        
+                    </ul>
+                </div>
+
+            </div>
+            <div class="col-lg-10">
+                <div class="row" id="product-list">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+        integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
+        integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/products.js"></script>
+</body>
+
+</html>
