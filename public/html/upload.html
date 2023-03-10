@@ -14,7 +14,7 @@
 
 <body>
     <header></header>
-    <div class="toast text-white bg-danger px-1 py-1 position-absolute end-0 top-0" id="error-toast"
+    <div class="toast text-white bg-danger px-1 py-1 position-absolute end-0 top-0 hover-pointer" id="error-toast"
         data-bs-autohide="false">
         <div class="toast-body"></div>
     </div>
@@ -24,13 +24,27 @@
         </div>
     </div>
     <div class="container-fluid">
-        <h2 class="p-3">Upload Order</h2>
-        <form id="order-upload-form" class="mt-1 px-3">
-            <input type="file" id="order-file" placeholder="Upload FIle" class="form-control w-25 d-inline mb-3 px-1">
-            <button type="submit" class="btn btn-secondary  mb-1 mx-1">Preview</button>
+        <h4 class="p-3">Upload Order</h4>
+        <div>
+            <form id="order-upload-form" class="mt-1 px-3">
+                <div class="row">
+                    <div class="col-12 col-sm-8 col-md-4">
+                        <input type="file" id="order-file" class="form-control mb-3 px-2">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-1">
+                        <button type="submit" class="btn btn-secondary  mb-1" id="preview-btn">Preview</button>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+        <div class="px-3">
             <a href="#" id="download-sample" class="d-block px-0 text-start">Download Sample</a>
-        </form>
-        <div id="order-list" class="mt-5 mx-3">
+        </div>
+        <div id="order-list" class="mt-5 mx-3 table-responsive">
+            <div class="text-end mb-3">
+                <button class="btn btn-primary" id="upload-order">Upload</button>
+            </div>
             <table class="table table-bordered">
                 <thead class="table-dark">
                     <th>SKU_ID</th>
@@ -40,10 +54,6 @@
                 <tbody>
                 </tbody>
             </table>
-            <div class="text-end">
-                <button class="btn btn-primary" id="upload-order">Upload</button>
-            </div>
-            
         </div>
     </div>
     <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">

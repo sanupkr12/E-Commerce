@@ -39,7 +39,7 @@ function manageCart(){
                         productHtml += `<div class="card mb-3">
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
                         <div class="row no-gutters">
-                          <div class="col-md-4 px-0">
+                          <div class="col-md-4 p-2">
                             <a href="http://localhost:3000/products/${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
                             </a>
@@ -51,9 +51,9 @@ function manageCart(){
                               </a>
                               <p class="card-text">${results[i].product.description}</p>
                               <p class="card-text"><small class="text-muted">${"₹ " + results[i].product.price}</small></p>
-                              <button class="btn btn-secondary"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-25 form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
-                            <button class="btn btn-secondary"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
+                              <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
+                            <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
                             </div>
                           </div>
                         </div>
@@ -106,7 +106,7 @@ function manageCart(){
                         productHtml += `<div class="card mb-3">
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
                         <div class="row no-gutters">
-                          <div class="col-md-4 px-0">
+                          <div class="col-md-4 p-2">
                             <a href="http://localhost:3000/products/${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
                             </a>
@@ -118,9 +118,9 @@ function manageCart(){
                               </a>
                               <p class="card-text">${results[i].product.description}</p>
                               <p class="card-text">${"₹ " + results[i].product.price}</p>
-                              <button class="btn btn-secondary"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-25 form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
-                            <button class="btn btn-secondary"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
+                              <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input text-center form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
+                            <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
                             </div>
                           </div>
                         </div>
@@ -152,35 +152,50 @@ function downloadOrder(event){
         }
     }
     let order = [];
-    for(let j=0;j<cart[index].items.length;j++){
-        let fields = cart[index].items[j];
-        order.push(fields);
+    fetch("/data/products.json")
+    .then(res=>res.json())
+    .then(json=>{
+        let products = json.products;
+        for(let j=0;j<cart[index].items.length;j++){
+            let id = cart[index].items[j].id;
+            let fields = {};
+            for(let j=0;j<products.length;j++){
+                if(products[j].id===id){
+                    fields["sku_id"] = products[j].sku_id;
+                    fields["title"] = products[j].title;
+                    fields["quantity"] = cart[index].items[j].quantity;
+                }
+            }
+            
+            order.push(fields);
+        }
+    
+        let config = {
+            quoteChar : '',
+            escapeChar : '',
+            delimiter : '\t',
+        }
+    
+        let data = Papa.unparse(order, config);
+        let blob = new Blob([data], {type: 'text/tsv;charset=utf-8'});
+        let fileUrl = null;
+        if (navigator.msSaveBlob) {
+            fileUrl = navigator.msSaveBlob(blob, 'download.tsv');
+        } else {
+            fileUrl = window.URL.createObjectURL(blob);
+        }
+        let ele = document.createElement('a');
+        ele.href=fileUrl;
+        ele.setAttribute('download', 'download.tsv');
+        ele.click();
+        ele.remove();
+        cart[index].items = [];
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartItemCount();
+        location.reload();
+        } 
+    );
     }
-
-    let config = {
-        quoteChar : '',
-        escapeChar : '',
-        delimiter : '\t',
-    }
-
-    let data = Papa.unparse(order, config);
-    let blob = new Blob([data], {type: 'text/tsv;charset=utf-8'});
-    let fileUrl = null;
-    if (navigator.msSaveBlob) {
-        fileUrl = navigator.msSaveBlob(blob, 'download.tsv');
-    } else {
-        fileUrl = window.URL.createObjectURL(blob);
-    }
-    let ele = document.createElement('a');
-    ele.href=fileUrl;
-    ele.setAttribute('download', 'download.tsv');
-    ele.click();
-    ele.remove();
-    cart[index].items = [];
-    localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartItemCount();
-    location.reload();
-    } 
 }
 
 function handleRemoveModal(id,price,event){

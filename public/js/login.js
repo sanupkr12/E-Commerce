@@ -73,10 +73,13 @@ function handleLogin(event) {
                                     cart[index].items.push(untrackedItems[i]);
                                 }
                             }
-                            localStorage.setItem("cart", JSON.stringify(cart));
-                            localStorage.setItem("untrackedItems",JSON.stringify([]));
-                            window.location.href="http://localhost:3000/cart";
-                            return;
+                            if(untrackedItems.length >0){
+                                localStorage.setItem("cart", JSON.stringify(cart));
+                                localStorage.setItem("untrackedItems",JSON.stringify([]));
+                                window.location.href="http://localhost:3000/cart";
+                                return;
+                            }
+                            
                         }
                     }
                     localStorage.setItem("untrackedItems",JSON.stringify([]));

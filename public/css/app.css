@@ -77,8 +77,7 @@ color:blue;}
 }
 
 .cart-item-image{
-    height:10rem;
-    width:65%;
+    height:13rem;
 }
 
 .cart-item-image:hover{
@@ -176,5 +175,19 @@ color:blue;}
 
 #shopping-cart-text{
     margin-left:-1rem;
+}
+
+.w-input{
+    width:15%;
+}
+
+.w-input-product-card{
+    width:30%;
+}
+
+@media (max-width:520px) {
+    .w-input{
+        width:25%;
+    }
 }
 

@@ -85,10 +85,11 @@
                         </div></a></li>                        
                     </ul>
                 </div>
+                <button class="btn btn-warning mt-3" id="reset-filter">Reset Filters</button>
             </div>
             <div class="col-lg-10">
                 <div class="row d-flex align-items-center">
-                    <div class="col-md-4">
+                    <div class="col-12 col-sm-6 col-md-4">
                         <form id="search-form" class="my-3">
                             <div class="input-group" id="search-box">
                                 <input type="text" required="true" class="form-control shadow-none p-2" id="search-input"
@@ -98,22 +99,21 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-2  offset-md-6">
-                        <div class="row">
-                            <div class="dropdown text-center my-2">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-rating"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Sort By
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="sort-price">
-                                    <li><button class="dropdown-item" id="price-high-to-low" type="button">Price : High to
-                                            Low</button></li>
-                                    <li><button class="dropdown-item" id="price-low-to-high" type="button">Price : Low to
-                                            High</button></li>
-                                    <li><button class="dropdown-item" id="rating-high-to-low" type="button">Rating : High to
-                                            Low</button></li>
-                                </ul>
-                            </div>
+                    <div class="col-12 col-sm-4 offset-sm-2 col-md-4  offset-md-4">
+                        <div class="dropdown text-end my-2">
+                            <span>Sort By:</span>
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-rating"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Relevance
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="sort-price">
+                                <li><button class="dropdown-item" id="price-high-to-low" type="button">Price : High to
+                                        Low</button></li>
+                                <li><button class="dropdown-item" id="price-low-to-high" type="button">Price : Low to
+                                        High</button></li>
+                                <li><button class="dropdown-item" id="rating-high-to-low" type="button">Rating : High to
+                                        Low</button></li>
+                            </ul>
                         </div>
                     </div>
                     

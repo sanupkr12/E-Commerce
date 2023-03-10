@@ -1,10 +1,3 @@
-let phtl = 0;
-let plth = 0;
-let rhtl = 0;
-let brandFilter = "";
-let priceFilter = "";
-let ratingFilter = "";
-
 $(document).ready(init);
 
 function init(){
@@ -15,120 +8,213 @@ function init(){
     $("#brand-list").click(addBrandFilter);
     $("#price-range-list").click(addPriceRangeFilter);
     $("#rating-range-list").click(addRatingRangeFilter);
+    $("#reset-filter").click(resetFilter);
     fetchProducts();
 }
 
-function addRatingRangeFilter(event){
-    ratingFilter = $(event.target)[0].value.toLowerCase();
-    console.log(ratingFilter);
-    return;
+function resetFilter(event){
+    event.preventDefault();
+    sessionStorage.clear();
+    location.reload();
 }
 
-function addBrandFilter(event){
-    let products = [];
-    page = 1;
-    let priceRange = getPriceRange(priceFilter);
+function addRatingRangeFilter(event){
+    let ratingFilter = $(event.target)[0].value.toLowerCase();
+    let ratingFilters = sessionStorage.getItem("ratingFilters");
+    let ratingFiltersArray = []
+    if(ratingFilters!=null){
+        ratingFiltersArray = ratingFilters.split(",");
+    }
+    
+    let flag = false;
+    for(let i=0;i<ratingFiltersArray.length;i++){
+        if(ratingFiltersArray[i].toLowerCase() === ratingFilter){
+            flag = true;
+            break;
+        }
+    }
+
+    if(flag===true){
+        sessionStorage.setItem("ratingFilters",ratingFiltersArray.filter((item)=>item.toLowerCase()!= ratingFilter).join(","));
+    }
+    else{
+        ratingFiltersArray.push(ratingFilter);
+        sessionStorage.setItem("ratingFilters",ratingFiltersArray.join(","));
+    }
+
     if(searchProducts.length > 0){
-        if(priceFilter.length >0){
-            for(let i=0;i<searchProducts.length;i++){
-                if(searchProducts[i].brand.toLowerCase() === brandFilter){
-                    if(searchProducts[i].price >= priceRange["min"] && searchProducts[i].price<priceRange["max"])
-                    {
-                        products.push(searchProducts[i]);
-                    }
-                }
-            }
-        }
-        else{
-            for(let i=0;i<searchProducts.length;i++){
-                if(searchProducts[i].brand.toLowerCase() === brandFilter){
-                    products.push(searchProducts[i]);
-                }
-            }
-        }
-        searchProducts = [...products];
-        populateProducts(products);
+        searchProducts = applyFilter(searchProducts);
+        searchProducts = applySort(searchProducts);
+        populateProducts(searchProducts);
     }
     else{
         fetch("/data/products.json")
         .then(res=>res.json())
         .then(data=>{
-            if(priceFilter.length >0){
-                for(let i=0;i<data.products.length;i++){
-                    if(data.products[i].brand.toLowerCase() === brandFilter){
-                        if(data.products[i].price >= priceRange["min"] && data.products[i].price<priceRange["max"])
-                        {
-                            products.push(data.products[i]);
-                        }
-                    }
-                }
-            }
-            else{
-                for(let i=0;i<data.products.length;i++){
-                    if(data.products[i].brand.toLowerCase() === brandFilter){
-                        products.push(data.products[i]);
-                    }
-                }
-            }
-            searchProducts = [...products];
-            populateProducts(products); 
+            let products = data.products;
+            products = applyFilter(products);
+            products = applySort(products);
+            populateProducts(products);
+        });
+    } 
+}
+
+function addBrandFilter(event){
+    let brandFilter = $(event.target)[0].value.toLowerCase();
+    let brandFilters = sessionStorage.getItem("brandFilters");
+    let brandFiltersArray = [];
+    if(brandFilters!=null){
+        brandFiltersArray = brandFilters.split(",");
+    }
+        
+    let flag = false;
+    for(let i=0;i<brandFiltersArray.length;i++){
+        if(brandFiltersArray[i].toLowerCase() === brandFilter){
+            flag = true;
+            break;
+        }   
+    }
+
+    if(flag){
+        sessionStorage.setItem("brandFilters",brandFiltersArray.filter((item)=>item.toLowerCase()!= brandFilter).join(","));
+    }
+    else{
+        brandFiltersArray.push(brandFilter);
+        sessionStorage.setItem("brandFilters",brandFiltersArray.join(","));
+    }
+    page = 1;
+    if(searchProducts.length > 0){
+        searchProducts = applyFilter(searchProducts);
+        searchProducts = applySort(searchProducts);
+        populateProducts(searchProducts);
+    }
+    else{
+        fetch("/data/products.json")
+        .then(res=>res.json())
+        .then(data=>{
+            let products = data.products;
+            products = applyFilter(products);
+            products = applySort(products);
+            populateProducts(products);
         });
     }  
 }
 function addPriceRangeFilter(event){
-    priceFilter = $(event.target)[0].value.toLowerCase();
-    let products = [];
+    let priceFilter = $(event.target)[0].value.toLowerCase();
+    if(priceFilter.length <=0){
+        return;
+    }
     page = 1;
-    let priceRange = getPriceRange(priceFilter);
-        if(searchProducts.length > 0){
-            if(brandFilter.length > 0){
-                for(let i=0;i<searchProducts.length;i++){
-                    if(searchProducts[i].brand.toLowerCase() === brandFilter){
-                        if(searchProducts[i].price >= priceRange["min"] && searchProducts[i].price<priceRange["max"])
-                        {
-                            products.push(searchProducts[i]);
-                        }
-                    }
-                }
-            }
-            else{
-                for(let i=0;i<searchProducts.length;i++){
-                    if(searchProducts[i].price >= priceRange["min"] && searchProducts[i].price<priceRange["max"])
-                        {
-                            products.push(searchProducts[i]);
-                        }
-                }
-            }
-            searchProducts = [...products];
-            populateProducts(products);
+    let priceFilters = sessionStorage.getItem("priceRangeFilters");
+    let priceFiltersArray = [];
+    if(priceFilters!=null){
+        priceFiltersArray = priceFilters.split(",");
+    }
+
+    let flag = false;
+    for(let i=0;i<priceFiltersArray.length;i++){
+        if(priceFiltersArray[i].toLowerCase() === priceFilter){
+            flag = true;
+            break;
         }
-        else{
-            fetch("/data/products.json")
-        .then(res=>res.json())
-        .then(data=>{
-            
-            if(brandFilter.length > 0){
-                for(let i=0;i<data.products.length;i++){
-                    if(data.products[i].brand.toLowerCase() === brandFilter){
-                        if(data.products[i].price >= priceRange["min"] && data.products[i].price<priceRange["max"])
-                        {
-                            products.push(data.products[i]);
-                        }
+    }
+    if(flag===true){
+        sessionStorage.setItem("priceRangeFilters",priceFiltersArray.filter((item)=>item.toLowerCase()!= priceFilter).join(","));
+    }
+    else{
+        priceFiltersArray.push(priceFilter);
+        sessionStorage.setItem("priceRangeFilters",priceFiltersArray.join(","));
+    }
+
+    if(searchProducts.length > 0){
+        searchProducts = applyFilter(searchProducts);
+        searchProducts = applySort(searchProducts);
+        populateProducts(searchProducts);
+    }
+    else{
+        fetch("/data/products.json")
+    .then(res=>res.json())
+    .then(data=>{
+        let products = data.products;
+        products = applyFilter(products);
+        products = applySort(products);
+        populateProducts(products);
+    });
+    } 
+}
+
+function applyFilter(products){
+    let brandFilters  = sessionStorage.getItem("brandFilters");
+    let priceRangeFilters = sessionStorage.getItem("priceRangeFilters");
+    let ratingFilters = sessionStorage.getItem("ratingFilters");
+    let res = [];
+    if(brandFilters){
+        brandFilters = brandFilters.split(",");
+        if(brandFilters.length>0){
+            for(let i=0;i<products.length;i++){
+                for(let j=0;j<brandFilters.length;j++){
+                    if(products[i].brand.toLowerCase()===brandFilters[j].toLowerCase()){
+                        res.push(products[i]);
+                        break;
                     }
                 }
             }
-            else{
-                for(let i=0;i<data.products.length;i++){
-                    if(data.products[i].price >= priceRange["min"] && data.products[i].price<priceRange["max"])
-                        {
-                            products.push(data.products[i]);
-                        }
+            products = [...res];
+        }
+    }
+    res = [];
+    if(priceRangeFilters){
+        priceRangeFilters = priceRangeFilters.split(",");
+        if(priceRangeFilters.length >0){
+            for(let i=0;i<products.length;i++){
+                for(let j=0;j<priceRangeFilters.length;j++){
+                    let priceRange = getPriceRange(priceRangeFilters[j]);
+                    if(products[i].price >= priceRange["min"] && products[i].price<priceRange["max"]){
+                        res.push(products[i]);
+                        break;
+                    }
                 }
             }
-            searchProducts = [...products];
-            populateProducts(products);
-        });
-        } 
+            products = [...res];
+        }
+    } 
+    res = [];
+    if(ratingFilters){
+        ratingFilters = ratingFilters.split(",");
+        if(ratingFilters.length >0){
+            for(let i=0;i<products.length;i++){
+                for(let j=0;j<ratingFilters.length;j++){
+                    let ratingRange = getRatingRange(ratingFilters[j]);
+                    if(products[i].rating >= ratingRange["min"] && products[i].rating<ratingRange["max"]){
+                        res.push(products[i]);
+                        break;
+                    }
+                }
+            }
+            products = [...res];
+        }
+    }
+    return products;
+}
+
+function applySort(products){
+    let phtl = sessionStorage.getItem("phtl");
+    let rhtl = sessionStorage.getItem("rhtl");
+    
+    if(phtl!=null){
+        if(phtl == 1){
+            products.sort(comparePricehtl);
+        }
+        else if(phtl == -1){
+            products.sort(comparePricelth);
+        }
+    }
+    if(rhtl!=null){
+        if(rhtl == 1){
+            products.sort(compareRatinghtl);
+        }
+    }
+    return products;
 }
 
 function getPriceRange(priceFilter){
@@ -143,6 +229,24 @@ function getPriceRange(priceFilter){
         return {min:50000,max:10000000};
     }
 
+}
+
+function getRatingRange(ratingFilter){
+    if(ratingFilter === "0 - 1"){
+        return {min:0,max:1};
+    }
+    else if(ratingFilter === "1 - 2"){
+        return {min:1,max:2};
+    }
+    else if(ratingFilter === "2 - 3"){
+        return {min:2,max:3};
+    }
+    else if(ratingFilter === "3 - 4"){
+        return {min:3,max:4};
+    }
+    else {
+        return {min:4,max:5};
+    }
 }
 function comparePricelth( a, b) {
     if ( a.price < b.price ){
@@ -175,17 +279,15 @@ function compareRatinghtl( a, b) {
 }
 
 function addPriceFilterhtl(){
-    phtl = 1;
-    plth = 0;
+    sessionStorage.setItem("phtl",1);
+    sessionStorage.setItem("rhtl",0);
     $("#sort-rating")[0].innerText = "price-high-to-low";
     $("#price-high-to-low").addClass("bg-secondary");
     $("#price-low-to-high").removeClass("bg-secondary");
     $("#rating-high-to-low").removeClass("bg-secondary");
     if(searchProducts.length > 0){
-          if(rhtl){
-            searchProducts.sort( compareRatinghtl );
-          }
-          searchProducts.sort( comparePricehtl );
+          searchProducts = applyFilter(searchProducts);
+          searchProducts = applySort(searchProducts);
           populateProducts(searchProducts);
     }
     else{
@@ -194,26 +296,22 @@ function addPriceFilterhtl(){
         .then((json) => {
             let products = json.products;
             totalItem = products.length;
-            if(rhtl){
-                products.sort( compareRatinghtl );
-              }
-            products.sort( comparePricehtl );
+            products = applyFilter(products);
+            products = applySort(products);
             populateProducts(products);
         });
     }
 }
 function addPriceFilterlth(){
-    phtl = 0;
-    plth = 1;
+    sessionStorage.setItem("phtl",-1);
+    sessionStorage.setItem("rhtl",0);
     $("#sort-rating")[0].innerText = "price-low-to-high";
     $("#price-low-to-high").addClass("bg-secondary");
     $("#price-high-to-low").removeClass("bg-secondary");
     $("#rating-high-to-low").removeClass("bg-secondary");
     if(searchProducts.length > 0){
-        if(rhtl){
-            searchProducts.sort( compareRatinghtl );
-          }
-          searchProducts.sort( comparePricelth );
+        searchProducts = applyFilter(searchProducts);
+          searchProducts = applySort(searchProducts);
           populateProducts(searchProducts);
     }
     else{
@@ -222,44 +320,33 @@ function addPriceFilterlth(){
         .then((json) => {
             let products = json.products;
             totalItem = products.length;
-            if(rhtl){
-                products.sort( compareRatinghtl );
-              }
-            products.sort( comparePricelth );
+            products = applyFilter(products);
+            products = applySort(products);
             populateProducts(products);
         });
     }
 }
 function addRatingFilterhtl(){
-    rhtl = 1;
+    sessionStorage.setItem("rhtl",1);
+    sessionStorage.setItem("phtl",0);
     $("#sort-rating")[0].innerText = "rating-high-to-low";
     $("#price-low-to-high").removeClass("bg-secondary");
     $("#price-high-to-low").removeClass("bg-secondary");
     $("#rating-high-to-low").addClass("bg-secondary");
     if(searchProducts.length > 0){
-        if(phtl){
-            searchProducts.sort( comparePricehtl );
-        }
-        if(plth){
-            searchProducts.sort( comparePricelth );
-        }
-        searchProducts.sort( compareRatinghtl );
-        populateProducts(searchProducts);
+        searchProducts = applyFilter(searchProducts);
+          searchProducts = applySort(searchProducts);
+          populateProducts(searchProducts);
     }
   else{
       fetch("/data/products.json")
       .then((response) => response.json())
       .then((json) => {
-          let products = json.products;
-          totalItem = products.length;
-          if(phtl){
-            products.sort( comparePricehtl );
-          }
-          if(plth){
-            products.sort( comparePricelth );
-          }
-          products.sort( compareRatinghtl );
-          populateProducts(products);
+        let products = json.products;
+        totalItem = products.length;
+        products = applyFilter(products);
+        products = applySort(products);
+        populateProducts(products);
       });
   }
 }
@@ -274,7 +361,7 @@ function handleSearch(event) {
             let products = json.products;
             let results = [];
             for (let i = 0; i < products.length; i++) {
-                if (products[i].description.toLowerCase().includes(query) || products[i].title.toLowerCase().includes(query)) {
+                if (products[i].description.toLowerCase().includes(query) || products[i].title.toLowerCase().includes(query) || products[i].brand.toLowerCase().includes(query) || products[i].price.toString().includes(query)) {
                     results.push(products[i]);
                 }
             }
@@ -283,7 +370,8 @@ function handleSearch(event) {
             }
             else {
                 searchProducts = [...results];
-                $("#sort-rating")[0].innerText = "Sort By";
+                $("#sort-rating")[0].innerText = "Relevance";
+                sessionStorage.clear();
                 populateProducts(results);
             }
         });
@@ -306,25 +394,99 @@ function populateProducts(products) {
         }
         if((limit * (page - 1))>products.length )
         {
-
             return;
         }
         let brandList = [];
-
-        for(let i=0;i<products.length;i++){
-            brandList.push(products[i].brand);
+        if(searchProducts.length >0){
+            for(let i=0;i<searchProducts.length;i++){
+                brandList.push(products[i].brand);
+            }
+            let brandFilters = sessionStorage.getItem('brandFilters');
+            brandList = [...new Set(brandList)];
+            $("#brand-list")[0].innerHTML = "";
+            if(brandFilters!=null){
+                let brandFiltersArray = brandFilters.split(",");
+                for(let i=0;i<brandList.length;i++)
+                {
+                    let flag=false;
+                    for(let j=0;j<brandFiltersArray.length;j++){
+                        if(brandFiltersArray[j].toLowerCase()===brandList[i].toLowerCase())
+                        {
+                            flag = true;
+                            $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                            <input class="form-check-input" type="checkbox"checked value="${brandList[i]}" id="brand-${brandList[i]}" />
+                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                            </div></a></li>`);
+                            break;
+                        }
+                    }
+                    if(flag===false){
+                        $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
+                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                        </div></a></li>`);
+                    }
+                }
+            }
+            else{
+                for(let i=0;i<brandList.length;i++)
+                {
+                    $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
+                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                        </div></a></li>`);
+                }
+            }  
         }
+        else{
+            fetch("/data/products.json")
+            .then(res=>res.json())
+            .then(data=>{
+                for(let i=0;i<data.products.length;i++){
+                    brandList.push(data.products[i].brand);
+                }
+                brandList = [...new Set(brandList)];
+                let brandFilters = sessionStorage.getItem('brandFilters');
 
-        brandList = [...new Set(brandList)];
-        $("#brand-list")[0].innerHTML = "";
-        for(let i=0;i<brandList.length;i++)
-        {
-            $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-            <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
-            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-        </div></a></li>`);
+                $("#brand-list")[0].innerHTML = "";
+                if(brandFilters!=null){
+                    let brandFiltersArray = brandFilters.split(",");
+                    for(let i=0;i<brandList.length;i++)
+                    {
+                        let flag=false;
+                        for(let j=0;j<brandFiltersArray.length;j++){
+                            if(brandFiltersArray[j].toLowerCase()===brandList[i].toLowerCase())
+                            {
+                                flag = true;
+                                $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                                <input class="form-check-input" type="checkbox"checked value="${brandList[i]}" id="brand-${brandList[i]}" />
+                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                                </div></a></li>`);
+                                break;
+                            }
+                        }
+                        if(flag===false){
+                            $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
+                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                            </div></a></li>`);
+                        }
+                    }
+                }
+                else{
+                    for(let i=0;i<brandList.length;i++)
+                    {
+                        $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
+                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
+                            </div></a></li>`);
+                    }
+                }  
+            })
         }
         let productHtml = "";
+        products = applyFilter(products);
+        products = applySort(products);
         for (let i = (limit * (page - 1)); i < ((limit * (page - 1) + limit) > products.length ? products.length :(limit * (page - 1) + limit)); i++) {
             let product = products[i];
             let email = localStorage.getItem("email");
@@ -333,20 +495,20 @@ function populateProducts(products) {
                 let untrackedItems = localStorage.getItem("untrackedItems");
                 for(let i = 0; i < untrackedItems.length;i++){
                     if(untrackedItems[i].id === product.id){
-                        productHtml += `<div class="col-lg-3 col-md-6 mb-3">
+                        productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                         <div class="card rounded-1 shadow product-box mx-auto">
                             <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
                             <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
                             <span class="card-rating-box">${product.rating} ⭐</span>
                             </div>
                             <div class="card-body">
-                                <h4 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h4>
-                                <h5>${"₹ " + product.price}</h5>
+                                <h5 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h5>
+                                <h6>${"₹ " + product.price}</h6>
                                 <p class="card-text card-description-text">${product.description}</p>
-                                <div class="input-group w-auto">
-                                <button class="btn btn-warning"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                                <input type="number" step="1" min="0" class="w-25 p-1 form-control d-inline num-input" id="${"input-" + product.id}" value=${untrackedItems[i].quantity} readonly="true">
-                                <button class="btn btn-warning"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                                <div>
+                                <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                                <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center" id="${"input-" + product.id}" value=${untrackedItems[i].quantity} readonly="true">
+                                <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
                                 </div>
                             </div> 
                             </div>
@@ -375,63 +537,72 @@ function populateProducts(products) {
                     }
                 }
                 if(flag){
-                    productHtml += `<div class="col-lg-3 col-md-6 mb-3">
+                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                         <div class="card rounded-1 shadow product-box mx-auto" >
                             <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
                             <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
                             <span class="card-rating-box">${product.rating} ⭐</span>
                             </div>
                             <div class="card-body">
-                                <h4 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h4>
-                                <h5>${"₹ " + product.price}</h5>
+                                <h5 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h5>
+                                <h6>${"₹ " + product.price}</h6>
                                 <p class="card-text card-description-text">${product.description}</p>
-                                <div class="input-group w-auto">
-                                <button class="btn btn-warning"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                                <input type="number" step="1" min="0" class="w-25 p-1 form-control d-inline num-input" id="${"input-" + product.id}" value=${cartEntry[index1].items[index2].quantity} readonly="true">
-                                <button class="btn btn-warning"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                                <div>
+                                <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                                <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center" id="${"input-" + product.id}" value=${cartEntry[index1].items[index2].quantity} readonly="true">
+                                <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
                                 </div>
                             </div> 
                             </div>
                             </div>`;
                 }
                 else{
-                        productHtml += `<div class="col-lg-3 col-md-6 mb-3">
-                            <div class="card rounded-1 shadow product-box mx-auto" >
-                                <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                                <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                                <span class="card-rating-box">${product.rating} ⭐</span>
+                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card rounded-1 shadow product-box mx-auto" >
+                            <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                            <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                            <span class="card-rating-box">${product.rating} ⭐</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h4>
+                                <h6>${"₹ " + product.price}</h6>
+                                <p class="card-text card-description-text">${product.description}</p>
+                                <div>
+                                <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                                <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center" id="${"input-" + product.id}" value="0" readonly="true">
+                                <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
                                 </div>
-                                <div class="card-body">
-                                    <h4 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h4>
-                                    <h5>${"₹ " + product.price}</h5>
-                                    <p class="card-text card-description-text">${product.description}</p>
-                                    <div class="input-group w-auto">
-                                    <button class="btn btn-warning"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                                    <input type="number" step="1" min="0" class="w-25 p-1 form-control d-inline num-input" id="${"input-" + product.id}" value="0" readonly="true">
-                                    <button class="btn btn-warning"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                                    </div>
-                                </div> 
-                                </div>
-                                </div>`;
-                }
-                
-            }
-            
+                            </div> 
+                            </div>
+                            </div>`;
+                }   
+            }  
         }
-        productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
-<ul class="pagination">
-<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+        
+                        
         let itemCount = products.length / limit;
-        for (let i = 0; i < itemCount; i++) {
-            productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+
+        if(itemCount>1){
+            productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                        <ul class="pagination">`;
+        if(page==1){
+            productHtml+=`<li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>`;
         }
-        productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
-</ul>
-</nav>`;
+        else{
+            productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+        }
+            for (let i = 0; i < itemCount; i++) {
+                productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+            }
+            productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                    </nav>`;
+        }
+        
         $("#product-list")[0].innerHTML = productHtml;
         $(".page-link").click(handlePageClick);
 }
-// <a class="btn btn-sm btn-warning mt-2 w-100 py-1 fs-5 add-btn" onclick="addProduct(${product.id},event)">ADD TO CART</a>
+
 function goToProduct(id){
     window.location.href = `http://localhost:3000/products/${id}`;
 }

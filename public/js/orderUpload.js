@@ -12,6 +12,11 @@ function init(){
 function handleOrderUpload(event){
     event.preventDefault();
     let file = $("#order-file")[0].files[0];
+    if(!file){
+        $("#error-toast  .toast-body")[0].innerText = "No file selected";
+        $("#error-toast").show();
+        return;
+    }
     
     if(file.type != "text/tab-separated-values"){
         $("#error-toast  .toast-body")[0].innerText = "Please upload correct file";
@@ -66,7 +71,7 @@ function readFileDataCallback(results){
                     validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title});
                 }
                 else{
-                    alert("Invalid quantity for " + data[i].sku_id + data[i].quantity);
+                    alert("Invalid quantity for " + data[i].sku_id);
                     validOrderItems = [];
                     return;
                 }
