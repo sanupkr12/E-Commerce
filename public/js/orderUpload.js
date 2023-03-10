@@ -1,8 +1,11 @@
+let validOrderItems = [];
 $(document).ready(init);
 
 function init(){
+    $("#order-list").hide();
     $("#order-upload-form").submit(handleOrderUpload);
     $("#download-sample").click(downloadSample);
+    $("#upload-order").click(uploadOrder);
     $("#error-toast").click(()=>{$('#error-toast').hide()});
 }
 
@@ -37,29 +40,49 @@ function readFileDataCallback(results){
         $("#error-toast .toast-body")[0].innerText = "Number of rows exceeds limit(10)";
         $("#error-toast").show();
     }
-    let validOrderItems = [];
     fetch("/data/products.json")
     .then(res=>res.json())
     .then((json)=>{
+        
         let products = json.products;
         for(let i=0;i<data.length;i++){
             let flag = false;
             let id = -1;
+            let title = "";
             products.forEach(p=>{
                 if(p.sku_id == data[i].sku_id){
                     id = p.id;
+                    title = p.title;
                     flag = true;
                 }
             });
             if(!flag){
                 alert("product with sku id " + data[i].sku_id + " does not exist");
+                validOrderItems = [];
                 return;
             }
             else{
-                validOrderItems.push({id,quantity:data[i].quantity});
+                if(parseInt(data[i].quantity) > 0){
+                    validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title});
+                }
+                else{
+                    alert("Invalid quantity for " + data[i].sku_id + data[i].quantity);
+                    validOrderItems = [];
+                    return;
+                }
             }
         }
-        let cart = JSON.parse(localStorage.getItem('cart'));
+        if(validOrderItems.length > 0){
+            $("#order-list").show();
+        }
+        for(let i=0;i<validOrderItems.length;i++){
+            $("#order-list").find("tbody").append(`<tr class="bg-white"><td>${validOrderItems[i].sku_id}</td><td>${validOrderItems[i].title}</td><td>${validOrderItems[i].quantity}</td></tr>`)
+        }
+    });
+}
+
+function uploadOrder(){
+    let cart = JSON.parse(localStorage.getItem('cart'));
         let email = localStorage.getItem('email');
         let index1 = 0;
         for(let i = 0; i < cart.length; i++) {
@@ -92,10 +115,10 @@ function readFileDataCallback(results){
         updateCartItemCount(email);
         $("#success-toast .toast-body")[0].innerText = "Order placed successfully";
         $("#success-toast").show();
+        $("#order-list").hide();
         setTimeout(()=>{
             $("#success-toast").hide();
         },3000);
-    });
 }
 
 function readFileData(file, callback) {
@@ -111,7 +134,7 @@ function readFileData(file, callback) {
 }
 
 function downloadSample(){
-    let fields = ['product_id','quantity'];
+    let fields = ['sku_id','quantity'];
     let headers = fields.join('\t');
     let blob = new Blob([headers], {type: 'text/tsv;charset=utf-8'});
     let fileUrl = null;

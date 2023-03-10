@@ -1,8 +1,9 @@
-const limit = 8;
 let page = 1;
 let totalItem = 0;
 let searchPage = 1;
 let searchProducts = [];
+
+const limit = 8;
 
 $(document).ready(init);
 
@@ -13,17 +14,34 @@ function init() {
         .then(data => {
             $("header")[0].innerHTML = data;
             let email = localStorage.getItem("email");
+            let untrackedItems = localStorage.getItem("untrackedItems");
             if (!email) {
-                $("#cart-text")[0].value = "0";
+                $("#cart-text")[0].value = untrackedItems.length;
                 $("#logout-btn")[0].style.display = "none";
+                $("#login").click(handleLoginClick);
+                if(window.location.href.split("/").pop()==='login'){
+                    $("#login")[0].style.display = "none";
+                    $("#go-to-cart-btn")[0].style.display = "none";
+                }
             }
-            else {
-                updateCartItemCount(email);
-                $("#user-detail-text")[0].innerText = email.split("@")[0];
+            else{
+                fetch("/data/credentials.json")
+                .then(res=>res.json())
+                .then(data=>{
+                    let credentials = data.credentials;
+                    for(let i=0;i<credentials.length;i++){
+                        if(credentials[i].email===email){
+                            $("#user-detail-text")[0].innerText = credentials[i].username;
+                            break;
+                        }
+                    }
+                });
+                
                 $("#logout-btn").click(handleLogout);
                 $("#login")[0].style.display = "none";
             }
-            $("#login").click(handleLoginClick);
+            updateCartItemCount(email);
+            
             $("#brand-logo").click(handleLogoClick);
             $("#go-to-cart-btn").click(()=>{window.location.href = "http://localhost:3000/cart";});
             $("#file-upload-btn").click(()=>{window.location.href = "http://localhost:3000/order"});
@@ -34,7 +52,7 @@ function init() {
                 $("#file-upload-btn")[0].style.display = "none";
             }
         });
-    validateLogin();
+
     numberValidation();
     fetch("/html/footer.html")
         .then(
@@ -50,9 +68,7 @@ function init() {
         });   
 }
 
-function handleLoginClick(){
-        $("#signup")[0].style.display = "block";
-        $("#login")[0].style.display = "none";
+function handleLoginClick(){   
         window.location.href="http://localhost:3000/login";
 }
 
@@ -88,7 +104,33 @@ function toJson($form) {
 
 function updateCartItemCount(email){
     let cartEntry = JSON.parse(localStorage.getItem("cart"));
-    let index = 0;
+    let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+    email = localStorage.getItem("email");
+    if(!email){
+        let cart = untrackedItems; 
+        fetch("/data/products.json")
+    .then(res=>res.json())
+    .then(data=>{
+        let products = data.products;
+        let results = [];
+        for(let i=0; i < cart.length; i++) {
+            let flag = false;
+            for(let j=0;j<products.length;j++) {
+                if(products[j].id === cart[i].id && cart[i].quantity > 0) {
+                    flag = true;
+                }     
+            }
+            if(flag){
+                results.push({id:cart[i].id,quantity:cart[i].quantity});
+            }
+        }
+        untrackedItems = results;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        $("#cart-text")[0].innerText = results.length;
+    });
+    }
+    else{
+        let index = 0;
     for (let i = 0; i < cartEntry.length; i++) {
         if (cartEntry[i].email == email) {
             index = i;
@@ -107,8 +149,7 @@ function updateCartItemCount(email){
             for(let j=0;j<products.length;j++) {
                 if(products[j].id === cart[i].id && cart[i].quantity > 0) {
                     flag = true;
-                }
-                
+                }     
             }
             if(flag){
                 results.push({id:cart[i].id,quantity:cart[i].quantity});
@@ -118,15 +159,6 @@ function updateCartItemCount(email){
         localStorage.setItem("cart", JSON.stringify(cartEntry));
         $("#cart-text")[0].innerText = results.length;
     });
-    
-}
-
-function validateLogin() {
-    let email = localStorage.getItem("email");
-    if(window.location.href.split("/").pop() != 'login'){
-        if (!email) {
-            window.location.href = "http://localhost:3000/login";
-        }
     }
 }
 
@@ -138,105 +170,181 @@ function decreaseQuantityOnCart(id,price,event){
     event.stopPropagation();
     let email = localStorage.getItem("email");
     let cartEntry = JSON.parse(localStorage.getItem("cart"));
-    let index1 = 0;
-    for (let j = 0; j < cartEntry.length; j++) {
-        if (cartEntry[j].email === email) {
-            index1 = j;
-            break;
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
         }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cart.items = cart.items.filter(item => item.id!== id);
+            localStorage.setItem("untrackedItems", JSON.stringify(cart));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice - parseInt(price));;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
+    else{
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
 
-    let index2 = 0;
-    let cart = cartEntry[index1].items;
-    for(let i=0; i < cart.length; i++) {
-        if(cart[i].id===id){
-            index2 = i;
-            break;
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
         }
-    }
-    cart[index2].quantity-=1;
-    if(cart[index2].quantity<=0){
-        cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
         localStorage.setItem("cart", JSON.stringify(cartEntry));
-        updateCartItemCount(email);
-        location.reload();
-        return;
+        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
-    let orgPrice = parseInt($("#total-bill")[0].innerText);
-    $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
-    localStorage.setItem("cart", JSON.stringify(cartEntry));
-    $(`#input-`+id)[0].value = cart[index2].quantity;
 }
 
 function increaseQuantityOnCart(id,price,event){
     event.stopPropagation();
     let email = localStorage.getItem("email");
     let cartEntry = JSON.parse(localStorage.getItem("cart"));
-    let index1 = 0;
-    for (let j = 0; j < cartEntry.length; j++) {
-        if (cartEntry[j].email === email) {
-            index1 = j;
-            break;
+
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
         }
+        cart[index2].quantity+=1;
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice + parseInt(price));;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
-    let index2 = 0;
-    let cart = cartEntry[index1].items;
-    for(let i=0; i < cart.length; i++) {
-        if(cart[i].id===id){
-            index2 = i;
-            break;
+    else{
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
         }
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity+=1;
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice + parseInt(price));;
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
-    cart[index2].quantity+=1;
-    let orgPrice = parseInt($("#total-bill")[0].innerText);
-    $("#total-bill").text(orgPrice + parseInt(price));;
-    localStorage.setItem("cart", JSON.stringify(cartEntry));
-    $(`#input-`+id)[0].value = cart[index2].quantity;
+    
 }
 
 function handleAddToCart(event) {
+    let email = localStorage.getItem("email");
     if (event.target.innerText === "Go to Cart") {
         window.location.href="http://localhost:3000/cart";
         return;
     }
+
     let id = parseInt($("#product-id")[0].value);
     let cartEntry = JSON.parse(localStorage.getItem("cart"));
     let oldQuantity = 0;
     let index = 0;
     let items = [];
-    let email = localStorage.getItem("email");
-    for (let j = 0; j < cartEntry.length; j++) {
-        if (cartEntry[j].email === email) {
-            items = cartEntry[j].items;
-            index = j;
-            break;
-        }
-    }
-    let itemCount = cartEntry[index].items.length;
-    let cart = items;
-    let index1 = 0;
-    let flag = false;
-    for (let i = 0; i < cart.length; i++) {
-        let item = cart[i];
-        if (item.id === id) {
-            flag = true;
-            oldQuantity = parseInt(item.quantity);
-            index1 = i;
-        }
-    }
-    let quantity = parseInt($("#input-quantity")[0].value);
-    if (flag === true) {
-        cartEntry[index][index1] = { "id": id, "quantity": quantity };
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-    }
-    else {
-        cartEntry[index].items.push({ id, quantity });
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-        itemCount += 1;
-    }
 
-    $("#cart-text")[0].innerText = itemCount;
-    $(".addToCartBtn")[0].innerText = "Go to Cart";
+    if(!email){
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let itemCount = untrackedItems.length;
+        let cart = untrackedItems;
+        let index1 = 0;
+        let flag = false;
+        for (let i = 0; i < cart.length; i++) {
+            if (cart[i].id === id) {
+                flag = true;
+                oldQuantity = parseInt(item.quantity);
+                index1 = i;
+            }
+        }
+        let quantity = parseInt($("#input-quantity")[0].value);
+        if (flag === true) {
+            cart[index1] = { "id": id, "quantity": quantity };
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        }
+        else {
+            cart.push({ id, quantity });
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+            itemCount += 1;
+        }
+    
+        $("#cart-text")[0].innerText = itemCount;
+        $(".addToCartBtn")[0].innerText = "Go to Cart";
+    }
+    else{
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                items = cartEntry[j].items;
+                index = j;
+                break;
+            }
+        }
+        let itemCount = cartEntry[index].items.length;
+        let cart = items;
+        let index1 = 0;
+        let flag = false;
+        for (let i = 0; i < cart.length; i++) {
+            let item = cart[i];
+            if (item.id === id) {
+                flag = true;
+                oldQuantity = parseInt(item.quantity);
+                index1 = i;
+            }
+        }
+        let quantity = parseInt($("#input-quantity")[0].value);
+        if (flag === true) {
+            cartEntry[index][index1] = { "id": id, "quantity": quantity };
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+        }
+        else {
+            cartEntry[index].items.push({ id, quantity });
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            itemCount += 1;
+        }
+    
+        $("#cart-text")[0].innerText = itemCount;
+        $(".addToCartBtn")[0].innerText = "Go to Cart";
+    }   
 }
 
 function toJson($form) {
@@ -250,24 +358,232 @@ function toJson($form) {
     return json;
 }
 
-function increaseQuantity(event) {
+function increaseQuantity(id,event) {
     event.preventDefault();
+    event.stopPropagation();
     let quantity = parseInt($("#input-quantity")[0].value);
     $("#input-quantity")[0].value = quantity + 1;
+    let email = localStorage.getItem('email');
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity+=1;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity+=1;
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+    }
 }
 
-function decreaseQuantity(event) {
+function decreaseQuantity(id,event) {
     event.preventDefault();
+    event.stopPropagation();
     let quantity = parseInt($("#input-quantity")[0].value);
-    if (quantity <= 1) {
-        return;
-    }
     $("#input-quantity")[0].value = quantity - 1;
+    let email = localStorage.getItem("email");
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cart.items = cart.items.filter(item => item.id!== id);
+            localStorage.setItem("untrackedItems", JSON.stringify(cart));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+    }
+    
+}
+
+function increaseQuantityOnProduct(id,event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let quantity = parseInt($(`#input-${id}`)[0].value);
+    $(`#input-${id}`)[0].value = quantity + 1;
+    let email = localStorage.getItem('email');
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        if(flag === false){
+            cart.push({id,quantity:1});
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        }
+        else{
+            cart[index2].quantity+=1;
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        }
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+        let index2 = 0;
+        let flag = false;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+        if(flag === false){
+            cart.push({id,quantity:1});
+            localStorage.setItem('cart', JSON.stringify(cartEntry));
+        }
+        else{
+            cart[index2].quantity+=1;
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+        }
+        
+    }
+    updateCartItemCount(email);
+}
+
+function decreaseQuantityOnProduct(id,event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let quantity = parseInt($(`#input-${id}`)[0].value);
+    $(`#input-${id}`)[0].value = quantity - 1;
+    let email = localStorage.getItem("email");
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        let flag = false;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+
+        if(flag === false){
+            return;
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cart.items = cart.items.filter(item => item.id!== id);
+            localStorage.setItem("untrackedItems", JSON.stringify(cart));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+
+        let index2 = 0;
+        let flag = false;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+        if(flag === false){
+            return;
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            updateCartItemCount(email);
+            location.reload();
+            return;
+        }
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+    }
+    updateCartItemCount(email);
 }
 
 function handleLogout() {
     localStorage.removeItem("email");
-    validateLogin();
+    window.location.href = "http://localhost:3000/login";
 }
 
 function numberValidation() {
@@ -285,3 +601,4 @@ function numberValidation() {
         }
     }
 }
+

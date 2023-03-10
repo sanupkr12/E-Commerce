@@ -45,11 +45,24 @@ function showProductDetails(id) {
 
             $("#product-images")[0].innerHTML = imageHtml;
             $(".carousel-indicators")[0].innerHTML = carouselIndicatorHtml;
-            $("#increase-quantity").click(increaseQuantity);
-            $("#decrease-quantity").click(decreaseQuantity);
+            $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
+            $("#decrease-quantity").click((event)=>{decreaseQuantity(id,event)});
             $(".addToCart").click(addProduct);
             $("#product-id")[0].value = id;
-            let cart = cartEntry[index];
+
+            if(!email){
+                let cart = JSON.parse(localStorage.getItem("untrackedItems"));
+                for (let i = 0; i < cart.length; i++) {
+                    if (cart[i].id == id) {
+                        $("#input-quantity").val(cart[i].quantity);
+                        $(".addToCart")[0].innerText = "GO TO CART";
+                        break;
+                    }
+                }
+                return;
+            }
+            else{
+                let cart = cartEntry[index];
             for (let i = 0; i < cart.items.length; i++) {
                 if (cart.items[i].id == id) {
                     $("#input-quantity").val(cart.items[i].quantity);
@@ -57,6 +70,8 @@ function showProductDetails(id) {
                     break;
                 }
             }
+            }
+            
         });
 }
 

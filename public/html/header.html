@@ -6,23 +6,23 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav w-100 justify-content-end">
+                <ul class="navbar-nav w-100 justify-content-end align-items-center">
                     <li class="nav-item w-25">
                         <div class="row d-flex align-items-center">
-                            <div class="col-md-4">
+                            <div class="col-md-3 offset-md-2">
                                 <div class="row d-flex justify-content-center">
-                                    <div class="col-md-6 position-relative w-50" id="go-to-cart-btn" data-bs-toggle="tooltip" data-bs-title="GO TO CART" data-bs-placement="bottom"><img src="/images/shopping-cart.png" class="cart-img img-fluid" ><span class="badge position-absolute top-0 end-0 rounded-pill bg-light text-dark" id="cart-text"></span></div>
+                                    <div class="col-md-6 position-relative w-100 text-end" id="go-to-cart-btn" data-bs-toggle="tooltip" data-bs-title="GO TO CART" data-bs-placement="bottom"><img src="/images/shopping-cart.png" class="cart-img img-fluid" ><span class="badge position-absolute top-0 end-0 rounded-pill bg-light text-dark" id="cart-text"></span></div>
                                 </div>
                             </div>
-                            <div class="col-md-8 d-flex justify-content-center">
-                                <button id="login" class="btn btn-primary w-100">Login</button>
+                            <div class="col-md-7 text-center">
+                                <button id="login" class="btn btn-primary w-50">Login</button>
                                 <div class="dropdown" id="auth-dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" id="user-detail-text" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-info rounded-pill dropdown-toggle" id="user-detail-text" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                       
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-dark p-3">
-                                        <button class="btn btn-primary w-100 mb-3" id="file-upload-btn" data-bs-toggle="tooltip" data-bs-title="UPLOAD FILE" data-bs-placement="bottom">Order Upload</button>
-                                        <button id="logout-btn" class="btn btn-primary w-100">Logout</button>
+                                    <ul class="dropdown-menu dropdown-menu-dark p-1">
+                                        <li id="file-upload-btn" class="dropdown-item w-100 mb-1 rounded-1"  data-bs-toggle="tooltip" data-bs-title="UPLOAD FILE" data-bs-placement="bottom">Order Upload</li>
+                                        <li id="logout-btn" data-bs-toggle="tooltip" data-bs-title="Logout" data-bs-placement="bottom" class="dropdown-item w-100 rounded-1">Logout</li>
                                         
                                     </ul>
                                   </div>

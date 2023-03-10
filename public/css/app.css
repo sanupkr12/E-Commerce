@@ -56,7 +56,7 @@ a{
 }
 
 a:hover{cursor: pointer;
-color:black;}
+color:blue;}
 
 #carouselExampleControls{
     width:35rem;
@@ -69,7 +69,7 @@ color:black;}
 }
 
 .product-box:hover{
-    transform:scale(1.05);
+    transform:scale(1.01);
 }
 
 #search-input{
@@ -110,8 +110,8 @@ color:black;}
 }
 
 #bill-details{
-    background-color:#B4E4FF;
-    border:0.1rem #95BDFF solid;
+    background-color:rgb(13 110 253 / 25%);
+    border:0.1rem #dadee4  solid;
     height:fit-content;
 }
 
@@ -125,7 +125,7 @@ color:black;}
     padding: 0.4rem;
 }
 
-#go-to-cart-btn, #file-upload-btn{
+#go-to-cart-btn, #file-upload-btn,#logout-btn,.hover-pointer{
     cursor: pointer;
 }
 
@@ -172,5 +172,9 @@ color:black;}
 .dropdown-menu {
     max-height: 16rem;
     overflow-y: auto;
+}
+
+#shopping-cart-text{
+    margin-left:-1rem;
 }
 
