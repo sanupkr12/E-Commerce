@@ -36,9 +36,9 @@ function manageCart(){
                 let price = 0;
                     for (let i = 0; i < results.length; i++) {
                         price += results[i].product.price * results[i].quantity;
-                        productHtml += `<div class="card mb-3">
+                        productHtml += `<div class="card mb-3 border-0 shadow-sm">
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
-                        <div class="row no-gutters">
+                        <div class="card-body row no-gutters py-2">
                           <div class="col-md-4 p-2">
                             <a href="http://localhost:3000/products/${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
@@ -52,8 +52,8 @@ function manageCart(){
                               <p class="card-text">${results[i].product.description}</p>
                               <p class="card-text"><small class="text-muted">${"₹ " + results[i].product.price}</small></p>
                               <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
-                            <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
+                              <input type="number" step="1" min="0" class="w-input form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
+                              <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
                             </div>
                           </div>
                         </div>
@@ -61,9 +61,10 @@ function manageCart(){
                     }
                     $("#empty-cart-box")[0].style.display = "none";
                     $("#total-bill")[0].innerText = price;
-                    $("#cart-quantity")[0].innerText += results.length;
+                    $("#cart-quantity")[0].innerHTML = results.length > 1 ? `Total : <p>(${results.length} items) </p>` : `Total : <p>(${results.length} item)</p>`;
                     $("#cart-items")[0].innerHTML = productHtml;
                     $('#checkout-btn').click(downloadOrder);
+                    $(".num-input").change(updateQuantity);
                     const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 });
@@ -103,9 +104,9 @@ function manageCart(){
                 let price = 0;
                     for (let i = 0; i < results.length; i++) {
                         price += results[i].product.price * results[i].quantity;
-                        productHtml += `<div class="card mb-3">
+                        productHtml += `<div class="card mb-3 border-0 shadow-sm">
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
-                        <div class="row no-gutters">
+                        <div class="card-body row no-gutters py-2">
                           <div class="col-md-4 p-2">
                             <a href="http://localhost:3000/products/${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
@@ -119,18 +120,19 @@ function manageCart(){
                               <p class="card-text">${results[i].product.description}</p>
                               <p class="card-text">${"₹ " + results[i].product.price}</p>
                               <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input text-center form-control d-inline num-input" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
+                            <input type="number" step="1" min="0" class="w-input text-center form-control d-inline num-input" id="${"input-" + results[i].product.id}" value="${results[i].quantity}" readonly="true">
                             <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
                             </div>
                           </div>
                         </div>
-                      </div>`;
+                      </div>`; 
                     }
                     $("#empty-cart-box")[0].style.display = "none";
                     $("#total-bill")[0].innerText = price;
-                    $("#cart-quantity")[0].innerText += results.length;
+                    $("#cart-quantity")[0].innerHTML = results.length > 1 ? `Total : <p>(${results.length} items) </p>` : `Total : <p>(${results.length} item)</p>`;
                     $("#cart-items")[0].innerHTML = productHtml;
                     $('#checkout-btn').click(downloadOrder);
+                    $(".num-input").change(updateQuantity);
                     const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 });
@@ -259,4 +261,110 @@ function removeFromCart(){
 
 function showProductDetails(id){
     window.location.href=`http://localhost:3000/products/${id}`;
+}
+
+function decreaseQuantityOnCart(id,price,event){
+    event.stopPropagation();
+    let email = localStorage.getItem("email");
+    let cartEntry = JSON.parse(localStorage.getItem("cart"));
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            $("#item-id").val(id);
+            $("#item-price").val(price);
+            let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
+            $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
+            $("#remove-item-modal").modal('toggle');
+            return;
+        }
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice - parseInt(price));;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
+    }
+    else{
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity-=1;
+        if(cart[index2].quantity<=0){
+            $("#item-id").val(id);
+            $("#item-price").val(price);
+            let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
+            $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
+            $("#remove-item-modal").modal('toggle');
+            return;
+        }
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
+    }
+}
+
+function increaseQuantityOnCart(id,price,event){
+    event.stopPropagation();
+    let email = localStorage.getItem("email");
+    let cartEntry = JSON.parse(localStorage.getItem("cart"));
+
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity+=1;
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice + parseInt(price));;
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
+    }
+    else{
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+        let index2 = 0;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                break;
+            }
+        }
+        cart[index2].quantity+=1;
+        let orgPrice = parseInt($("#total-bill")[0].innerText);
+        $("#total-bill").text(orgPrice + parseInt(price));;
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+        $(`#input-`+id)[0].value = cart[index2].quantity;
+    }
 }

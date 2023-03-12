@@ -72,10 +72,6 @@ color:blue;}
     transform:scale(1.01);
 }
 
-#search-input{
-    font-size:1.1rem;
-}
-
 .cart-item-image{
     height:13rem;
 }
@@ -109,8 +105,7 @@ color:blue;}
 }
 
 #bill-details{
-    background-color:rgb(13 110 253 / 25%);
-    border:0.1rem #dadee4  solid;
+
     height:fit-content;
 }
 
@@ -175,6 +170,17 @@ color:blue;}
 
 #shopping-cart-text{
     margin-left:-1rem;
+}
+
+#filter-btn{
+    right:3rem;
+    bottom:5rem;
+    z-index:2;
+}
+
+#product-header{
+    top:4rem;
+    z-index:2;
 }
 
 .w-input{

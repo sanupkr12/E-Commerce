@@ -31,7 +31,7 @@ function init() {
                     let credentials = data.credentials;
                     for(let i=0;i<credentials.length;i++){
                         if(credentials[i].email===email){
-                            $("#user-detail-text")[0].innerText = credentials[i].username;
+                            $("#user-detail-text")[0].innerHTML = `<i class="fa-solid fa-user mx-1"></i> ${credentials[i].username}`;
                             break;
                         }
                     }
@@ -164,111 +164,6 @@ function updateCartItemCount(email){
 
 function handleLogoClick() {
     window.location.href= "http://localhost:3000/products";
-}
-
-function decreaseQuantityOnCart(id,price,event){
-    event.stopPropagation();
-    let email = localStorage.getItem("email");
-    let cartEntry = JSON.parse(localStorage.getItem("cart"));
-    if(!email){
-        let index2 = 0;
-        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-        let cart = untrackedItems;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
-            }
-        }
-        cart[index2].quantity-=1;
-        if(cart[index2].quantity<=0){
-            cart.items = cart.items.filter(item => item.id!== id);
-            localStorage.setItem("untrackedItems", JSON.stringify(cart));
-            updateCartItemCount(email);
-            location.reload();
-            return;
-        }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice - parseInt(price));;
-        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
-    }
-    else{
-        let index1 = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index1 = j;
-                break;
-            }
-        }
-
-        let index2 = 0;
-        let cart = cartEntry[index1].items;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
-            }
-        }
-        cart[index2].quantity-=1;
-        if(cart[index2].quantity<=0){
-            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
-            localStorage.setItem("cart", JSON.stringify(cartEntry));
-            updateCartItemCount(email);
-            location.reload();
-            return;
-        }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
-    }
-}
-
-function increaseQuantityOnCart(id,price,event){
-    event.stopPropagation();
-    let email = localStorage.getItem("email");
-    let cartEntry = JSON.parse(localStorage.getItem("cart"));
-
-    if(!email){
-        let index2 = 0;
-        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-        let cart = untrackedItems;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
-            }
-        }
-        cart[index2].quantity+=1;
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice + parseInt(price));;
-        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
-    }
-    else{
-        let index1 = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index1 = j;
-                break;
-            }
-        }
-        let index2 = 0;
-        let cart = cartEntry[index1].items;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
-            }
-        }
-        cart[index2].quantity+=1;
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice + parseInt(price));;
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
-    }
-    
 }
 
 function handleAddToCart(event) {
@@ -575,6 +470,61 @@ function decreaseQuantityOnProduct(id,event) {
             updateCartItemCount(email);
             location.reload();
             return;
+        }
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+    }
+    updateCartItemCount(email);
+}
+
+function updateCart(id,quantity){
+    let email = localStorage.getItem("email");
+    if(!email){
+        let index2 = 0;
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        let flag = false;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+
+        if(flag === false){
+            cart.push({id,quantity});
+        }
+        else{
+            cart[index2] = {id,quantity};
+        }
+        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+
+        let index2 = 0;
+        let flag = false;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+        if(flag === false){
+            cart.push({id,quantity});
+            return;
+        }
+        else{
+            cart[index2] = {id,quantity};
         }
         localStorage.setItem("cart", JSON.stringify(cartEntry));
     }

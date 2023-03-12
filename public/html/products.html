@@ -15,92 +15,119 @@
 </head>
 
 <body>
-    <header></header>
+    <header class="sticky-top"></header>
     <div class="toast text-white bg-success px-3 py-1" id="success-toast">
         <div class="toast-body p-1">
         </div>
     </div>
     <div class="container-fluid mt-3 px-5">
-            
-        <div class="row">
-            <div class="col-lg-2 d-flex flex-column mt-3">
-                <p class="border-bottom py-3">Filter By:</p>
-                <div class="dropdown mb-3 dropend ">
-                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Brands
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="brand-list">
-                    </ul>
+        <!-- Modal -->
+        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Filter By:</h5>
+                        <button type="button" class="btn btn-close" data-bs-dismiss="modal">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Price:</strong></p>
+                        <form id="price-form">
+                            <div class="form-floating my-1">
+                                <input class="form-control shadow-none" type="number" name="min" id="min-price" placeholder="0">
+                                <label for="min-price">Min (in ₹)</label>
+                            </div>
+                            <div class="form-floating my-1">
+                                <input class="form-control shadow-none" type="number" name="max" id="max-price" placeholder="max">
+                                <label for="max-price">Max (in ₹)</label>
+                            </div>
+                        </form>
+                        <p><strong>Rating:</strong></p>
+                        <form id="rating-list-form">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="0-1" id="rating-0-1">
+                                <label class="form-check-label" for="rating-0-1">
+                                  0 to 1 ⭐
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="1-2" id="rating-1-2">
+                                <label class="form-check-label" for="rating-1-2">
+                                  1 to 2 ⭐
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="2-3" id="rating-2-3">
+                                <label class="form-check-label" for="rating-2-3">
+                                  2 to 3 ⭐
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="3-4" id="rating-3-4">
+                                <label class="form-check-label" for="rating-3-4">
+                                  3 to 4 ⭐
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="4-5" id="rating-4-5">
+                                <label class="form-check-label" for="rating-4-5">
+                                  4 to 5 ⭐
+                                </label>
+                            </div>
+                        </form>
+                        <p><strong>Brand:</strong></p>
+                        <form id="brand-list-form">
+                            
+                        </form>
+                        
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-warning mr-auto" id="reset-filter">Reset Filters</button>
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="apply-filter">Apply</button>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="dropdown dropend mb-3">
-                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton2"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Price Range
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" id="price-range-list">
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="0 - 10000" id="Checkme1" />
-                            <label class="form-check-label" for="Checkme1">0 - 10000</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="10000 - 25000" id="Checkme2" />
-                            <label class="form-check-label" for="Checkme2">10000 - 25000</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="25000 - 50000" id="Checkme3" />
-                            <label class="form-check-label" for="Checkme3">25000 - 50000</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="50000+" id="Checkme4" />
-                            <label class="form-check-label" for="Checkme4">50000+</label>
-                        </div></a></li>                        
-                    </ul>
-                </div>
-                <div class="dropdown dropend">
-                    <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton3"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Rating range
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3" id="rating-range-list">
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="0 - 1" id="rating1" />
-                            <label class="form-check-label" for="rating1">0 - 1</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1 - 2" id="rating2" />
-                            <label class="form-check-label" for="rating2">1 - 2</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="2 - 3" id="rating3" />
-                            <label class="form-check-label" for="rating3">2 - 3</label>
-                        </div></a></li>
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="3 - 4" id="rating4" />
-                            <label class="form-check-label" for="rating4">3 - 4</label>
-                        </div></a></li> 
-                        <li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="4 - 5" id="rating5" />
-                            <label class="form-check-label" for="rating5">4 - 5</label>
-                        </div></a></li>                        
-                    </ul>
-                </div>
-                <button class="btn btn-warning mt-3" id="reset-filter">Reset Filters</button>
             </div>
-            <div class="col-lg-10">
+        </div>
+        <!-- Button trigger modal -->
+
+        <div class="row">
+            <div class="col-lg-1 my-3">
+                <button type="button" class="btn btn-primary rounded-circle p-3 bg-secondary border-0 shadow-none w-auto" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <span  data-bs-toggle="tooltip" data-bs-title="Filter" data-bs-placement="bottom"><i class="fa-solid fa-filter"></i></span>
+                </button>
+            </div>
+            <div class="col-lg-11">
                 <div class="row d-flex align-items-center">
                     <div class="col-12 col-sm-6 col-md-4">
                         <form id="search-form" class="my-3">
                             <div class="input-group" id="search-box">
-                                <input type="text" required="true" class="form-control shadow-none p-2" id="search-input"
-                                    placeholder="Search Products">
+                                <input type="text" required="true" class="form-control shadow-none p-2"
+                                    id="search-input" placeholder="Search Products">
                                 <button type="submit" class="btn btn-secondary"><i
                                         class="fa fa-solid fa-magnifying-glass p-2"></i></button>
                             </div>
                         </form>
                     </div>
-                    <div class="col-12 col-sm-4 offset-sm-2 col-md-4  offset-md-4">
-                        <div class="dropdown text-end my-2">
+                    <div class="col-12 col-sm-5 offset-sm-1 col-md-4  offset-md-4">
+                            <div class="row">
+                                <div class="col-5 col-md-4 d-flex justify-content-end align-items-center">
+                                    <p class="mb-0">Sort By:</p>
+                                </div>
+                                <div class="col-7 col-md-8">
+                                    <select class="form-select shadow-none" aria-label="Default select example" id="sort-by">
+                                        <option value="relevance" selected>Relevance</option>
+                                        <option value="phtl">Price : High to Low</option>
+                                        <option value="plth">Price : Low to High</option>
+                                        <option value="rhtl">Rating : High to Low</option>
+                                      </select>
+                                </div>
+                            </div>
+                        <!-- <div class="dropdown text-end my-2">
                             <span>Sort By:</span>
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-rating"
                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -109,14 +136,11 @@
                             <ul class="dropdown-menu" aria-labelledby="sort-price">
                                 <li><button class="dropdown-item" id="price-high-to-low" type="button">Price : High to
                                         Low</button></li>
-                                <li><button class="dropdown-item" id="price-low-to-high" type="button">Price : Low to
-                                        High</button></li>
-                                <li><button class="dropdown-item" id="rating-high-to-low" type="button">Rating : High to
-                                        Low</button></li>
+                                <li><button class="dropdown-item" id="price-low-to-high" type="button"></button></li>
+                                <li><button class="dropdown-item" id="rating-high-to-low" type="button"></button></li>
                             </ul>
-                        </div>
+                        </div> -->
                     </div>
-                    
                 </div>
                 <div class="row" id="product-list">
                 </div>
@@ -140,3 +164,91 @@
 </body>
 
 </html>
+
+<!-- <div class="dropdown mb-3 dropend ">
+    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+        id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Brands
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="brand-list">
+    </ul>
+</div>
+<div class="dropdown dropend mb-3">
+    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+        id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+        Price Range
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" id="price-range-list">
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="0 - 10000"
+                        id="Checkme1" />
+                    <label class="form-check-label" for="Checkme1">0 - 10000</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="10000 - 25000"
+                        id="Checkme2" />
+                    <label class="form-check-label" for="Checkme2">10000 - 25000</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="25000 - 50000"
+                        id="Checkme3" />
+                    <label class="form-check-label" for="Checkme3">25000 - 50000</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="50000+"
+                        id="Checkme4" />
+                    <label class="form-check-label" for="Checkme4">50000+</label>
+                </div>
+            </a></li>
+    </ul>
+</div> -->
+<!-- <div class="dropdown dropend">
+    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
+        id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+        Rating range
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3" id="rating-range-list">
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="0 - 1"
+                        id="rating1" />
+                    <label class="form-check-label" for="rating1">0 - 1</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1 - 2"
+                        id="rating2" />
+                    <label class="form-check-label" for="rating2">1 - 2</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="2 - 3"
+                        id="rating3" />
+                    <label class="form-check-label" for="rating3">2 - 3</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="3 - 4"
+                        id="rating4" />
+                    <label class="form-check-label" for="rating4">3 - 4</label>
+                </div>
+            </a></li>
+        <li><a class="dropdown-item" href="#">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="4 - 5"
+                        id="rating5" />
+                    <label class="form-check-label" for="rating5">4 - 5</label>
+                </div>
+            </a></li>
+    </ul>
+</div> -->

@@ -2,7 +2,21 @@ $(document).ready(init);
 
 function init(){
     let id = window.location.href.split("/").pop();
+    $("#input-quantity").on('change',handleInputQuantityChange);
     showProductDetails(id);
+}
+
+function handleInputQuantityChange(event){
+    event.preventDefault();
+    let id = window.location.href.split("/").pop();
+    let quantity = parseInt(event.target.value);
+    if(quantity < 0){
+        alert("Quantity cannot be negative");
+        return;
+    }
+    else{
+        updateCart(id,quantity);
+    }
 }
 
 function showProductDetails(id) {

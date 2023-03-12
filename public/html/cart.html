@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <header></header>
+    <header class="sticky-top"></header>
     <div class="modal" tabindex="-1" role="dialog" id="remove-item-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -33,24 +33,38 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid p-3 px-5" id="cart-box">
+    <div class="container-fluid px-5" id="cart-box">
         <div class="row p-3">
             <div class="col-lg-8 col-md-12 col-sm-12">
-                <h2 class="p-1" id="shopping-cart-text">Cart</h2>
-                <div class="row" id="cart-items">
+                <h2 class="p-1 px-3" id="shopping-cart-text">Cart</h2>
+                <div id="cart-items">
 
                 </div>
             </div>
-            <div class="col-lg-3 col-md-12 col-sm-12 offset-lg-1 py-3 mt-1 rounded " id="bill-details">
+            <div class="col-lg-3 col-md-12 col-sm-12 offset-lg-1 py-3">
                 <h3 class=" mb-3">Order Summary</h3>
-                <div class="mt-1 mb-1 py-3 contact-text">
-                    <p><strong>Address: </strong>1,2,3, Ashoka Indl Est, Village Valiv, nr Golani Complex, Vasai(e),
-                        Mumbai, Maharashtra, 401506</p>
-                    <p><strong>Contacts : </strong>+91 9525024556</p>
+                <div class="card border-0 shadow-sm" id="bill-details">
+                    <div class="mt-1 mb-1 py-3 card-body">
+                        <p><strong>Address: </strong>1,2,3, Ashoka Indl Est, Village Valiv, nr Golani Complex, Vasai(e),
+                            Mumbai, Maharashtra, 401506</p>
+                        <p><strong>Contacts : </strong>+91 9525024556</p>
+                    </div>
+                    <div class="card-footer">
+                        <!-- <div class="d-flex justify-content-between">
+                            
+                            
+                        </div> -->
+                        <div class="row">
+                            <div class="col">
+                                <p class="fs-5" id="cart-quantity"> </p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="mb-3 fs-5 fw-bold">₹<span id="total-bill"></span></p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="checkout-btn">Checkout</button>
+                    </div>
                 </div>
-                <p><strong id="cart-quantity">Total item : </strong></p>
-                <h4 class="mb-3">Total bill : ₹<span id="total-bill"></span> </h4>
-                <button class="btn btn-primary w-100" id="checkout-btn">Checkout</button>
             </div>
         </div>
         <div class="row p-3" id="empty-cart-box">

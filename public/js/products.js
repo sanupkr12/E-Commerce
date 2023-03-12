@@ -2,14 +2,85 @@ $(document).ready(init);
 
 function init(){
     $("#search-form").submit(handleSearch);
-    $("#price-high-to-low").click(addPriceFilterhtl);
-    $("#price-low-to-high").click(addPriceFilterlth);
-    $("#rating-high-to-low").click(addRatingFilterhtl);
-    $("#brand-list").click(addBrandFilter);
-    $("#price-range-list").click(addPriceRangeFilter);
-    $("#rating-range-list").click(addRatingRangeFilter);
     $("#reset-filter").click(resetFilter);
+    $("#apply-filter").click(handleFilter);
+    $("#sort-by").on('change',handleSortBy);
     fetchProducts();
+}
+
+function handleSortBy(event){
+    let sortBasis = event.target.value;
+    if(sortBasis == 'phtl'){
+        sessionStorage.setItem("phtl",1);
+        sessionStorage.setItem("rhtl",0);
+    }
+    else if(sortBasis == 'plth'){
+        sessionStorage.setItem("phtl",-1);
+        sessionStorage.setItem("rhtl",0);
+    }
+    else if(sortBasis == 'rhtl'){
+        sessionStorage.setItem("phtl",0);
+        sessionStorage.setItem("rhtl",1);
+    }
+    else{
+        sessionStorage.setItem("phtl",0);
+        sessionStorage.setItem("rhtl",0);
+    }
+    if(searchProducts.length > 0){
+        searchProducts = applyFilter(searchProducts);
+        searchProducts = applySort(searchProducts);
+        populateProducts(searchProducts);
+    }
+    else{
+        fetch("/data/products.json")
+        .then((response) => response.json())
+        .then((json) => {
+            let products = json.products;
+            totalItem = products.length;
+            products = applyFilter(products);
+            products = applySort(products);
+            populateProducts(products);
+        });
+    }
+}
+function handleFilter(event){
+    event.preventDefault();
+    let $brandForm = $("#brand-list-form");
+    let brandList = JSON.parse(toJson($brandForm));
+    let $ratingForm = $("#rating-list-form");
+    let ratingList = JSON.parse(toJson($ratingForm));
+    let $priceForm = $("#price-form");
+    let priceData = JSON.parse(toJson($priceForm));
+
+    let brandFilters = Object.keys(brandList).join(",");
+    if(brandFilters.length > 0){
+        sessionStorage.setItem("brandFilters",brandFilters);
+    }
+    let ratingFilters = Object.keys(ratingList).join(",");
+    if(ratingFilters.length > 0){
+        sessionStorage.setItem("ratingFilters",ratingFilters);
+    }
+    let minPrice = 0;
+    let maxPrice = 100000000;
+    if(priceData["min"]!="")
+    {
+        minPrice = parseInt(priceData["min"]);
+    }
+
+    if(priceData["max"]!="")
+    {
+        maxPrice = parseInt(priceData["max"]);
+    }
+    sessionStorage.setItem("priceFilters",JSON.stringify({"min":minPrice,"max":maxPrice}));
+    
+    if(searchProducts.length > 0){
+        populateProducts(searchProducts);
+        $("#filterModal").modal('toggle');
+    }
+    else{
+        location.reload();
+    }
+
 }
 
 function resetFilter(event){
@@ -18,134 +89,9 @@ function resetFilter(event){
     location.reload();
 }
 
-function addRatingRangeFilter(event){
-    let ratingFilter = $(event.target)[0].value.toLowerCase();
-    let ratingFilters = sessionStorage.getItem("ratingFilters");
-    let ratingFiltersArray = []
-    if(ratingFilters!=null){
-        ratingFiltersArray = ratingFilters.split(",");
-    }
-    
-    let flag = false;
-    for(let i=0;i<ratingFiltersArray.length;i++){
-        if(ratingFiltersArray[i].toLowerCase() === ratingFilter){
-            flag = true;
-            break;
-        }
-    }
-
-    if(flag===true){
-        sessionStorage.setItem("ratingFilters",ratingFiltersArray.filter((item)=>item.toLowerCase()!= ratingFilter).join(","));
-    }
-    else{
-        ratingFiltersArray.push(ratingFilter);
-        sessionStorage.setItem("ratingFilters",ratingFiltersArray.join(","));
-    }
-
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-        searchProducts = applySort(searchProducts);
-        populateProducts(searchProducts);
-    }
-    else{
-        fetch("/data/products.json")
-        .then(res=>res.json())
-        .then(data=>{
-            let products = data.products;
-            products = applyFilter(products);
-            products = applySort(products);
-            populateProducts(products);
-        });
-    } 
-}
-
-function addBrandFilter(event){
-    let brandFilter = $(event.target)[0].value.toLowerCase();
-    let brandFilters = sessionStorage.getItem("brandFilters");
-    let brandFiltersArray = [];
-    if(brandFilters!=null){
-        brandFiltersArray = brandFilters.split(",");
-    }
-        
-    let flag = false;
-    for(let i=0;i<brandFiltersArray.length;i++){
-        if(brandFiltersArray[i].toLowerCase() === brandFilter){
-            flag = true;
-            break;
-        }   
-    }
-
-    if(flag){
-        sessionStorage.setItem("brandFilters",brandFiltersArray.filter((item)=>item.toLowerCase()!= brandFilter).join(","));
-    }
-    else{
-        brandFiltersArray.push(brandFilter);
-        sessionStorage.setItem("brandFilters",brandFiltersArray.join(","));
-    }
-    page = 1;
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-        searchProducts = applySort(searchProducts);
-        populateProducts(searchProducts);
-    }
-    else{
-        fetch("/data/products.json")
-        .then(res=>res.json())
-        .then(data=>{
-            let products = data.products;
-            products = applyFilter(products);
-            products = applySort(products);
-            populateProducts(products);
-        });
-    }  
-}
-function addPriceRangeFilter(event){
-    let priceFilter = $(event.target)[0].value.toLowerCase();
-    if(priceFilter.length <=0){
-        return;
-    }
-    page = 1;
-    let priceFilters = sessionStorage.getItem("priceRangeFilters");
-    let priceFiltersArray = [];
-    if(priceFilters!=null){
-        priceFiltersArray = priceFilters.split(",");
-    }
-
-    let flag = false;
-    for(let i=0;i<priceFiltersArray.length;i++){
-        if(priceFiltersArray[i].toLowerCase() === priceFilter){
-            flag = true;
-            break;
-        }
-    }
-    if(flag===true){
-        sessionStorage.setItem("priceRangeFilters",priceFiltersArray.filter((item)=>item.toLowerCase()!= priceFilter).join(","));
-    }
-    else{
-        priceFiltersArray.push(priceFilter);
-        sessionStorage.setItem("priceRangeFilters",priceFiltersArray.join(","));
-    }
-
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-        searchProducts = applySort(searchProducts);
-        populateProducts(searchProducts);
-    }
-    else{
-        fetch("/data/products.json")
-    .then(res=>res.json())
-    .then(data=>{
-        let products = data.products;
-        products = applyFilter(products);
-        products = applySort(products);
-        populateProducts(products);
-    });
-    } 
-}
-
 function applyFilter(products){
     let brandFilters  = sessionStorage.getItem("brandFilters");
-    let priceRangeFilters = sessionStorage.getItem("priceRangeFilters");
+    let priceRangeFilters = JSON.parse(sessionStorage.getItem("priceFilters"));
     let ratingFilters = sessionStorage.getItem("ratingFilters");
     let res = [];
     if(brandFilters){
@@ -153,30 +99,26 @@ function applyFilter(products){
         if(brandFilters.length>0){
             for(let i=0;i<products.length;i++){
                 for(let j=0;j<brandFilters.length;j++){
-                    if(products[i].brand.toLowerCase()===brandFilters[j].toLowerCase()){
+                    if(products[i].brand.toLowerCase()==brandFilters[j].toLowerCase()){
                         res.push(products[i]);
                         break;
                     }
                 }
             }
             products = [...res];
+            console.log(products);
         }
     }
     res = [];
     if(priceRangeFilters){
-        priceRangeFilters = priceRangeFilters.split(",");
-        if(priceRangeFilters.length >0){
             for(let i=0;i<products.length;i++){
-                for(let j=0;j<priceRangeFilters.length;j++){
-                    let priceRange = getPriceRange(priceRangeFilters[j]);
-                    if(products[i].price >= priceRange["min"] && products[i].price<priceRange["max"]){
-                        res.push(products[i]);
-                        break;
-                    }
+                if(products[i].price >= priceRangeFilters["min"] && products[i].price<priceRangeFilters["max"]){
+                    res.push(products[i]);
                 }
             }
+            $("#min-price").val(priceRangeFilters["min"]);
+            $("#max-price").val(priceRangeFilters["max"]);
             products = [...res];
-        }
     } 
     res = [];
     if(ratingFilters){
@@ -191,6 +133,9 @@ function applyFilter(products){
                     }
                 }
             }
+            for(let i=0;i<ratingFilters.length;i++){
+                $(`#rating-${ratingFilters[i]}`).prop("checked",true);
+            }
             products = [...res];
         }
     }
@@ -200,48 +145,43 @@ function applyFilter(products){
 function applySort(products){
     let phtl = sessionStorage.getItem("phtl");
     let rhtl = sessionStorage.getItem("rhtl");
-    
+    let flag = false;
     if(phtl!=null){
         if(phtl == 1){
             products.sort(comparePricehtl);
+            $("#sort-by").val("phtl");
+            flag = true;
         }
         else if(phtl == -1){
             products.sort(comparePricelth);
+            $("#sort-by").val("plth");
+            flag = true;
         }
     }
     if(rhtl!=null){
         if(rhtl == 1){
             products.sort(compareRatinghtl);
+            $("#sort-by").val("rhtl");
+            flag = true;
         }
+    }
+    if(!flag){
+        $("#sort-by").val("relevance");
     }
     return products;
 }
 
-function getPriceRange(priceFilter){
-    if(priceFilter === "0 - 10000"){
-        return {min:0,max:10000};
-    }else if(priceFilter === "10000 - 25000"){
-        return {min:10000,max:25000};
-    }else if(priceFilter === "25000 - 50000"){
-        return {min:25000,max:50000};
-    }
-    else{
-        return {min:50000,max:10000000};
-    }
-
-}
-
 function getRatingRange(ratingFilter){
-    if(ratingFilter === "0 - 1"){
+    if(ratingFilter === "0-1"){
         return {min:0,max:1};
     }
-    else if(ratingFilter === "1 - 2"){
+    else if(ratingFilter === "1-2"){
         return {min:1,max:2};
     }
-    else if(ratingFilter === "2 - 3"){
+    else if(ratingFilter === "2-3"){
         return {min:2,max:3};
     }
-    else if(ratingFilter === "3 - 4"){
+    else if(ratingFilter === "3-4"){
         return {min:3,max:4};
     }
     else {
@@ -278,79 +218,6 @@ function compareRatinghtl( a, b) {
     return 0;
 }
 
-function addPriceFilterhtl(){
-    sessionStorage.setItem("phtl",1);
-    sessionStorage.setItem("rhtl",0);
-    $("#sort-rating")[0].innerText = "price-high-to-low";
-    $("#price-high-to-low").addClass("bg-secondary");
-    $("#price-low-to-high").removeClass("bg-secondary");
-    $("#rating-high-to-low").removeClass("bg-secondary");
-    if(searchProducts.length > 0){
-          searchProducts = applyFilter(searchProducts);
-          searchProducts = applySort(searchProducts);
-          populateProducts(searchProducts);
-    }
-    else{
-        fetch("/data/products.json")
-        .then((response) => response.json())
-        .then((json) => {
-            let products = json.products;
-            totalItem = products.length;
-            products = applyFilter(products);
-            products = applySort(products);
-            populateProducts(products);
-        });
-    }
-}
-function addPriceFilterlth(){
-    sessionStorage.setItem("phtl",-1);
-    sessionStorage.setItem("rhtl",0);
-    $("#sort-rating")[0].innerText = "price-low-to-high";
-    $("#price-low-to-high").addClass("bg-secondary");
-    $("#price-high-to-low").removeClass("bg-secondary");
-    $("#rating-high-to-low").removeClass("bg-secondary");
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-          searchProducts = applySort(searchProducts);
-          populateProducts(searchProducts);
-    }
-    else{
-        fetch("/data/products.json")
-        .then((response) => response.json())
-        .then((json) => {
-            let products = json.products;
-            totalItem = products.length;
-            products = applyFilter(products);
-            products = applySort(products);
-            populateProducts(products);
-        });
-    }
-}
-function addRatingFilterhtl(){
-    sessionStorage.setItem("rhtl",1);
-    sessionStorage.setItem("phtl",0);
-    $("#sort-rating")[0].innerText = "rating-high-to-low";
-    $("#price-low-to-high").removeClass("bg-secondary");
-    $("#price-high-to-low").removeClass("bg-secondary");
-    $("#rating-high-to-low").addClass("bg-secondary");
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-          searchProducts = applySort(searchProducts);
-          populateProducts(searchProducts);
-    }
-  else{
-      fetch("/data/products.json")
-      .then((response) => response.json())
-      .then((json) => {
-        let products = json.products;
-        totalItem = products.length;
-        products = applyFilter(products);
-        products = applySort(products);
-        populateProducts(products);
-      });
-  }
-}
-
 function handleSearch(event) {
     event.preventDefault();
     page = 1;
@@ -370,9 +237,8 @@ function handleSearch(event) {
             }
             else {
                 searchProducts = [...results];
-                $("#sort-rating")[0].innerText = "Relevance";
                 sessionStorage.clear();
-                populateProducts(results);
+                populateProducts(searchProducts);
             }
         });
 }
@@ -392,7 +258,7 @@ function populateProducts(products) {
         {
             products = [...searchProducts];
         }
-        if((limit * (page - 1))>products.length )
+        if((limit * (page - 1))>products.length)
         {
             return;
         }
@@ -403,38 +269,45 @@ function populateProducts(products) {
             }
             let brandFilters = sessionStorage.getItem('brandFilters');
             brandList = [...new Set(brandList)];
-            $("#brand-list")[0].innerHTML = "";
+            $("#brand-list-form")[0].innerHTML = "";
             if(brandFilters!=null){
                 let brandFiltersArray = brandFilters.split(",");
                 for(let i=0;i<brandList.length;i++)
                 {
                     let flag=false;
+                    let brand = brandList[i].toLowerCase()
                     for(let j=0;j<brandFiltersArray.length;j++){
-                        if(brandFiltersArray[j].toLowerCase()===brandList[i].toLowerCase())
+                        if(brandFiltersArray[j].toLowerCase()===brand)
                         {
                             flag = true;
-                            $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox"checked value="${brandList[i]}" id="brand-${brandList[i]}" />
-                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                            </div></a></li>`);
+                            $("#brand-list-form").append(`<div class="form-check">
+                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                            <label class="form-check-label" for="brand-${brand}">
+                            ${brandList[i]}
+                            </label>
+                          </div>`);
                             break;
                         }
                     }
                     if(flag===false){
-                        $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
-                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                        </div></a></li>`);
+                        $("#brand-list-form").append(`<div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                      </div>`);
                     }
                 }
             }
             else{
                 for(let i=0;i<brandList.length;i++)
                 {
-                    $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
-                            <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                        </div></a></li>`);
+                    $("#brand-list-form").append(`<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
+                    <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
+                    ${brandList[i]}
+                    </label>
+                  </div>`);
                 }
             }  
         }
@@ -448,38 +321,46 @@ function populateProducts(products) {
                 brandList = [...new Set(brandList)];
                 let brandFilters = sessionStorage.getItem('brandFilters');
 
-                $("#brand-list")[0].innerHTML = "";
+                $("#brand-list-form")[0].innerHTML = "";
                 if(brandFilters!=null){
                     let brandFiltersArray = brandFilters.split(",");
                     for(let i=0;i<brandList.length;i++)
                     {
                         let flag=false;
+                        let brand = brandList[i].toLowerCase();
                         for(let j=0;j<brandFiltersArray.length;j++){
-                            if(brandFiltersArray[j].toLowerCase()===brandList[i].toLowerCase())
+                            if(brandFiltersArray[j].toLowerCase()===brand)
                             {
                                 flag = true;
-                                $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                                <input class="form-check-input" type="checkbox"checked value="${brandList[i]}" id="brand-${brandList[i]}" />
-                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                                </div></a></li>`);
+                                $("#brand-list-form").append(`<div class="form-check">
+                                <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                                <label class="form-check-label" for="brand-${brand}">
+                                ${brandList[i]}
+                                </label>
+                              </div>`);
                                 break;
                             }
                         }
                         if(flag===false){
-                            $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
-                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                            </div></a></li>`);
+                            $("#brand-list-form").append(`<div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                            <label class="form-check-label" for="brand-${brand}">
+                            ${brandList[i]}
+                            </label>
+                          </div>`);
                         }
                     }
                 }
                 else{
                     for(let i=0;i<brandList.length;i++)
                     {
-                        $("#brand-list").append(`<li><a class="dropdown-item" href="#"><div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="${brandList[i]}" id="brand-${brandList[i]}" />
-                                <label class="form-check-label" for="brand-${brandList[i]}">${brandList[i]}</label>
-                            </div></a></li>`);
+                        let brand = brandList[i].toLowerCase();
+                        $("#brand-list-form").append(`<div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                      </div>`);
                     }
                 }  
             })
@@ -578,10 +459,7 @@ function populateProducts(products) {
                 }   
             }  
         }
-        
-                        
         let itemCount = products.length / limit;
-
         if(itemCount>1){
             productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
                         <ul class="pagination">`;
@@ -621,7 +499,6 @@ function handlePageClick(event) {
     else {
         page = parseInt(val);
     }
-
     fetchProducts();
 }
 
