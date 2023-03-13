@@ -45,7 +45,7 @@ function readFileDataCallback(results){
         $("#error-toast .toast-body")[0].innerText = "Number of rows exceeds limit(10)";
         $("#error-toast").show();
     }
-    fetch("/data/products.json")
+    fetch("../data/products.json")
     .then(res=>res.json())
     .then((json)=>{
         

@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Commerce Website</title>
+    <link rel="icon" type="image/x-icon" href="../images/increff-logo.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
         integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
         integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./css/app.css">
+    <link rel="stylesheet" href="../css/app.css">
 </head>
 
 <body>
@@ -119,7 +120,7 @@
                                     <p class="mb-0">Sort By:</p>
                                 </div>
                                 <div class="col-7 col-md-8">
-                                    <select class="form-select shadow-none" aria-label="Default select example" id="sort-by">
+                                    <select class="form-select shadow-none hover-pointer" aria-label="Default select example" id="sort-by">
                                         <option value="relevance" selected>Relevance</option>
                                         <option value="phtl">Price : High to Low</option>
                                         <option value="plth">Price : Low to High</option>
@@ -127,19 +128,6 @@
                                       </select>
                                 </div>
                             </div>
-                        <!-- <div class="dropdown text-end my-2">
-                            <span>Sort By:</span>
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-rating"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Relevance
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="sort-price">
-                                <li><button class="dropdown-item" id="price-high-to-low" type="button">Price : High to
-                                        Low</button></li>
-                                <li><button class="dropdown-item" id="price-low-to-high" type="button"></button></li>
-                                <li><button class="dropdown-item" id="rating-high-to-low" type="button"></button></li>
-                            </ul>
-                        </div> -->
                     </div>
                 </div>
                 <div class="row" id="product-list">
@@ -159,96 +147,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
         integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/js/products.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="../js/products.js"></script>
+    <script src="../js/app.js"></script>
 </body>
 
 </html>
-
-<!-- <div class="dropdown mb-3 dropend ">
-    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
-        id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        Brands
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="brand-list">
-    </ul>
-</div>
-<div class="dropdown dropend mb-3">
-    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
-        id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-        Price Range
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2" id="price-range-list">
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="0 - 10000"
-                        id="Checkme1" />
-                    <label class="form-check-label" for="Checkme1">0 - 10000</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="10000 - 25000"
-                        id="Checkme2" />
-                    <label class="form-check-label" for="Checkme2">10000 - 25000</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="25000 - 50000"
-                        id="Checkme3" />
-                    <label class="form-check-label" for="Checkme3">25000 - 50000</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="50000+"
-                        id="Checkme4" />
-                    <label class="form-check-label" for="Checkme4">50000+</label>
-                </div>
-            </a></li>
-    </ul>
-</div> -->
-<!-- <div class="dropdown dropend">
-    <button class="btn btn-secondary dropdown-toggle w-100" type="button"
-        id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-        Rating range
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3" id="rating-range-list">
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="0 - 1"
-                        id="rating1" />
-                    <label class="form-check-label" for="rating1">0 - 1</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1 - 2"
-                        id="rating2" />
-                    <label class="form-check-label" for="rating2">1 - 2</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="2 - 3"
-                        id="rating3" />
-                    <label class="form-check-label" for="rating3">2 - 3</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="3 - 4"
-                        id="rating4" />
-                    <label class="form-check-label" for="rating4">3 - 4</label>
-                </div>
-            </a></li>
-        <li><a class="dropdown-item" href="#">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="4 - 5"
-                        id="rating5" />
-                    <label class="form-check-label" for="rating5">4 - 5</label>
-                </div>
-            </a></li>
-    </ul>
-</div> -->

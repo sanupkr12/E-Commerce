@@ -8,7 +8,7 @@ const limit = 8;
 $(document).ready(init);
 
 function init() {
-    fetch("/html/header.html")
+    fetch("../html/header.html")
         .then(
             res => res.text())
         .then(data => {
@@ -16,16 +16,16 @@ function init() {
             let email = localStorage.getItem("email");
             let untrackedItems = localStorage.getItem("untrackedItems");
             if (!email) {
-                $("#cart-text")[0].value = untrackedItems.length;
+                $("#cart-text")[0].value = untrackedItems!=null? untrackedItems.length : 0;
                 $("#logout-btn")[0].style.display = "none";
                 $("#login").click(handleLoginClick);
-                if(window.location.href.split("/").pop()==='login'){
+                if(window.location.href.split("/").pop()==='login.html'){
                     $("#login")[0].style.display = "none";
                     $("#go-to-cart-btn")[0].style.display = "none";
                 }
             }
             else{
-                fetch("/data/credentials.json")
+                fetch("../data/credentials.json")
                 .then(res=>res.json())
                 .then(data=>{
                     let credentials = data.credentials;
@@ -43,8 +43,8 @@ function init() {
             updateCartItemCount(email);
             
             $("#brand-logo").click(handleLogoClick);
-            $("#go-to-cart-btn").click(()=>{window.location.href = "http://localhost:3000/cart";});
-            $("#file-upload-btn").click(()=>{window.location.href = "http://localhost:3000/order"});
+            $("#go-to-cart-btn").click(()=>{window.location.href = "/public/html/cart.html";});
+            $("#file-upload-btn").click(()=>{window.location.href = "/public/html/upload.html"});
             const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
             [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             if(!email){
@@ -54,7 +54,7 @@ function init() {
         });
 
     numberValidation();
-    fetch("/html/footer.html")
+    fetch("../html/footer.html")
         .then(
             res => res.text())
         .then(data => {
@@ -69,11 +69,11 @@ function init() {
 }
 
 function handleLoginClick(){   
-        window.location.href="http://localhost:3000/login";
+        window.location.href="/public/html/login.html";
 }
 
 function handleSignup(){
-    window.location.href="http://localhost:3000/signup";
+    window.location.href="/public/html/signup.html";
 }
 
 function download(filename, text) {
@@ -87,7 +87,7 @@ function download(filename, text) {
 }
   
 function handleFileUpload(){
-    Window.location.href="http://localhost:3000/order";
+    Window.location.href="/public/html/order.html";
 }
 
 function toJson($form) {
@@ -107,8 +107,8 @@ function updateCartItemCount(email){
     let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
     email = localStorage.getItem("email");
     if(!email){
-        let cart = untrackedItems; 
-        fetch("/data/products.json")
+        let cart = untrackedItems!=null ? untrackedItems : []; 
+        fetch("../data/products.json")
     .then(res=>res.json())
     .then(data=>{
         let products = data.products;
@@ -139,7 +139,7 @@ function updateCartItemCount(email){
     }
     let cart = cartEntry[index].items;
     
-    fetch("/data/products.json")
+    fetch("../data/products.json")
     .then(res=>res.json())
     .then(data=>{
         let products = data.products;
@@ -163,13 +163,13 @@ function updateCartItemCount(email){
 }
 
 function handleLogoClick() {
-    window.location.href= "http://localhost:3000/products";
+    window.location.href= "/public/html/products.html";
 }
 
 function handleAddToCart(event) {
     let email = localStorage.getItem("email");
     if (event.target.innerText === "Go to Cart") {
-        window.location.href="http://localhost:3000/cart";
+        window.location.href="/public/html/cart.html";
         return;
     }
 
@@ -361,8 +361,10 @@ function increaseQuantityOnProduct(id,event) {
         let index2 = 0;
         let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
         let cart = untrackedItems;
+        let flag=false;
         for(let i=0; i < cart.length; i++) {
             if(cart[i].id===id){
+                flag=true;
                 index2 = i;
                 break;
             }
@@ -533,7 +535,7 @@ function updateCart(id,quantity){
 
 function handleLogout() {
     localStorage.removeItem("email");
-    window.location.href = "http://localhost:3000/login";
+    window.location.href = "/public/html/login.html";
 }
 
 function numberValidation() {

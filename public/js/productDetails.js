@@ -1,14 +1,16 @@
 $(document).ready(init);
 
 function init(){
-    let id = window.location.href.split("/").pop();
+    let url = new URLSearchParams(window.location.search);
+    let id = url.get('id');
     $("#input-quantity").on('change',handleInputQuantityChange);
     showProductDetails(id);
 }
 
 function handleInputQuantityChange(event){
     event.preventDefault();
-    let id = window.location.href.split("/").pop();
+    let url = new URLSearchParams(window.location.search);
+    let id = url.get('id');
     let quantity = parseInt(event.target.value);
     if(quantity < 0){
         alert("Quantity cannot be negative");
@@ -20,7 +22,7 @@ function handleInputQuantityChange(event){
 }
 
 function showProductDetails(id) {
-    fetch("/data/products.json")
+    fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
             let products = json.products;
@@ -28,7 +30,7 @@ function showProductDetails(id) {
             let cartEntry = JSON.parse(localStorage.getItem("cart"));
             let email = localStorage.getItem("email");
             let index = 0;
-            for(let i=0;i<cartEntry.length;i++){
+            for(let i=0;i<(cartEntry!=null?cartEntry.length:0);i++){
                 if(cartEntry[i].email === email){
                     index = i;
                     break;
@@ -77,13 +79,13 @@ function showProductDetails(id) {
             }
             else{
                 let cart = cartEntry[index];
-            for (let i = 0; i < cart.items.length; i++) {
-                if (cart.items[i].id == id) {
-                    $("#input-quantity").val(cart.items[i].quantity);
-                    $(".addToCart")[0].innerText = "GO TO CART";
-                    break;
+                for (let i = 0; i < cart.items.length; i++) {
+                    if (cart.items[i].id == id) {
+                        $("#input-quantity").val(cart.items[i].quantity);
+                        $(".addToCart")[0].innerText = "GO TO CART";
+                        break;
+                    }
                 }
-            }
             }
             
         });
@@ -94,7 +96,8 @@ function addProduct(event){
     if(event.target.innerText === "GO TO CART"){
         let cartEntry = JSON.parse(localStorage.getItem("cart"));
         let email = localStorage.getItem("email");
-        let id = window.location.href.split("/").pop();
+        let url = new URLSearchParams(window.location.search);
+        let id = url.get('id');
         let index = 0;
         for(let i=0;i<cartEntry.length;i++){
             if(cartEntry[i].email === email){
@@ -113,7 +116,7 @@ function addProduct(event){
         let newQuantity = parseInt($("#input-quantity")[0].value);
         cart.items[index2].quantity = newQuantity;
         localStorage.setItem("cart",JSON.stringify(cartEntry));
-        window.location.href="http://localhost:3000/cart";
+        window.location.href="/public/html/cart.html";
         return;
     }
     let cart = JSON.parse(localStorage.getItem('cart'));
@@ -128,9 +131,10 @@ function addProduct(event){
     let items = cart[index1].items;
     let flag = false;
     let index2 = 0;
-    let id = parseInt(window.location.href.split("/").pop());
+    let url = new URLSearchParams(window.location.search);
+    let id = parseInt(url.get('id'));
     for(let i=0; i < items.length; i++) {
-        if(items[i].id===id){
+        if(items[i].id==id){
             flag = true;
             index2 = i;
             break;
@@ -142,7 +146,8 @@ function addProduct(event){
         items[index2].quantity+=quantity;
     }
     else{
-        cart[index1].items.push({id:id,quantity:quantity});
+        console.log("hi");
+        items.push({id:id,quantity:quantity});
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartItemCount(email);

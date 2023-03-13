@@ -40,6 +40,6 @@ function handleSignupSubmit(event){
             updateCartItemCount(email);
             $("#login")[0].style.display = "none";
             $("#logout-btn")[0].style.display = "block";
-            window.location.href='http://localhost:3000/products';
+            window.location.href='/public/html/products';
     })
 }

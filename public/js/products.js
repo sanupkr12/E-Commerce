@@ -32,7 +32,7 @@ function handleSortBy(event){
         populateProducts(searchProducts);
     }
     else{
-        fetch("/data/products.json")
+        fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
             let products = json.products;
@@ -222,7 +222,7 @@ function handleSearch(event) {
     event.preventDefault();
     page = 1;
     let query = $("#search-input")[0].value.toLowerCase();
-    fetch("/data/products.json")
+    fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
             let products = json.products;
@@ -244,7 +244,7 @@ function handleSearch(event) {
 }
 
 function fetchProducts() {
-    fetch("./data/products.json")
+    fetch("../data/products.json")
     .then((response) => response.json())
     .then((json) => {
         let products = json.products;
@@ -312,7 +312,7 @@ function populateProducts(products) {
             }  
         }
         else{
-            fetch("/data/products.json")
+            fetch("../data/products.json")
             .then(res=>res.json())
             .then(data=>{
                 for(let i=0;i<data.products.length;i++){
@@ -374,7 +374,8 @@ function populateProducts(products) {
 
             if(!email){
                 let untrackedItems = localStorage.getItem("untrackedItems");
-                for(let i = 0; i < untrackedItems.length;i++){
+                let flag = false;
+                for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
                     if(untrackedItems[i].id === product.id){
                         productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                         <div class="card rounded-1 shadow product-box mx-auto">
@@ -394,8 +395,29 @@ function populateProducts(products) {
                             </div> 
                             </div>
                             </div>`;
+                            flag = true;
                         break;
                     }
+                }
+                if(flag==false){
+                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card rounded-1 shadow product-box mx-auto">
+                            <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                            <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                            <span class="card-rating-box">${product.rating} ⭐</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title mt-1 card-title-text hover-pointer" onclick="goToProduct(${product.id})">${product.title}</h5>
+                                <h6>${"₹ " + product.price}</h6>
+                                <p class="card-text card-description-text">${product.description}</p>
+                                <div>
+                                <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                                <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center" id="${"input-" + product.id}" value="0" readonly="true">
+                                <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                                </div>
+                            </div> 
+                            </div>
+                            </div>`;
                 }
             }
             else{
@@ -463,26 +485,25 @@ function populateProducts(products) {
         if(itemCount>1){
             productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
                         <ul class="pagination">`;
-        if(page==1){
-            productHtml+=`<li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>`;
-        }
-        else{
-            productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
-        }
-            for (let i = 0; i < itemCount; i++) {
-                productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+            if(page==1){
+                productHtml+=`<li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>`;
             }
-            productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                    </nav>`;
+            else{
+                productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+            }
+                for (let i = 0; i < itemCount; i++) {
+                    productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+                }
+                productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                        </nav>`;
         }
-        
         $("#product-list")[0].innerHTML = productHtml;
         $(".page-link").click(handlePageClick);
 }
 
 function goToProduct(id){
-    window.location.href = `http://localhost:3000/products/${id}`;
+    window.location.href = `/public/html/productDetails.html?id=${id}`;
 }
 function handlePageClick(event) {
     let val = event.target.innerText;
@@ -505,7 +526,7 @@ function handlePageClick(event) {
 function addProduct(id,event){
     event.stopPropagation();
     if(event.target.innerText === "GO TO CART"){
-        window.location.href="http://localhost:3000/cart";
+        window.location.href="/public/html/cart.html";
         return;
     }
     

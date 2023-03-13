@@ -12,7 +12,7 @@ function manageCart(){
     if(!email){
         let cart = JSON.parse(localStorage.getItem("untrackedItems"));
     
-    fetch("/data/products.json")
+    fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
             let products = json.products;
@@ -40,13 +40,13 @@ function manageCart(){
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
                         <div class="card-body row no-gutters py-2">
                           <div class="col-md-4 p-2">
-                            <a href="http://localhost:3000/products/${results[i].product.id}">
+                            <a href="../html/productDetails.html?id=${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
                             </a>
                           </div>
                           <div class="col-md-8">
                             <div class="card-body">
-                            <a href="http://localhost:3000/products/${results[i].product.id}">
+                            <a href="../html/productDetails.html?id=${results[i].product.id}">
                               <h5 class="card-title product-title">${results[i].product.title}</h5>
                               </a>
                               <p class="card-text">${results[i].product.description}</p>
@@ -64,7 +64,6 @@ function manageCart(){
                     $("#cart-quantity")[0].innerHTML = results.length > 1 ? `Total : <p>(${results.length} items) </p>` : `Total : <p>(${results.length} item)</p>`;
                     $("#cart-items")[0].innerHTML = productHtml;
                     $('#checkout-btn').click(downloadOrder);
-                    $(".num-input").change(updateQuantity);
                     const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 });
@@ -80,7 +79,7 @@ function manageCart(){
     }
     let cart = cartEntry[index].items;
     
-    fetch("/data/products.json")
+    fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
             let products = json.products;
@@ -95,7 +94,7 @@ function manageCart(){
                 }
             }
             if (!results.length) {
-                $("#empty-cart-image")[0].src = "./images/empty-cart.png";
+                $("#empty-cart-image")[0].src = "../images/empty-cart.png";
                 $("#bill-details")[0].style.display = "none";
                 $("#checkout-btn")[0].style.display = "none";
                 return;
@@ -108,13 +107,13 @@ function manageCart(){
                         <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
                         <div class="card-body row no-gutters py-2">
                           <div class="col-md-4 p-2">
-                            <a href="http://localhost:3000/products/${results[i].product.id}">
+                            <a href="../html/productDetails.html?id=${results[i].product.id}">
                             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
                             </a>
                           </div>
                           <div class="col-md-8">
                             <div class="card-body">
-                            <a href="http://localhost:3000/products/${results[i].product.id}">
+                            <a href="../html/productDetails.html?id=${results[i].product.id}">
                               <h5 class="card-title product-title">${results[i].product.title}</h5>
                               </a>
                               <p class="card-text">${results[i].product.description}</p>
@@ -132,7 +131,6 @@ function manageCart(){
                     $("#cart-quantity")[0].innerHTML = results.length > 1 ? `Total : <p>(${results.length} items) </p>` : `Total : <p>(${results.length} item)</p>`;
                     $("#cart-items")[0].innerHTML = productHtml;
                     $('#checkout-btn').click(downloadOrder);
-                    $(".num-input").change(updateQuantity);
                     const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 });
@@ -142,7 +140,7 @@ function manageCart(){
 function downloadOrder(event){
     let email = localStorage.getItem("email");
     if(!email){
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = "/public/html/login.html";
     }
     else{
         let cart = JSON.parse(localStorage.getItem("cart"));
@@ -154,7 +152,7 @@ function downloadOrder(event){
         }
     }
     let order = [];
-    fetch("/data/products.json")
+    fetch("../data/products.json")
     .then(res=>res.json())
     .then(json=>{
         let products = json.products;
@@ -260,7 +258,7 @@ function removeFromCart(){
 }
 
 function showProductDetails(id){
-    window.location.href=`http://localhost:3000/products/${id}`;
+    window.location.href=`/public/html/productDetails.html?id=${id}`;
 }
 
 function decreaseQuantityOnCart(id,price,event){

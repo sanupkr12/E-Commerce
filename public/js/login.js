@@ -11,7 +11,7 @@ function handleLogin(event) {
     let $form = $("#login-form");
     let email = $form.find("#email").val();
     let password = $form.find("#password").val();
-    fetch('/data/credentials.json')
+    fetch('../data/credentials.json')
         .then(
             (response) => response.json()
         )
@@ -40,8 +40,9 @@ function handleLogin(event) {
                         newCart["items"] = [];
                         newCart = [newCart];
                         localStorage.setItem("cart", JSON.stringify(newCart));
+                        cart = newCart;
                     }
-                    else {
+                        
                         let flag = false;
                         let index = 0;
                         for (let i = 0; i < cart.length; i++) {
@@ -76,15 +77,14 @@ function handleLogin(event) {
                             if(untrackedItems.length >0){
                                 localStorage.setItem("cart", JSON.stringify(cart));
                                 localStorage.setItem("untrackedItems",JSON.stringify([]));
-                                window.location.href="http://localhost:3000/cart";
+                                window.location.href="/public/html/cart.html";
                                 return;
                             }
                             
                         }
                     }
                     localStorage.setItem("untrackedItems",JSON.stringify([]));
-                    window.location.href="http://localhost:3000/products";
+                    window.location.href="/public/html/products.html";
                 }
-            }
         );
 }
