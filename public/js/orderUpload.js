@@ -6,6 +6,7 @@ function init(){
     $("#order-upload-form").submit(handleOrderUpload);
     $("#download-sample").click(downloadSample);
     $("#upload-order").click(uploadOrder);
+    $("#error-list").hide();
     $("#error-toast").click(()=>{$('#error-toast').hide()});
 }
 
@@ -23,7 +24,6 @@ function handleOrderUpload(event){
         $("#error-toast").show();
         return;
     }
-
     readFileData(file,readFileDataCallback);
 }
 
@@ -35,7 +35,7 @@ function readFileDataCallback(results){
         $("#error-toast").show();
         return; 
     }
-    if(fields[0]!= 'product_id' && fields[1]!= 'quantity'){
+    if(fields[0]!= 'sku_id' || fields[1]!= 'quantity'){
         $("#error-toast .toast-body")[0].innerText = "Incorrect headers";
         $("#error-toast").show();
         return;
@@ -48,8 +48,8 @@ function readFileDataCallback(results){
     fetch("../data/products.json")
     .then(res=>res.json())
     .then((json)=>{
-        
         let products = json.products;
+        let errorFields = [];
         for(let i=0;i<data.length;i++){
             let flag = false;
             let id = -1;
@@ -62,22 +62,31 @@ function readFileDataCallback(results){
                 }
             });
             if(!flag){
-                alert("product with sku id " + data[i].sku_id + " does not exist");
-                validOrderItems = [];
-                return;
+                errorFields.push("Row no. " + (+i+1) + " : product with sku id " + data[i].sku_id + " does not exist");
             }
             else{
+                console.log(data[i].quantity);
                 if(parseInt(data[i].quantity) > 0){
                     validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title});
                 }
                 else{
-                    alert("Invalid quantity for " + data[i].sku_id);
-                    validOrderItems = [];
-                    return;
+                    errorFields.push("Row no. " + (+i+1) + " : Invalid quantity for " + data[i].sku_id);
                 }
             }
         }
+        if(errorFields.length > 0){
+            let errorHtml = "<p>Errors:</p>";
+            for(let i=0;i<errorFields.length;i++){
+                errorHtml+=`<li class="text-danger">${errorFields[i]}</li>`;
+            }
+            $("#order-list").hide();
+            $("#error-list").show();
+            $("#error-list")[0].innerHTML = errorHtml;
+            return;
+        }
+        
         if(validOrderItems.length > 0){
+            $("#error-list").hide();
             $("#order-list").show();
         }
         for(let i=0;i<validOrderItems.length;i++){

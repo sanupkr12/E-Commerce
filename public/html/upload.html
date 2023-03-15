@@ -15,11 +15,10 @@
 
 <body>
     <header class="sticky-top"></header>
-    <div class="toast text-white bg-danger px-1 py-1 position-absolute end-0 top-0 hover-pointer" id="error-toast"
-        data-bs-autohide="false">
+    <div class="toast text-white bg-danger px-1 py-1 hover-pointer" id="error-toast" data-bs-autohide="false">
         <div class="toast-body"></div>
     </div>
-    <div class="toast text-white bg-success px-3 py-1 position-absolute end-0 top-0" data-bs-autohide="true"
+    <div class="toast text-white bg-success px-3 py-1" data-bs-autohide="true"
         data-bs-dismiss="2000" id="success-toast">
         <div class="toast-body p-1">
         </div>
@@ -36,25 +35,29 @@
                         <button type="submit" class="btn btn-secondary  mb-1" id="preview-btn">Preview</button>
                     </div>
                 </div>
-                
+
             </form>
         </div>
         <div class="px-3">
-            <a href="#" id="download-sample" class="d-block px-0 text-start">Download Sample</a>
+            <a href="#" id="download-sample" class="text-primary px-0 text-start">Download Sample</a>
         </div>
-        <div id="order-list" class="mt-5 mx-3 table-responsive">
+        <div id="error-list" class="mx-3 mt-5">
+        </div>
+        <div id="order-list" class="mt-5 mx-3">
             <div class="text-end mb-3">
                 <button class="btn btn-primary" id="upload-order">Upload</button>
             </div>
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                    <th>SKU_ID</th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <th>SKU_ID</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>  
         </div>
     </div>
     <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">

@@ -55,9 +55,11 @@
                 <h5 id="product-brand" class="mb-3 py-1 text-muted"></h5>
                 <h4 id="product-title" class="mb-3"></h4>
                 <h6 id="product-price" class="mb-3 border-bottom py-1"></h6>
-                <button class="btn btn-warning" id="decrease-quantity">-</button>
-                <input type="number" value="0" min="0" id="input-quantity" class="form-control d-inline num-input">
-                <button class="btn btn-warning" id="increase-quantity">+</button>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-warning" id="decrease-quantity">-</button>
+                    <input type="number" value="0" min="0" id="input-quantity" class="form-control d-inline num-input text-center mx-1">
+                    <button class="btn btn-warning" id="increase-quantity">+</button>
+                </div>
                 <button class="d-block btn btn-secondary mt-3 mb-3 addToCart">Add to cart</button>
                 <input type="hidden" id="product-id" name="id">
                 <p id="product-description" class="mb-3"></p>
@@ -71,6 +73,24 @@
                     Saturdays, Sundays or holidays.</p>
                 <p><strong>Free shipping</strong></p>
                 <p>We offer free shipping to Switzerland and Liechtenstein with orders of over CHF 80.</p>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog" id="remove-item-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Remove Item</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="item-id"></input>
+                    <input type="hidden" id="item-price"></input>
+                    <p id="item-title" class="mb-1"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="close-modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="remove-item">Remove</button>
+                </div>
             </div>
         </div>
     </div>
