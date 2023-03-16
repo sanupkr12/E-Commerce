@@ -14,10 +14,7 @@
 
 <body>
     <header class="sticky-top"></header>
-    <div class="toast bg-success text-white px-5 py-1" id="success-toast">
-        <div class="toast-body p-1">
-        </div>
-    </div>
+    
     <div class="container-fluid">
         <div class="row p-3">
             <div class="col-lg-6 col-md-12 d-flex justify-content-center py-3">
@@ -41,26 +38,27 @@
                     <div id="thumbcarousel" class="carousel slide" data-interval="false">
                         <div class="carousel-inner">
 
-                        </div><!-- /carousel-inner -->
+                        </div>
                         <a class="left carousel-control" href="#thumbcarousel" role="button" data-slide="prev">
                             <span class="glyphicon glyphicon-chevron-left"></span>
                         </a>
                         <a class="right carousel-control" href="#thumbcarousel" role="button" data-slide="next">
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </a>
-                    </div> <!-- /thumbcarousel -->
-                </div><!-- /clearfix -->
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6 px-5 col-md-12 p-3">
-                <h5 id="product-brand" class="mb-3 py-1 text-muted"></h5>
-                <h4 id="product-title" class="mb-3"></h4>
+                <h5 id="product-brand" class="mb-1 py-1 text-muted"></h5>
+                <h4 id="product-title" class="mb-2"></h4>
                 <h6 id="product-price" class="mb-3 border-bottom py-1"></h6>
                 <div class="d-flex align-items-center">
                     <button class="btn btn-warning" id="decrease-quantity">-</button>
-                    <input type="number" value="0" min="0" id="input-quantity" class="form-control d-inline num-input text-center mx-1">
+                    <input type="number" value="0" min="0" id="input-quantity"
+                        class="form-control d-inline num-input text-center mx-1">
                     <button class="btn btn-warning" id="increase-quantity">+</button>
                 </div>
-                <button class="d-block btn btn-secondary mt-3 mb-3 addToCart">Add to cart</button>
+                <button class="d-block btn btn-secondary mt-3 mb-3 addToCart px-3">ADD TO CART</button>
                 <input type="hidden" id="product-id" name="id">
                 <p id="product-description" class="mb-3"></p>
                 <p class="py-1 border-top"><strong>Available offers</strong></p>
@@ -80,7 +78,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove Item</h5>
+                    <h5 class="modal-title">Remove item <span><img src="../images/warning.png" class="warning-img"></img></span></h5>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="item-id"></input>
@@ -92,6 +90,10 @@
                     <button type="button" class="btn btn-danger" id="remove-item">Remove</button>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="toast bg-success text-white px-5 py-1" id="success-toast">
+        <div class="toast-body p-1">
         </div>
     </div>
     <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">

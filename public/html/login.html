@@ -15,42 +15,35 @@
 
 <body>
     <header class="sticky-top"></header>
-    <div class="toast text-white bg-danger px-1 py-1 hover-pointer" id="error-toast"
-        data-bs-autohide="false">
-        <div class="toast-body position-relative">
-        </div>
-    </div>
     <div class="container-fluid d-flex  align-items-center justify-content-center">
         <div class="row w-75 d-flex justify-content-center align-items-center login-box">
             <div class="bg-light border col-md-8 d-flex p-0 rounded-3">
                 <div class="mx-0 row w-100">
-                    <div class="align-items-center justify-content-center col-lg-4 d-flex rounded-start p-3" style="
-background-color: #008080;
-">
-                        <img src="../images/increff-logo.png" class="img-fluid" style="
-height: fit-content;
-/* vertical-align: middle; */
-">
+                    <div class="align-items-center justify-content-center col-lg-4 d-flex rounded-start p-3" id="image-box">
+                        <img src="../images/increff-logo.png" class="img-fluid" id="login-img">
                     </div>
                     <div class="col-lg-8">
-                        <form class="px-3 py-5 w-100" id="login-form">
+                        <form class="px-3 py-5 w-100 needs-validation" id="login-form" novalidate>
                             <legend>Login</legend>
                             <div class="form-floating mb-3 mt-3">
                                 <input type="email" id="email" name="email" class="form-control mb-3"
-                                    placeholder="Enter Email">
+                                    placeholder="Enter Email" required>
                                 <label for="email">Email</label>
+                                <div class="invalid-feedback">Please enter valid email</div>
                             </div>
                             <div class="form-floating mb-3 mt-3">
                                 <input type="password" id="password" name="password" class="form-control mb-3"
-                                    placeholder="Enter Password">
+                                    placeholder="Enter Password" required>
                                 <label for="password">Password</label>
+                                <div class="invalid-feedback">Please enter valid password</div>
                             </div>
-
                             <button type="submit" id="login-btn" class="btn btn-primary btn-lg">Login</button>
                         </form>
+                        <div class="text-center"><p id="error-box" class="text-danger"></p></div>
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
     <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">

@@ -30,12 +30,11 @@ function init() {
                 let credentials = data.credentials;
                 for(let i=0;i<credentials.length;i++){
                     if(credentials[i].email===email){
-                        $("#user-detail-text")[0].innerHTML = `<i class="fa-solid fa-user mx-1 text-dark"></i> ${credentials[i].username}`;
+                        $("#user-detail-text")[0].innerHTML = `<i class="fa-solid fa-user mx-1 "></i> ${credentials[i].username}`;
                         break;
                     }
                 }
             });
-            
             $("#logout-btn").click(handleLogout);
             $("#login")[0].style.display = "none";
         }
@@ -51,7 +50,6 @@ function init() {
             $("#file-upload-btn")[0].style.display = "none";
         }
     });
-
     numberValidation();
     fetch("../html/footer.html")
     .then(
@@ -405,6 +403,8 @@ function increaseQuantityOnProduct(id,event) {
             localStorage.setItem("cart", JSON.stringify(cartEntry));
         } 
     }
+    $("#success-toast .toast-body")[0].innerText = 'Item added successfully';
+    $("#success-toast").toast('show');
     updateCartItemCount(email);
 }
 
@@ -412,7 +412,10 @@ function decreaseQuantityOnProduct(id,event) {
     event.preventDefault();
     event.stopPropagation();
     let quantity = parseInt($(`#input-${id}`)[0].value);
-    $(`#input-${id}`)[0].value = quantity - 1;
+    let title = $(event.target).closest('.card').find('.card-title')[0].innerText;
+    if(quantity<=0){
+        return;
+    }
     let email = localStorage.getItem("email");
     if(!email){
         let index2 = 0;
@@ -431,12 +434,12 @@ function decreaseQuantityOnProduct(id,event) {
         }
         cart[index2].quantity-=1;
         if(cart[index2].quantity<=0){
-            cart.items = cart.items.filter(item => item.id!== id);
-            localStorage.setItem("untrackedItems", JSON.stringify(cart));
-            updateCartItemCount(email);
-            location.reload();
+            $("#item-id").val(id);
+            $("#modal-description")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong>?`;
+            $("#remove-item-modal").modal('toggle');
             return;
         }
+        $(`#input-${id}`)[0].value = quantity - 1;
         localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
     }
     else{
@@ -463,15 +466,55 @@ function decreaseQuantityOnProduct(id,event) {
         }
         cart[index2].quantity-=1;
         if(cart[index2].quantity<=0){
-            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
-            localStorage.setItem("cart", JSON.stringify(cartEntry));
-            updateCartItemCount(email);
-            location.reload();
+            $("#item-id").val(id);
+            $("#modal-description")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong>?`;
+            $("#remove-item-modal").modal('toggle');
             return;
         }
+        $(`#input-${id}`)[0].value = quantity - 1;
         localStorage.setItem("cart", JSON.stringify(cartEntry));
     }
     updateCartItemCount(email);
+}
+
+function removeItemFromCart(event){
+    event.preventDefault();
+    let email = localStorage.getItem("email");
+    let id = $("#item-id")[0].value;
+    if(!email){
+        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+        let cart = untrackedItems;
+        cart.items = cart.items.filter(item => item.id!= id);
+        localStorage.setItem("untrackedItems", JSON.stringify(cart));
+        updateCartItemCount(email);
+        location.reload();
+    }
+    else{
+        let cartEntry = JSON.parse(localStorage.getItem("cart"));
+        let index1 = 0;
+        for (let j = 0; j < cartEntry.length; j++) {
+            if (cartEntry[j].email === email) {
+                index1 = j;
+                break;
+            }
+        }
+        let index2 = 0;
+        let flag = false;
+        let cart = cartEntry[index1].items;
+        for(let i=0; i < cart.length; i++) {
+            if(cart[i].id===id){
+                index2 = i;
+                flag = true;
+                break;
+            }
+        }
+
+        cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!= id);
+        localStorage.setItem("cart", JSON.stringify(cartEntry));
+        updateCartItemCount(email);
+        location.reload();
+    }
+
 }
 
 function updateCart(id,quantity){

@@ -18,6 +18,73 @@
 
 <body>
     <header class="sticky-top"></header>
+    <div class="container-fluid px-5" id="cart-box">
+        <div class="row p-3" id="cart-div">
+            <div class="col-lg-8 col-md-12 col-sm-12">
+                <div class="row">
+                    <div class="col-12 col-sm-8 col-md-6 col-lg-6">
+                        <h3 class="p-1 px-3" id="shopping-cart-text">Cart <span class="fs-3 fw-light"
+                                id="cart-quantity"> </span></h3>
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-6 col-lg-6 my-2" id="clear-cart-box">
+                        <button class="btn btn-danger btn-sm" id="clear-cart">Clear Cart</button>
+                    </div>
+                </div>
+                <div id="cart-items">
+
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12 col-sm-12 offset-lg-1 py-3">
+                <div class="card border-0 shadow-sm" id="bill-details">
+                    <div class="card-header">
+                        <h4 class=" mb-1">Order Summary</h4>
+                    </div>
+                    <div class="mb-1 py-3 card-body">
+                        <p class="mb-0"><strong>Address: </strong></p>
+                        <address class="mb-1">1,2,3, Ashoka Indl Est, Village Valiv, nr Golani Complex, Vasai(e),
+                            Mumbai, Maharashtra, 401506.</address>
+                        <p class="mb-0">+91 9525024556</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <p>Subtotal:</p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="mb-1 fw-bold">₹<span id="total-bill"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>Delivery:</p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="mb-1 fw-bold">₹100</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p class="fs-5">Total:</p>
+                            </div>
+                            <div class="col text-end">
+                                <p class="mb-1 fs-5 fw-bold">₹<span id="total-cost"></span></p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="checkout-btn">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mx-0" id="empty-cart-box">
+            <div class="col-md-12 d-flex flex-column align-items-center justify-content-center">
+                <img src="#" id="empty-cart-image" class="mx-3" />
+                <h4>Hey, it feels so light!</h4>
+                <p>There is nothing in your bag. Let's add some items.</p>
+                <a class="btn btn-primary mx-3" href="/public/html/products.html">Click to add items</a>
+            </div>
+        </div>
+    </div>
+    </div>
     <div class="product-card d-none">
         <div class="card mb-3 border-0 shadow-sm">
             <button data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove from cart"
@@ -50,7 +117,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove Item</h5>
+                    <h5 class="modal-title">Remove Item <i class="fa-solid fa-triangle-exclamation text-warning"></i></h5>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="item-id"></input>
@@ -68,7 +135,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Clear Cart</h5>
+                    <h5 class="modal-title">Clear Cart <i class="fa fa-solid fa-triangle-exclamation text-warning"></i></h5>
                 </div>
                 <div class="modal-body">
                     <p class="mb-1">Are you sure you want to clear the cart?</p>
@@ -80,69 +147,9 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid px-5" id="cart-box">
-        <div class="row p-3" id="cart-div">
-            <div class="col-lg-8 col-md-12 col-sm-12">
-                <div class="row">
-                    <div class="col-12 col-sm-8 col-md-6 col-lg-6">
-                        <h2 class="p-1 px-3" id="shopping-cart-text">Cart <span class="fs-3 fw-light" id="cart-quantity"> </span></h2>
-                    </div>
-                    <div class="col-12 col-sm-4 col-md-6 col-lg-6 my-2" id="clear-cart-box">
-                        <button class="btn btn-danger" id="clear-cart">Clear Cart</button>
-                    </div>
-                </div>
-                <div id="cart-items">
-
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-sm-12 offset-lg-1 py-3">
-                <div class="card border-0 shadow-sm" id="bill-details">
-                    <div class="card-header">
-                        <h3 class=" mb-3">Order Summary</h3>
-                    </div>
-                    <div class="mb-1 py-3 card-body">
-                        <p class="mb-0"><strong>Address: </strong><address>1,2,3, Ashoka Indl Est, Village Valiv, nr Golani Complex, Vasai(e),
-                            Mumbai, Maharashtra, 401506.</address></p>
-                        <p class="mb-0"><strong>+91 9525024556</strong></p>
-                    </div>
-                    <div class="card-footer">
-                        <!-- <div class="d-flex justify-content-between">
-                            
-                            
-                        </div> -->
-                        <div class="row">
-                            <div class="col"><p class="fs-5">Subtotal:</p></div>
-                            <div class="col text-end">
-                                <p class="mb-1 fs-5 fw-bold">₹<span id="total-bill"></span></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><p class="fs-5">Delivery:</p></div>
-                            <div class="col text-end">
-                                <p class="mb-1 fs-5 fw-bold">₹100</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><p class="fs-5">Total:</p></div>
-                            <div class="col text-end">
-                                <p class="mb-1 fs-5 fw-bold">₹<span id="total-cost"></span></p>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" id="checkout-btn">Checkout</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mx-0" id="empty-cart-box">
-                <div class="col-md-12 d-flex flex-column align-items-center justify-content-center">
-                    <img src="#" id="empty-cart-image" class="mx-3" />
-                    <h4>Hey, it feels so light!</h4>
-                    <p>There is nothing in your bag. Let's add some items.</p>
-                    <a class="btn btn-primary mx-3" href="/public/html/products.html">Click to add items</a>
-                </div>
-            </div>
-        </div>
-        
+    <div id="redirect-box" class="text-center mt-3"><img class="w-auto redirect-image rounded-circle bg-warning"
+            src="../images/rocket-launch.gif">
+        <h2 class="mt-5">You are being redirected to login page!</h2>
     </div>
     <footer class="bg-dark d-flex align-items-center justify-content-center container-fluid text-center footer-box">
     </footer>

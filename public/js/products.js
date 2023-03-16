@@ -7,7 +7,304 @@ function init(){
     $("#reset-filter-lg").click(resetFilter);
     $("#apply-filter-lg").click(handleFilterlarge);
     $("#sort-by").on('change',handleSortBy);
+    $("#remove-item").click(removeItemFromCart);
+    $("#close-modal").click(closeModal);
     fetchProducts();
+}
+
+function fetchProducts() {
+    fetch("../data/products.json")
+    .then((response) => response.json())
+    .then((json) => {
+        let products = json.products;
+        totalItem = products.length;
+        populateProducts(products);
+    });
+}
+
+function populateProducts(products) {
+    if(searchProducts.length > 0)
+    {
+        products = [...searchProducts];
+    }
+    if((limit * (page - 1))>products.length)
+    {
+        return;
+    }
+    let brandList = [];
+    if(searchProducts.length >0){
+        for(let i=0;i<searchProducts.length;i++){
+            brandList.push(products[i].brand);
+        }
+        let brandFilters = sessionStorage.getItem('brandFilters');
+        brandList = [...new Set(brandList)];
+        $("#brand-list-form")[0].innerHTML = "";
+        $("#brand-list-form-lg")[0].innerHTML = "";
+        if(brandFilters!=null){
+            let brandFiltersArray = brandFilters.split(",");
+            for(let i=0;i<brandList.length;i++)
+            {
+                let flag=false;
+                let brand = brandList[i].toLowerCase()
+                for(let j=0;j<brandFiltersArray.length;j++){
+                    if(brandFiltersArray[j].toLowerCase()===brand)
+                    {
+                        flag = true;
+                        $("#brand-list-form").append(`<div class="form-check">
+                        <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                        </div>`);
+                        $("#brand-list-form-lg").append(`<div class="form-check">
+                        <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                        </div>`);
+                        break;
+                    }
+                }
+                if(flag===false){
+                    $("#brand-list-form").append(`<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                    <label class="form-check-label" for="brand-${brand}">
+                    ${brandList[i]}
+                    </label>
+                    </div>`);
+                    $("#brand-list-form-lg").append(`<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                    <label class="form-check-label" for="brand-${brand}">
+                    ${brandList[i]}
+                    </label>
+                    </div>`);
+                }
+            }
+        }
+        else{
+            for(let i=0;i<brandList.length;i++)
+            {
+                $("#brand-list-form").append(`<div class="form-check">
+                <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
+                <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
+                ${brandList[i]}
+                </label>
+                </div>`);
+                $("#brand-list-form-lg").append(`<div class="form-check">
+                <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
+                <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
+                ${brandList[i]}
+                </label>
+                </div>`);
+            }
+        }  
+    }
+    else{
+        fetch("../data/products.json")
+        .then(res=>res.json())
+        .then(data=>{
+            for(let i=0;i<data.products.length;i++){
+                brandList.push(data.products[i].brand);
+            }
+            brandList = [...new Set(brandList)];
+            let brandFilters = sessionStorage.getItem('brandFilters');
+            $("#brand-list-form")[0].innerHTML = "";
+            $("#brand-list-form-lg")[0].innerHTML = "";
+            if(brandFilters!=null){
+                let brandFiltersArray = brandFilters.split(",");
+                for(let i=0;i<brandList.length;i++)
+                {
+                    let flag=false;
+                    let brand = brandList[i].toLowerCase();
+                    for(let j=0;j<brandFiltersArray.length;j++){
+                        if(brandFiltersArray[j].toLowerCase()===brand)
+                        {
+                            flag = true;
+                            $("#brand-list-form").append(`<div class="form-check">
+                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                            <label class="form-check-label" for="brand-${brand}">
+                            ${brandList[i]}
+                            </label>
+                            </div>`);
+                            $("#brand-list-form-lg").append(`<div class="form-check">
+                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                            <label class="form-check-label" for="brand-${brand}">
+                            ${brandList[i]}
+                            </label>
+                            </div>`);
+                            break;
+                        }
+                    }
+                    if(flag===false){
+                        $("#brand-list-form").append(`<div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                        </div>`);
+                        $("#brand-list-form-lg").append(`<div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                        <label class="form-check-label" for="brand-${brand}">
+                        ${brandList[i]}
+                        </label>
+                        </div>`);
+                    }
+                }
+            }
+            else{
+                for(let i=0;i<brandList.length;i++)
+                {
+                    let brand = brandList[i].toLowerCase();
+                    $("#brand-list-form").append(`<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                    <label class="form-check-label" for="brand-${brand}">
+                    ${brandList[i]}
+                    </label>
+                    </div>`);
+                    $("#brand-list-form-lg").append(`<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
+                    <label class="form-check-label" for="brand-${brand}">
+                    ${brandList[i]}
+                    </label>
+                    </div>`);
+                }
+            }  
+        })
+    }
+    let productHtml = "";
+    products = applyFilter(products);
+    products = applySort(products);
+    for (let i = (limit * (page - 1)); i < ((limit * (page - 1) + limit) > products.length ? products.length :(limit * (page - 1) + limit)); i++) {
+        let product = products[i];
+        let email = localStorage.getItem("email");
+        if(!email){
+            let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+            let flag = false;
+            for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
+                if(untrackedItems[i].id === product.id){ 
+                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto">
+                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                        <span class="card-rating-box">${product.rating} ⭐</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
+                            <h6>${"₹ " + product.price}</h6>
+                            <p class="card-text card-description-text">${product.description}</p>
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${untrackedItems[i].quantity} readonly="true">
+                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                            </div>
+                        </div> 
+                        </div>
+                        </div>`;
+                        flag = true;
+                    break;
+                }
+            }
+            if(flag==false){
+                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto">
+                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                        <span class="card-rating-box">${product.rating} ⭐</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
+                            <h6>${"₹ " + product.price}</h6>
+                            <p class="card-text card-description-text">${product.description}</p>
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
+                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                            </div>
+                        </div> 
+                        </div>
+                        </div>`;
+            }
+        }
+        else{
+            let index1 = 0;
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
+            for (let j = 0; j < cartEntry.length; j++) {
+                if (cartEntry[j].email === email) {
+                    index1 = j;
+                    break;
+                }
+            }
+            let index2 = 0;
+            let flag = false;
+            let cart = cartEntry[index1].items;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===product.id){
+                    index2 = i;
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
+                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                        <span class="card-rating-box">${product.rating} ⭐</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
+                            <h6>${"₹ " + product.price}</h6>
+                            <p class="card-text card-description-text">${product.description}</p>
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${cartEntry[index1].items[index2].quantity} readonly="true">
+                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                            </div>
+                        </div> 
+                        </div>
+                        </div>`;
+            }
+            else{
+                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
+                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
+                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
+                        <span class="card-rating-box">${product.rating} ⭐</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h4>
+                            <h6>${"₹ " + product.price}</h6>
+                            <p class="card-text card-description-text">${product.description}</p>
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
+                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
+                            </div>
+                        </div> 
+                        </div>
+                        </div>`;
+            }   
+        }  
+    }
+    let itemCount = products.length / limit;
+    if(itemCount>1){
+        productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                    <ul class="pagination">`;
+        if(page==1){
+            productHtml+=`<li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>`;
+        }
+        else{
+            productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
+        }
+            for (let i = 0; i < itemCount; i++) {
+                productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+            }
+            productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                    </nav>`;
+    }
+    $("#product-list")[0].innerHTML = productHtml;
+    $(".page-link").click(handlePageClick);
 }
 
 function handleSortBy(event){
@@ -62,12 +359,11 @@ function handleFilter(event){
         sessionStorage.setItem("ratingFilters",ratingFilters);
     }
     let minPrice = 0;
-    let maxPrice = 100000000;
+    let maxPrice = 100000;
     if(priceData["min"]!="")
     {
         minPrice = parseInt(priceData["min"]);
     }
-
     if(priceData["max"]!="")
     {
         maxPrice = parseInt(priceData["max"]);
@@ -105,12 +401,11 @@ function handleFilterlarge(event){
         sessionStorage.setItem("ratingFilters",ratingFilters);
     }
     let minPrice = 0;
-    let maxPrice = 100000000;
+    let maxPrice = 100000;
     if(priceData["min"]!="")
     {
         minPrice = parseInt(priceData["min"]);
     }
-
     if(priceData["max"]!="")
     {
         maxPrice = parseInt(priceData["max"]);
@@ -280,281 +575,6 @@ function handleSearch(event) {
         });
 }
 
-function fetchProducts() {
-    fetch("../data/products.json")
-    .then((response) => response.json())
-    .then((json) => {
-        let products = json.products;
-        totalItem = products.length;
-        populateProducts(products);
-    });
-}
-
-function populateProducts(products) {
-    if(searchProducts.length > 0)
-    {
-        products = [...searchProducts];
-    }
-    if((limit * (page - 1))>products.length)
-    {
-        return;
-    }
-    let brandList = [];
-    if(searchProducts.length >0){
-        for(let i=0;i<searchProducts.length;i++){
-            brandList.push(products[i].brand);
-        }
-        let brandFilters = sessionStorage.getItem('brandFilters');
-        brandList = [...new Set(brandList)];
-        $("#brand-list-form")[0].innerHTML = "";
-        if(brandFilters!=null){
-            let brandFiltersArray = brandFilters.split(",");
-            for(let i=0;i<brandList.length;i++)
-            {
-                let flag=false;
-                let brand = brandList[i].toLowerCase()
-                for(let j=0;j<brandFiltersArray.length;j++){
-                    if(brandFiltersArray[j].toLowerCase()===brand)
-                    {
-                        flag = true;
-                        $("#brand-list-form").append(`<div class="form-check">
-                        <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
-                        break;
-                    }
-                }
-                if(flag===false){
-                    $("#brand-list-form").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
-                }
-            }
-        }
-        else{
-            for(let i=0;i<brandList.length;i++)
-            {
-                $("#brand-list-form").append(`<div class="form-check">
-                <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
-                <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
-                ${brandList[i]}
-                </label>
-                </div>`);
-            }
-        }  
-    }
-    else{
-        fetch("../data/products.json")
-        .then(res=>res.json())
-        .then(data=>{
-            for(let i=0;i<data.products.length;i++){
-                brandList.push(data.products[i].brand);
-            }
-            brandList = [...new Set(brandList)];
-            let brandFilters = sessionStorage.getItem('brandFilters');
-            $("#brand-list-form")[0].innerHTML = "";
-            $("#brand-list-form-lg")[0].innerHTML = "";
-            if(brandFilters!=null){
-                let brandFiltersArray = brandFilters.split(",");
-                for(let i=0;i<brandList.length;i++)
-                {
-                    let flag=false;
-                    let brand = brandList[i].toLowerCase();
-                    for(let j=0;j<brandFiltersArray.length;j++){
-                        if(brandFiltersArray[j].toLowerCase()===brand)
-                        {
-                            flag = true;
-                            $("#brand-list-form").append(`<div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                            <label class="form-check-label" for="brand-${brand}">
-                            ${brandList[i]}
-                            </label>
-                            </div>`);
-                            $("#brand-list-form-lg").append(`<div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                            <label class="form-check-label" for="brand-${brand}">
-                            ${brandList[i]}
-                            </label>
-                            </div>`);
-                            break;
-                        }
-                    }
-                    if(flag===false){
-                        $("#brand-list-form").append(`<div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
-                        $("#brand-list-form-lg").append(`<div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
-                    }
-                }
-            }
-            else{
-                for(let i=0;i<brandList.length;i++)
-                {
-                    let brand = brandList[i].toLowerCase();
-                    $("#brand-list-form").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
-                    $("#brand-list-form-lg").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
-                }
-            }  
-        })
-    }
-    let productHtml = "";
-    products = applyFilter(products);
-    products = applySort(products);
-    for (let i = (limit * (page - 1)); i < ((limit * (page - 1) + limit) > products.length ? products.length :(limit * (page - 1) + limit)); i++) {
-        let product = products[i];
-        let email = localStorage.getItem("email");
-        if(!email){
-            let untrackedItems = localStorage.getItem("untrackedItems");
-            let flag = false;
-            for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
-                if(untrackedItems[i].id === product.id){
-                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow product-box mx-auto">
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${untrackedItems[i].quantity} readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
-                        flag = true;
-                    break;
-                }
-            }
-            if(flag==false){
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow product-box mx-auto">
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
-            }
-        }
-        else{
-            let index1 = 0;
-            let cartEntry = JSON.parse(localStorage.getItem("cart"));
-            for (let j = 0; j < cartEntry.length; j++) {
-                if (cartEntry[j].email === email) {
-                    index1 = j;
-                    break;
-                }
-            }
-            let index2 = 0;
-            let flag = false;
-            let cart = cartEntry[index1].items;
-            for(let i=0; i < cart.length; i++) {
-                if(cart[i].id===product.id){
-                    index2 = i;
-                    flag = true;
-                    break;
-                }
-            }
-            if(flag){
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow product-box mx-auto" >
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${cartEntry[index1].items[index2].quantity} readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
-            }
-            else{
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow product-box mx-auto" >
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h4>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
-            }   
-        }  
-    }
-    let itemCount = products.length / limit;
-    if(itemCount>1){
-        productHtml += `<nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                    <ul class="pagination">`;
-        if(page==1){
-            productHtml+=`<li class="page-item"><a class="page-link disabled" href="#">Previous</a></li>`;
-        }
-        else{
-            productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
-        }
-            for (let i = 0; i < itemCount; i++) {
-                productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
-            }
-            productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                    </nav>`;
-    }
-    $("#product-list")[0].innerHTML = productHtml;
-    $(".page-link").click(handlePageClick);
-}
 
 function goToProduct(id){
     window.location.href = `/public/html/productDetails.html?id=${id}`;
@@ -641,4 +661,8 @@ function addProduct(id,event){
         $("#success-toast").toast("show");
         event.target.innerText = "GO TO CART";
     }
+}
+function closeModal(event){
+    event.preventDefault();
+    $("#remove-item-modal").modal('toggle')
 }

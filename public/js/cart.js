@@ -6,6 +6,7 @@ function init(){
     $("#clear-cart").click(handleClearCart);
     $("#close-clear-modal").click(()=>$("#clear-cart-modal").modal('toggle'));
     $("#remove-cart").click(clearCart);
+    $("#redirect-box")[0].style.display = "none";
     manageCart();
 }
 
@@ -36,45 +37,45 @@ function manageCart(){
                 $("#checkout-btn")[0].style.display = "none";
                 return;
             }
-                let productHtml = "";
-                let price = 0;
-                let productCard = $(".product-card").clone();
-                    for (let i = 0; i < results.length; i++) {
-                        price += results[i].product.price * results[i].quantity;
-                        productHtml += `<div class="card mb-3 border-0 shadow-sm">
-                        <div class="card-body row no-gutters py-2">
-                          <div class="col-md-4 p-2">
-                            <a href="../html/productDetails.html?id=${results[i].product.id}">
-                            <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
-                            </a>
-                          </div>
-                          <div class="col-md-8">
-                            <div class="card-body position-relative">
-                            <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
-                            <a href="../html/productDetails.html?id=${results[i].product.id}">
-                              <h5 class="card-title product-title">${results[i].product.title}</h5>
-                              </a>
-                              <p class="card-text">${results[i].product.description}</p>
-                              <p class="card-text"><small class="text-muted">${"₹ " + results[i].product.price}</small></p>
-                              <div class="d-flex align-items-center">
-                              <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                              <input type="number" step="1" min="0" class="w-input form-control d-inline num-input mx-1" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
-                              <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
-                              </div>
-                            </div>
-                          </div>
+            let productHtml = "";
+            let price = 0;
+            let productCard = $(".product-card").clone();
+                for (let i = 0; i < results.length; i++) {
+                    price += results[i].product.price * results[i].quantity;
+                    productHtml += `<div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-body row no-gutters py-2">
+                        <div class="col-md-4 p-2">
+                        <a href="../html/productDetails.html?id=${results[i].product.id}">
+                        <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
+                        </a>
                         </div>
-                      </div>`;
-                    }
-                    $("#empty-cart-box")[0].style.display = "none";
-                    $("#total-bill")[0].innerText = price;
-                    $("#total-cost")[0].innerText = parseInt(price + 100);
-                    $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
-                    $("#cart-items")[0].innerHTML = productHtml;
-                    $('#checkout-btn').click(downloadOrder);
-                    const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
-                    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-                });
+                        <div class="col-md-8">
+                        <div class="card-body position-relative">
+                        <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="btn btn-outline-danger btn-sm border-0 end-0 position-absolute top-0"><i class="fa fa-solid fa-trash fs-5 mt-2"></i></button>
+                        <a href="../html/productDetails.html?id=${results[i].product.id}">
+                            <h5 class="card-title product-title">${results[i].product.title}</h5>
+                            </a>
+                            <p class="card-text">${results[i].product.description}</p>
+                            <h6 class="card-text"><small class="text-muted">${"₹ " + results[i].product.price}</small></h6>
+                            <div class="d-flex align-items-center">
+                            <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
+                            <input type="number" step="1" min="0" class="w-input form-control d-inline num-input mx-1" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
+                            <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>`;
+                }
+                $("#empty-cart-box")[0].style.display = "none";
+                $("#total-bill")[0].innerText = price;
+                $("#total-cost")[0].innerText = parseInt(price + 100);
+                $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
+                $("#cart-items")[0].innerHTML = productHtml;
+                $('#checkout-btn').click(downloadOrder);
+                const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
+                [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            });
     }
     else{
     let cartEntry = JSON.parse(localStorage.getItem("cart"));
@@ -86,7 +87,6 @@ function manageCart(){
         }
     }
     let cart = cartEntry[index].items;
-    
     fetch("../data/products.json")
         .then((response) => response.json())
         .then((json) => {
@@ -136,12 +136,12 @@ function manageCart(){
                     </div>
                     <div class="col-md-8">
                     <div class="card-body position-relative">
-                    <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="bg-transparent border-0 end-0 position-absolute text-danger top-0"><i class="fa fa-solid fa-trash"></i></button>
+                    <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="btn btn-outline-danger btn-sm border-0 end-0 position-absolute top-0"><i class="fa fa-solid fa-trash fs-5 mt-2"></i></button>
                     <a href="../html/productDetails.html?id=${results[i].product.id}">
                         <h5 class="card-title product-title">${results[i].product.title}</h5>
                         </a>
                         <p class="card-text">${results[i].product.description}</p>
-                        <p class="card-text">${"₹ " + results[i].product.price}</p>
+                        <h6 class="card-text">${"₹ " + results[i].product.price}</h6>
                         <div class="d-flex align-items-center">
                         <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
                         <input type="number" step="1" min="0" class="w-input text-center form-control d-inline num-input mx-1" id="${"input-" + results[i].product.id}" value="${results[i].quantity}" readonly="true">
@@ -167,7 +167,10 @@ function manageCart(){
 function downloadOrder(event){
     let email = localStorage.getItem("email");
     if(!email){
-        window.location.href = "/public/html/login.html";
+        $("#redirect-box")[0].style.display = "block";
+        $("#cart-box")[0].style.display = "none";
+        setTimeout(()=>{window.location.href = "/public/html/login.html";},2500); 
+        return;
     }
     else{
     let cart = JSON.parse(localStorage.getItem("cart"));
