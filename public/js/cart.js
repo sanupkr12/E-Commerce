@@ -37,44 +37,19 @@ function manageCart(){
                 $("#checkout-btn")[0].style.display = "none";
                 return;
             }
-            let productHtml = "";
             let price = 0;
-            let productCard = $(".product-card").clone();
-                for (let i = 0; i < results.length; i++) {
-                    price += results[i].product.price * results[i].quantity;
-                    productHtml += `<div class="card mb-3 border-0 shadow-sm">
-                    <div class="card-body row no-gutters py-2">
-                        <div class="col-md-4 p-2">
-                        <a href="../html/productDetails.html?id=${results[i].product.id}">
-                        <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
-                        </a>
-                        </div>
-                        <div class="col-md-8">
-                        <div class="card-body position-relative">
-                        <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="btn btn-outline-danger btn-sm border-0 end-0 position-absolute top-0"><i class="fa fa-solid fa-trash fs-5 mt-2"></i></button>
-                        <a href="../html/productDetails.html?id=${results[i].product.id}">
-                            <h5 class="card-title product-title">${results[i].product.title}</h5>
-                            </a>
-                            <p class="card-text">${results[i].product.description}</p>
-                            <h6 class="card-text"><small class="text-muted">${"₹ " + results[i].product.price}</small></h6>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input form-control d-inline num-input mx-1" id="${"input-" + results[i].product.id}" value=${results[i].quantity} readonly="true">
-                            <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>`;
-                }
-                $("#empty-cart-box")[0].style.display = "none";
-                $("#total-bill")[0].innerText = price;
-                $("#total-cost")[0].innerText = parseInt(price + 100);
-                $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
-                $("#cart-items")[0].innerHTML = productHtml;
-                $('#checkout-btn').click(downloadOrder);
-                const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
-                [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            let productHtml = generateCartHtml(results);
+            for(let i=0;i<results.length;i++){
+                price += results[i].product.price * results[i].quantity;
+            }
+            $("#empty-cart-box")[0].style.display = "none";
+            $("#total-bill")[0].innerText = price;
+            $("#total-cost")[0].innerText = parseInt(price + 100);
+            $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
+            $("#cart-items")[0].innerHTML = productHtml;
+            $('#checkout-btn').click(downloadOrder);
+            const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             });
     }
     else{
@@ -108,49 +83,10 @@ function manageCart(){
                 $("#checkout-btn")[0].style.display = "none";
                 return;
             }
-            let productHtml = "";
-            let tempHtml = "";
             let price = 0;
-            for (let i = 0; i < results.length; i++) {
-                let productCard = $(".product-card").clone();
-                productCard.find(".remove-item").click((event)=>handleRemoveModal(results[i].product.id,results[i].product.price,event));
-                productCard.find(".product-link").attr("href","../html/productDetails.html?id=" + results[i].product.id);
-                productCard.find(".product-image").attr('src',results[i].product.thumbnail);
-                productCard.find(".product-title")[0].innerText = results[i].product.title;
-                productCard.find(".product-description")[0].innerText = results[i].product.description;
-                productCard.find(".product-price")[0].innerText = results[i].product.price;
-                productCard.find(".input-quantity")[0].value = results[i].quantity;
-                // console.log(productCard.find(".input-quantity")[0].value);
-                // console.log(productCard[0].innerHTML);
-                // console.log(productCard.find(".input-quantity")[0]);
-                productCard.find(".decrease-quantity").click((event)=>{decreaseQuantityOnCart(results[i].product.id,results[i].product.price,event)});
-                productCard.find(".increase-quantity").click((event)=>{increaseQuantityOnCart(results[i].product.id,results[i].product.price,event)});
-                tempHtml+=productCard[0].innerHTML;
+            let productHtml = generateCartHtml(results);
+            for(let i=0;i<results.length;i++){
                 price += results[i].product.price * results[i].quantity;
-                productHtml += `<div class="card mb-3 border-0 shadow-sm">
-                <div class="card-body row no-gutters py-2">
-                    <div class="col-md-4 p-2">
-                    <a href="../html/productDetails.html?id=${results[i].product.id}">
-                    <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
-                    </a>
-                    </div>
-                    <div class="col-md-8">
-                    <div class="card-body position-relative">
-                    <button onclick="handleRemoveModal(${results[i].product.id},${results[i].product.price},event)" data-bs-toggle = "tooltip" data-bs-placement="bottom" title="Remove from cart" class="btn btn-outline-danger btn-sm border-0 end-0 position-absolute top-0"><i class="fa fa-solid fa-trash fs-5 mt-2"></i></button>
-                    <a href="../html/productDetails.html?id=${results[i].product.id}">
-                        <h5 class="card-title product-title">${results[i].product.title}</h5>
-                        </a>
-                        <p class="card-text">${results[i].product.description}</p>
-                        <h6 class="card-text">${"₹ " + results[i].product.price}</h6>
-                        <div class="d-flex align-items-center">
-                        <button class="btn btn-warning"  onclick="decreaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">-</button>
-                        <input type="number" step="1" min="0" class="w-input text-center form-control d-inline num-input mx-1" id="${"input-" + results[i].product.id}" value="${results[i].quantity}" readonly="true">
-                        <button class="btn btn-warning"  onclick="increaseQuantityOnCart(${results[i].product.id},${results[i].product.price},event)">+</button>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>`; 
             }
             $("#empty-cart-box")[0].style.display = "none";
             $("#total-bill")[0].innerText = price;

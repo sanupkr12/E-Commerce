@@ -50,52 +50,22 @@ function populateProducts(products) {
                     if(brandFiltersArray[j].toLowerCase()===brand)
                     {
                         flag = true;
-                        $("#brand-list-form").append(`<div class="form-check">
-                        <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
-                        $("#brand-list-form-lg").append(`<div class="form-check">
-                        <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
+                        $("#brand-list-form").append(addBrand(brand,true));
+                        $("#brand-list-form-lg").append(addBrand(brand,true));
                         break;
                     }
                 }
                 if(flag===false){
-                    $("#brand-list-form").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
-                    $("#brand-list-form-lg").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
+                    $("#brand-list-form").append(addBrand(brand,false));
+                    $("#brand-list-form-lg").append(addBrand(brand,false));
                 }
             }
         }
         else{
             for(let i=0;i<brandList.length;i++)
             {
-                $("#brand-list-form").append(`<div class="form-check">
-                <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
-                <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
-                ${brandList[i]}
-                </label>
-                </div>`);
-                $("#brand-list-form-lg").append(`<div class="form-check">
-                <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brandList[i].toLowerCase()}">
-                <label class="form-check-label" for="brand-${brandList[i].toLowerCase()}">
-                ${brandList[i]}
-                </label>
-                </div>`);
+                $("#brand-list-form").append(addBrand(brandList[i].toLowerCase(),false));
+                $("#brand-list-form-lg").append(addBrand(brandList[i],false));
             }
         }  
     }
@@ -120,34 +90,14 @@ function populateProducts(products) {
                         if(brandFiltersArray[j].toLowerCase()===brand)
                         {
                             flag = true;
-                            $("#brand-list-form").append(`<div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                            <label class="form-check-label" for="brand-${brand}">
-                            ${brandList[i]}
-                            </label>
-                            </div>`);
-                            $("#brand-list-form-lg").append(`<div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                            <label class="form-check-label" for="brand-${brand}">
-                            ${brandList[i]}
-                            </label>
-                            </div>`);
+                            $("#brand-list-form").append(addBrand(brand,true));
+                            $("#brand-list-form-lg").append(addBrand(brand,true));
                             break;
                         }
                     }
                     if(flag===false){
-                        $("#brand-list-form").append(`<div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
-                        $("#brand-list-form-lg").append(`<div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                        <label class="form-check-label" for="brand-${brand}">
-                        ${brandList[i]}
-                        </label>
-                        </div>`);
+                        $("#brand-list-form").append(addBrand(brand,false));
+                            $("#brand-list-form-lg").append(addBrand(brand,false));
                     }
                 }
             }
@@ -155,18 +105,8 @@ function populateProducts(products) {
                 for(let i=0;i<brandList.length;i++)
                 {
                     let brand = brandList[i].toLowerCase();
-                    $("#brand-list-form").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
-                    $("#brand-list-form-lg").append(`<div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="${brandList[i]}" id="brand-${brand}">
-                    <label class="form-check-label" for="brand-${brand}">
-                    ${brandList[i]}
-                    </label>
-                    </div>`);
+                    $("#brand-list-form").append(addBrand(brand,false));
+                    $("#brand-list-form-lg").append(addBrand(brand,false));
                 }
             }  
         })
@@ -182,47 +122,13 @@ function populateProducts(products) {
             let flag = false;
             for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
                 if(untrackedItems[i].id === product.id){ 
-                    productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto">
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${untrackedItems[i].quantity} readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
+                    productHtml += generateProductHtml(product,untrackedItems[i].quantity);
                         flag = true;
                     break;
                 }
             }
             if(flag==false){
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto">
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
+                productHtml += generateProductHtml(product,0);
             }
         }
         else{
@@ -245,44 +151,10 @@ function populateProducts(products) {
                 }
             }
             if(flag){
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${cartEntry[index1].items[index2].quantity} readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
+                productHtml += generateProductHtml(product,cartEntry[index1].items[index2].quantity);
             }
             else{
-                productHtml += `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
-                        <div class="card-header card-header-text p-0 hover-pointer" onclick="goToProduct(${product.id})">
-                        <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-                        <span class="card-rating-box">${product.rating} ⭐</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h4>
-                            <h6>${"₹ " + product.price}</h6>
-                            <p class="card-text card-description-text">${product.description}</p>
-                            <div class="d-flex align-items-center">
-                            <button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
-                            <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value="0" readonly="true">
-                            <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>
-                            </div>
-                        </div> 
-                        </div>
-                        </div>`;
+                productHtml += generateProductHtml(product,0);
             }   
         }  
     }
