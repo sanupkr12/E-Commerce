@@ -45,7 +45,7 @@ function removeItem(event){
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
-            localStorage.setItem('cart',cart);
+            localStorage.setItem('cart',JSON.stringify(cart));
             $errorToast.find(".toast-body")[0].innerText = error.message;
             $errorToast.show();
         } 
@@ -58,7 +58,8 @@ function handleInputQuantityChange(event){
     let id = url.get('id');
     const quantity = parseInt(event.target.value);
     if(quantity < 0){
-        alert("Quantity cannot be negative");
+        $errorToast.find(".toast-body")[0].innerText = "Quantity cannot be negative.";
+        $errorToast.show();
         return;
     }
     else{
@@ -242,7 +243,7 @@ function addProduct(event){
         } catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
-            localStorage.setItem('cart',cart);
+            localStorage.setItem('cart',JSON.stringify(cart));
             $errorToast.find(".toast-body")[0].innerText = error.message;
             $errorToast.show();
         }

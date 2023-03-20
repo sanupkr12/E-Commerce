@@ -127,7 +127,7 @@ function populateProducts(products) {
             }catch(error){
                 let cart = [];
                 cart.push({"email":email,"items":[]});
-                localStorage.setItem('cart',cart);
+                localStorage.setItem('cart',JSON.stringify(cart));
                 $errorToast.find(".toast-body")[0].innerText = error.message;
                 $errorToast.show();
             }   
@@ -164,7 +164,7 @@ function appendFilters(){
         let brandHtml = "";
         for(let i = 0; i < brandFilters.length; i++){
             let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
-            brandHtml += `<li class="m-1 bg-light rounded-1 px-1">${brand}</li>`;
+            brandHtml += `<p class="mx-1 my-auto bg-secondary badge fw-bold">${brand}</p>`;
         }
         $("#brand-filters")[0].innerHTML = brandHtml;
         $("#brand-filter-box")[0].style.display = "block";
@@ -175,7 +175,7 @@ function appendFilters(){
     if(ratingFilters.length > 0){
         let ratingHtml = "";
         for(let i = 0; i < ratingFilters.length; i++){
-            ratingHtml += `<li class="m-1 bg-light rounded-1 px-1">${ratingFilters[i]} ⭐</li>`;
+            ratingHtml += `<p class="mx-1 bg-secondary my-auto badge fw-bold">${ratingFilters[i]} ⭐</p>`;
         }
         $("#rating-filters")[0].innerHTML = ratingHtml;
         $("#rating-filter-box")[0].style.display = "block";  
@@ -485,6 +485,7 @@ function handleSearch(event) {
         }
         if (results.length === 0) {
             alert("No products to show");
+            // Add image instead of showing alert message
         }
         else {
             searchProducts = [...results];
@@ -594,7 +595,7 @@ function addProduct(id,event){
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
-            localStorage.setItem('cart',cart);
+            localStorage.setItem('cart',JSON.stringify(cart));
             $errorToast.find(".toast-body")[0].innerText = error.message;
             $errorToast.show();
         }

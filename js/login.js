@@ -18,7 +18,6 @@ function handleLogin(event) {
     fetch('../assets/data/credentials.json')
     .then(
         (response) => response.json()
-        //promise was awaiting so we need to await for a response
     )
     .then(
         (json) => {
@@ -45,7 +44,6 @@ function handleLogin(event) {
                     localStorage.setItem("cart", JSON.stringify(newCart));
                     cart = newCart;
                 }
-                    
                 let flag = false;
                 let index = 0;
                 for (let i = 0; i < cart.length; i++) {

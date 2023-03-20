@@ -119,11 +119,10 @@ function manageCart(){
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
-            localStorage.setItem('cart',cart);
+            localStorage.setItem('cart',JSON.stringify(cart));
             $errorToast.find(".toast-body").innerText = error.message;
             $errorToast.show();
-        }
-        
+        }   
     }
 }
 
@@ -190,6 +189,9 @@ function downloadOrder(event){
                 $errorToast.show();
             });
         } catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',JSON.stringify(cart));
             $errorToast.find(".toast-body").innerText = error.message;
             $errorToast.show();
         } 
@@ -212,44 +214,58 @@ function removeFromCart(){
     let price = parseInt($("#item-price").val());
     const email = localStorage.getItem("email");
     if(!email){
-        let cart = JSON.parse(localStorage.getItem("untrackedItems"));
-        let index2 = 0;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+        try{
+            let cart = JSON.parse(localStorage.getItem("untrackedItems"));
+            let index2 = 0;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            cart = cart.filter(item => item.id!== id);
+            localStorage.setItem('untrackedItems', JSON.stringify(cart));
+            updateCartItemCount(email);
+            location.reload();
+        }catch(error){
+            localStorage.setItem('untrackedItems', JSON.stringify([]));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
-        cart = cart.filter(item => item.id!== id);
-        localStorage.setItem('untrackedItems', JSON.stringify(cart));
-        updateCartItemCount(email);
-        location.reload();
     }
     else{
-        let cartEntry = JSON.parse(localStorage.getItem("cart"));
-        let index1 = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index1 = j;
-                break;
+        try{
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
+            let index1 = 0;
+            for (let j = 0; j < cartEntry.length; j++) {
+                if (cartEntry[j].email === email) {
+                    index1 = j;
+                    break;
+                }
             }
-        }
-        let index2 = 0;
-        let cart = cartEntry[index1].items;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+            let index2 = 0;
+            let cart = cartEntry[index1].items;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
+            localStorage.setItem('cart', JSON.stringify(cartEntry));
+            updateCartItemCount(email);
+            location.reload();
+        }catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',JSON.stringify(cart));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
-        cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
-        localStorage.setItem('cart', JSON.stringify(cartEntry));
-        updateCartItemCount(email);
-        location.reload();
     }
 }
 
@@ -258,108 +274,136 @@ function showProductDetails(id){window.location.href=`/html/productDetails.html?
 function decreaseQuantityOnCart(id,price,event){
     event.stopPropagation();
     const email = localStorage.getItem("email");
-    let cartEntry = JSON.parse(localStorage.getItem("cart"));
     if(!email){
         let index2 = 0;
-        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-        let cart = untrackedItems;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+        try{
+            let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+            let cart = untrackedItems;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            cart[index2].quantity-=1;
+            if(cart[index2].quantity<=0){
+                $("#item-id").val(id);
+                $("#item-price").val(price);
+                let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
+                $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
+                $removeItemModal.modal('toggle');
+                return;
+            }
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice - parseInt(price));
+            $("#total-cost").text(orgPrice - parseInt(price) + 100);
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+            $(`#input-`+id)[0].value = cart[index2].quantity;
+        }catch(error){
+            localStorage.setItem('untrackedItems', JSON.stringify([]));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        cart[index2].quantity-=1;
-        if(cart[index2].quantity<=0){
-            $("#item-id").val(id);
-            $("#item-price").val(price);
-            let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
-            $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
-            $removeItemModal.modal('toggle');
-            return;
-        }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice - parseInt(price));
-        $("#total-cost").text(orgPrice - parseInt(price) + 100);
-        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
     else{
         let index1 = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index1 = j;
-                break;
+        try{
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
+            for (let j = 0; j < cartEntry.length; j++) {
+                if (cartEntry[j].email === email) {
+                    index1 = j;
+                    break;
+                }
             }
-        }
-        let index2 = 0;
-        let cart = cartEntry[index1].items;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+            let index2 = 0;
+            let cart = cartEntry[index1].items;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            cart[index2].quantity-=1;
+            if(cart[index2].quantity<=0){
+                $("#item-id").val(id);
+                $("#item-price").val(price);
+                let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
+                $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
+                $removeItemModal.modal('toggle');
+                return;
+            }
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
+            $("#total-cost").text(orgPrice - parseInt(price) + 100);
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            $(`#input-`+id)[0].value = cart[index2].quantity;
+        }catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',JSON.stringify(cart));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        cart[index2].quantity-=1;
-        if(cart[index2].quantity<=0){
-            $("#item-id").val(id);
-            $("#item-price").val(price);
-            let title = $(event.target).closest(".card").find(".product-title")[0].innerText;
-            $("#item-title")[0].innerHTML = `Are you sure you want to remove <strong>${title}</strong> from cart?`;
-            $removeItemModal.modal('toggle');
-            return;
-        }
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
-        $("#total-cost").text(orgPrice - parseInt(price) + 100);
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
 }
 
 function increaseQuantityOnCart(id,price,event){
     event.stopPropagation();
     const email = localStorage.getItem("email");
-    let cartEntry = JSON.parse(localStorage.getItem("cart"));
     if(!email){
         let index2 = 0;
-        let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-        let cart = untrackedItems;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+        try{
+            let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+            let cart = untrackedItems;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            cart[index2].quantity+=1;
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice + parseInt(price));
+            $("#total-cost").text(orgPrice + parseInt(price) + 100);
+            localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+            $(`#input-`+id)[0].value = cart[index2].quantity;
+        }catch(error){
+            localStorage.setItem('untrackedItems', JSON.stringify([]));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        cart[index2].quantity+=1;
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice + parseInt(price));
-        $("#total-cost").text(orgPrice + parseInt(price) + 100);
-        localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
     else{
         let index1 = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index1 = j;
-                break;
+        try{
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
+            for (let j = 0; j < cartEntry.length; j++) {
+                if (cartEntry[j].email === email) {
+                    index1 = j;
+                    break;
+                }
             }
-        }
-        let index2 = 0;
-        let cart = cartEntry[index1].items;
-        for(let i=0; i < cart.length; i++) {
-            if(cart[i].id===id){
-                index2 = i;
-                break;
+            let index2 = 0;
+            let cart = cartEntry[index1].items;
+            for(let i=0; i < cart.length; i++) {
+                if(cart[i].id===id){
+                    index2 = i;
+                    break;
+                }
             }
+            cart[index2].quantity+=1;
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice + parseInt(price));
+            $("#total-cost").text(orgPrice + parseInt(price) + 100);
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+            $(`#input-`+id)[0].value = cart[index2].quantity;
+        }catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',JSON.stringify(cart));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        cart[index2].quantity+=1;
-        let orgPrice = parseInt($("#total-bill")[0].innerText);
-        $("#total-bill").text(orgPrice + parseInt(price));
-        $("#total-cost").text(orgPrice + parseInt(price) + 100);
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
-        $(`#input-`+id)[0].value = cart[index2].quantity;
     }
 }
 
@@ -372,16 +416,24 @@ function clearCart(event){
         localStorage.setItem("untrackedItems", JSON.stringify([]));
     }
     else{
-        let cartEntry = JSON.parse(localStorage.getItem("cart"));
-        let index = 0;
-        for (let j = 0; j < cartEntry.length; j++) {
-            if (cartEntry[j].email === email) {
-                index = j;
-                break;
+        try{
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
+            let index = 0;
+            for (let j = 0; j < cartEntry.length; j++) {
+                if (cartEntry[j].email === email) {
+                    index = j;
+                    break;
+                }
             }
+            cartEntry[index].items = [];
+            localStorage.setItem("cart", JSON.stringify(cartEntry));
+        }catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',JSON.stringify(cart));
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        cartEntry[index].items = [];
-        localStorage.setItem("cart", JSON.stringify(cartEntry));
     }
     updateCartItemCount(email);
     location.reload();
