@@ -1,7 +1,7 @@
-let page = 1;
-let totalItem = 0;
-let searchPage = 1;
-let searchProducts = [];
+let page = 1,
+totalItem = 0,
+searchPage = 1,
+searchProducts = [];
 const limit = 8;
 
 $(document).ready(init);
@@ -27,10 +27,10 @@ function init() {
             fetch("../assets/data/credentials.json")
             .then(res=>res.json())
             .then(data=>{
-                let credentials = data.credentials;
+                const credentials = data.credentials;
                 for(let i=0;i<credentials.length;i++){
                     if(credentials[i].email===email){
-                        $("#user-detail-text")[0].innerHTML = `<i class="fa-solid fa-user mx-1 "></i> ${credentials[i].username}`;
+                        $("#user-detail-text")[0].innerHTML += `${credentials[i].username}`;
                         break;
                     }
                 }
@@ -39,7 +39,7 @@ function init() {
             $("#login")[0].style.display = "none";
         }
         updateCartItemCount(email);
-        
+        validateUser();
         $("#brand-logo").click(handleLogoClick);
         $("#go-to-cart-btn").click(()=>{window.location.href = "/html/cart.html";});
         $("#file-upload-btn").click(()=>{window.location.href = "/html/upload.html"});
@@ -63,6 +63,37 @@ function init() {
             $("#footer-text")[0].innerText = "Copyright @Increff 2023, " + String(date).substr(0, 25);
         }, 5000);   
     });   
+}
+
+function validateUser(){
+    fetch("../assets/data/credentials.json")
+    .then(res=>res.json())
+    .then(json=>{
+        const users = json.credentials;
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        const email = localStorage.getItem('email');
+        let validUsers = [];
+        let userPresent = false;
+        for(let i=0;i<cart.length;i++){
+            if(cart[i].email === email){
+                userPresent = true;
+            }
+            let flag = false;
+            for(let j=0;j<users.length;j++){
+                if(cart[i].email===users[j].email){
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag === true){
+                validUsers.push(cart[i]);
+            }
+        }
+        if(userPresent===false){
+            validUsers.push({"email":email,"items":[]});
+        }
+        localStorage.setItem('cart', JSON.stringify(validUsers));
+    });
 }
 
 function handleLoginClick(){window.location.href="/html/login.html";}
@@ -108,6 +139,7 @@ function updateCartItemCount(email){
                 for(let j=0;j<products.length;j++) {
                     if(products[j].id === cart[i].id && cart[i].quantity > 0) {
                         flag = true;
+                        break;
                     }     
                 }
                 if(flag){
@@ -125,11 +157,17 @@ function updateCartItemCount(email){
     }
     else{
         let index = 0;
+        let flag = false;
         for (let i = 0; i < cartEntry.length; i++) {
             if (cartEntry[i].email == email) {
                 index = i;
+                flag = true;
                 break;
             }
+        }
+        if(flag===false){
+            cartEntry.push({"email":email,"items":[]});
+            index = cartEntry.length - 1;
         }
         let cart = cartEntry[index].items;
         fetch("../assets/data/products.json")

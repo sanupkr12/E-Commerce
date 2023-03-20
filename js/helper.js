@@ -72,5 +72,4 @@ function addBrand(brand,checked){
         </label>
         </div>`;
     }
-    
 }

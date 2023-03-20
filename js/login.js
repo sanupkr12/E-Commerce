@@ -1,5 +1,5 @@
-const $form = $("#login-form");
-const $errorToast = $("#error-toast");
+const $form = $("#login-form"),
+$errorToast = $("#error-toast");
 
 $(document).ready(init);
 

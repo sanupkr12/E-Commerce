@@ -1,10 +1,10 @@
 let validOrderItems = [];
-const $orderForm = $("#order-upload-form");
-const $errorToast = $("#error-toast");
-const $successToast = $("#success-toast");
-const $orderList = $("#order-list");
-const $errorList = $("#error-list");
-const $orderFile = $("#order-file");
+const $orderForm = $("#order-upload-form"),
+$errorToast = $("#error-toast"),
+$successToast = $("#success-toast"),
+$orderList = $("#order-list"),
+$errorList = $("#error-list"),
+$orderFile = $("#order-file");
 
 $(document).ready(init);
 
@@ -34,7 +34,7 @@ function handleOrderUpload(event){
 }
 
 function readFileDataCallback(results){
-    let fields = results.meta.fields;
+    const fields = results.meta.fields;
     if(fields.length != 2)
     {
         let errorHtml = "<p class='fw-bold'>Errors:</p><li class='text-danger'>Incorrect Number of fields</li>";
@@ -46,7 +46,7 @@ function readFileDataCallback(results){
         handleError(errorHtml);
         return;
     }
-    let data = results.data;
+    const data = results.data;
     if(data.length == 0){
         let errorHtml = "<p class='fw-bold'>Errors:</p><li class='text-danger'>Empty file</li>";
         handleError(errorHtml);
@@ -60,7 +60,7 @@ function readFileDataCallback(results){
     fetch("../assets/data/products.json")
     .then(res=>res.json())
     .then((json)=>{
-        let products = json.products;
+        const products = json.products;
         let errorFields = [];
         for(let i=0;i<data.length;i++){
             let flag = false;
@@ -116,6 +116,9 @@ function readFileDataCallback(results){
             $orderList.find("tbody").append(`<tr class="bg-white"><td>${validOrderItems[i].sku_id}</td><td>${validOrderItems[i].title}</td><td>${validOrderItems[i].quantity}</td></tr>`)
         }
         $orderFile.val(null);
+    }).catch(error=>{
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
     });
 }
 
@@ -129,40 +132,49 @@ function handleError(errorHtml){
 }
 
 function uploadOrder(){
-    let cart = JSON.parse(localStorage.getItem('cart'));
-    const email = localStorage.getItem('email');
-    let index1 = 0;
-    for(let i = 0; i < cart.length; i++) {
-        if(cart[i].email===email){
-            index1 = i;
-            break;
-        }
-    }
-    let items = cart[index1].items;
-    for(let i=0;i<validOrderItems.length;i++){
-        let flag = false;
-        let index2 = 0;
-        let id = validOrderItems[i].id;
-        for(let i=0; i < items.length; i++) {
-            if(items[i].id==id){
-                flag = true;
-                index2 = i;
+    try{
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        const email = localStorage.getItem('email');
+        let index1 = 0;
+        for(let i = 0; i < cart.length; i++) {
+            if(cart[i].email===email){
+                index1 = i;
                 break;
             }
         }
-        if(flag)
-        {
-            items[index2].quantity+=parseInt(validOrderItems[i].quantity);
+        let items = cart[index1].items;
+        for(let i=0;i<validOrderItems.length;i++){
+            let flag = false;
+            let index2 = 0;
+            let id = validOrderItems[i].id;
+            for(let i=0; i < items.length; i++) {
+                if(items[i].id==id){
+                    flag = true;
+                    index2 = i;
+                    break;
+                }
+            }
+            if(flag)
+            {
+                items[index2].quantity+=parseInt(validOrderItems[i].quantity);
+            }
+            else{
+                cart[index1].items.push({id:parseInt(id),quantity:parseInt(validOrderItems[i].quantity)});
+            }
         }
-        else{
-            cart[index1].items.push({id:parseInt(id),quantity:parseInt(validOrderItems[i].quantity)});
-        }
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartItemCount(email);
-    $successToast.find(".toast-body")[0].innerText = "Order placed successfully";
-    $successToast.show();
-    $orderList.hide();
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartItemCount(email);
+        $successToast.find(".toast-body")[0].innerText = "Order placed successfully";
+        $successToast.show();
+        setTimeout(()=>{$successToast.hide()},3000);
+        $orderList.hide();
+    }catch(error){
+        let cart = [];
+        cart.push({"email":email,"items":[]});
+        localStorage.setItem('cart',cart);
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
+    }   
 }
 
 function readFileData(file, callback) {

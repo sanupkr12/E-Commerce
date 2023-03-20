@@ -1,9 +1,9 @@
-const $searchForm = $("#search-form");
-const $removeItemModal = $("#remove-item-modal");
-const $successToast = $("#success-toast");
-const $errorToast = $("#error-toast");
-const $brandForm = $("#brand-list-form");
-const $brandFormLg = $("#brand-list-form-lg");
+const $searchForm = $("#search-form"),
+$removeItemModal = $("#remove-item-modal"),
+$successToast = $("#success-toast"),
+$errorToast = $("#error-toast"),
+$brandForm = $("#brand-list-form"),
+$brandFormLg = $("#brand-list-form-lg");
 
 $(document).ready(init);
 
@@ -24,7 +24,7 @@ function fetchProducts() {
     fetch("../assets/data/products.json")
     .then((response) => response.json())
     .then((json) => {
-        let products = json.products;
+        const products = json.products;
         totalItem = products.length;
         populateProducts(products);
     })
@@ -46,7 +46,7 @@ function populateProducts(products) {
     let brandList = [];
     if(searchProducts.length >0){
         for(let i=0;i<searchProducts.length;i++){
-            brandList.push(products[i].brand);
+            brandList.push(searchProducts[i].brand);
         }
         let filter = JSON.parse(sessionStorage.getItem('filter'));
         brandList = [...new Set(brandList)];
@@ -66,52 +66,70 @@ function populateProducts(products) {
             $brandForm[0].innerHTML = "";
             $brandFormLg[0].innerHTML = "";
             appendBrandFilters(filter["brand"],brandList); 
+        }).catch(error=>{
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         })
     }
     let productHtml = "";
     products = applyFilter(products);
     products = applySort(products);
+    appendFilters();
     for (let i = (limit * (page - 1)); i < ((limit * (page - 1) + limit) > products.length ? products.length :(limit * (page - 1) + limit)); i++) {
-        let product = products[i];
-        let email = localStorage.getItem("email");
+        const product = products[i];
+        const email = localStorage.getItem("email");
         if(!email){
-            let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-            let flag = false;
-            for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
-                if(untrackedItems[i].id === product.id){ 
-                    productHtml += generateProductHtml(product,untrackedItems[i].quantity);
-                        flag = true;
-                    break;
+            try{
+                let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
+                let flag = false;
+                for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
+                    if(untrackedItems[i].id === product.id){ 
+                        productHtml += generateProductHtml(product,untrackedItems[i].quantity);
+                            flag = true;
+                        break;
+                    }
                 }
-            }
-            if(flag==false){
-                productHtml += generateProductHtml(product,0);
-            }
+                if(flag==false){
+                    productHtml += generateProductHtml(product,0);
+                }
+            }catch(error){
+                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorToast.show();
+                localStorage.setItem("untrackedItems",JSON.stringify([]));
+            } 
         }
         else{
             let index1 = 0;
-            let cartEntry = JSON.parse(localStorage.getItem("cart"));
-            for (let j = 0; j < cartEntry.length; j++) {
-                if (cartEntry[j].email === email) {
-                    index1 = j;
-                    break;
+            try{
+                let cartEntry = JSON.parse(localStorage.getItem("cart"));
+                for (let j = 0; j < cartEntry.length; j++) {
+                    if (cartEntry[j].email === email) {
+                        index1 = j;
+                        break;
+                    }
                 }
-            }
-            let index2 = 0;
-            let flag = false;
-            let cart = cartEntry[index1].items;
-            for(let i=0; i < cart.length; i++) {
-                if(cart[i].id===product.id){
-                    index2 = i;
-                    flag = true;
-                    break;
+                let index2 = 0;
+                let flag = false;
+                let cart = cartEntry[index1].items;
+                for(let i=0; i < cart.length; i++) {
+                    if(cart[i].id===product.id){
+                        index2 = i;
+                        flag = true;
+                        break;
+                    }
                 }
-            }
-            if(flag){
-                productHtml += generateProductHtml(product,cartEntry[index1].items[index2].quantity);
-            }
-            else{
-                productHtml += generateProductHtml(product,0);
+                if(flag){
+                    productHtml += generateProductHtml(product,cartEntry[index1].items[index2].quantity);
+                }
+                else{
+                    productHtml += generateProductHtml(product,0);
+                } 
+            }catch(error){
+                let cart = [];
+                cart.push({"email":email,"items":[]});
+                localStorage.setItem('cart',cart);
+                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorToast.show();
             }   
         }  
     }
@@ -134,6 +152,37 @@ function populateProducts(products) {
     }
     $("#product-list")[0].innerHTML = productHtml;
     $(".page-link").click(handlePageClick);
+}
+
+function appendFilters(){
+    let filter = JSON.parse(sessionStorage.getItem("filter"));
+    let brandFilters = filter["brand"];
+    let ratingFilters = filter["rating"];
+    $("#brand-filters")[0].innerHTML = "";
+    $("#rating-filters")[0].innerHTML = "";
+    if(brandFilters.length >0){
+        let brandHtml = "";
+        for(let i = 0; i < brandFilters.length; i++){
+            let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
+            brandHtml += `<li class="m-1 bg-light rounded-1 px-1">${brand}</li>`;
+        }
+        $("#brand-filters")[0].innerHTML = brandHtml;
+        $("#brand-filter-box")[0].style.display = "block";
+    }
+    else{
+        $("#brand-filter-box")[0].style.display = "none";
+    }
+    if(ratingFilters.length > 0){
+        let ratingHtml = "";
+        for(let i = 0; i < ratingFilters.length; i++){
+            ratingHtml += `<li class="m-1 bg-light rounded-1 px-1">${ratingFilters[i]} ⭐</li>`;
+        }
+        $("#rating-filters")[0].innerHTML = ratingHtml;
+        $("#rating-filter-box")[0].style.display = "block";  
+    }
+    else{
+        $("#rating-filter-box")[0].style.display = "none";  
+    }
 }
 
 function appendBrandFilters(brandFilters,brandList) {
@@ -206,6 +255,9 @@ function handleSortBy(event){
             products = applyFilter(products);
             products = applySort(products);
             populateProducts(products);
+        }).catch(error=>{
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         });
     }
 }
@@ -241,7 +293,7 @@ function handleFilterlarge(event){
     let priceData = JSON.parse(toJson($priceForm));
     let brandFilters = Object.keys(brandList);
     let ratingFilters = Object.keys(ratingList);
-    addFilter(brandFilters,ratingFilters,priceData);  
+    addFilter(brandFilters,ratingFilters,priceData);
 }
 
 function addFilter(brandFilters,ratingFilters,priceData){
@@ -329,6 +381,10 @@ function applyFilter(products){
             }
             products = [...res];
         }
+        else{
+            $("#rating-list-form").find("input[type=checkbox").prop("checked",false);
+            $("#rating-list-form-lg").find("input[type=checkbox").prop("checked",false);
+        }
         return products;
     }
 }
@@ -364,22 +420,25 @@ function applySort(products){
 }
 
 function getRatingRange(ratingFilter){
-    if(ratingFilter === "0-1"){
-        return {min:0,max:1};
-    }
-    else if(ratingFilter === "1-2"){
-        return {min:1,max:2};
-    }
-    else if(ratingFilter === "2-3"){
-        return {min:2,max:3};
-    }
-    else if(ratingFilter === "3-4"){
-        return {min:3,max:4};
-    }
-    else {
-        return {min:4,max:5};
+    switch(ratingFilter){
+        case "0-1":{
+            return {min:0,max:1};
+        }
+        case "1-2":{
+            return {min:1,max:2};
+        }
+        case "2-3":{
+            return {min:2,max:3};
+        }
+        case "3-4":{
+            return {min:3,max:4};
+        }
+        default:{
+            return {min:4,max:5};
+        }
     }
 }
+
 function comparePricelth( a, b) {
     if ( a.price < b.price ){
       return -1;
@@ -429,7 +488,11 @@ function handleSearch(event) {
         }
         else {
             searchProducts = [...results];
-            sessionStorage.clear();
+            let filter = JSON.parse(sessionStorage.getItem('filter'));
+            filter["brand"] = [];
+            filter["rating"] = [];
+            filter["price"] = {"min":0,"max":1000000};
+            sessionStorage.setItem('filter', JSON.stringify(filter));
             populateProducts(searchProducts);
         }
     })
@@ -439,12 +502,10 @@ function handleSearch(event) {
     });
 }
 
-function goToProduct(id){
-    window.location.href = `/html/productDetails.html?id=${id}`;
-}
+function goToProduct(id){window.location.href = `/html/productDetails.html?id=${id}`;}
 
 function handlePageClick(event) {
-    let val = event.target.innerText;
+    const val = event.target.innerText;
     if (val == "Previous") {
         if (page >= 2) {
             page -= 1;
@@ -467,66 +528,77 @@ function addProduct(id,event){
         window.location.href="/html/cart.html";
         return;
     }
-    
-    let cart = JSON.parse(localStorage.getItem('cart'));
-    let email = localStorage.getItem('email');
+    const email = localStorage.getItem('email');
     if(!email){
-        let items = JSON.parse(localStorage.getItem('untrackedItems'));
-        let flag = false;
-        let index2 = 0;
-        for(let i=0; i < items.length; i++) {
-            if(items[i].id===id){
-                flag = true;
-                index2 = i;
-                break;
+        try{
+            let items = JSON.parse(localStorage.getItem('untrackedItems'));
+            let flag = false;
+            let index2 = 0;
+            for(let i=0; i < items.length; i++) {
+                if(items[i].id===id){
+                    flag = true;
+                    index2 = i;
+                    break;
+                }
             }
+            if(flag)
+            {
+                items[index2].quantity+=1;
+            }
+            else{
+                items.push({id:id,quantity:1});
+            }
+            localStorage.setItem('untrackedItems', JSON.stringify(items));
+            updateCartItemCount(email);
+            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
+            $successToast.toast("show");
+            event.target.innerText = "GO TO CART";
+        }catch(error){
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
+            localStorage.setItem('untrackedItems', JSON.stringify([]));
         }
-        if(flag)
-        {
-            items[index2].quantity+=1;
-        }
-        else{
-            items.push({id:id,quantity:1});
-        }
-        localStorage.setItem('untrackedItems', JSON.stringify(items));
-        updateCartItemCount(email);
-        $successToast.find(".toast-body")[0].innerText = "Product added to cart";
-        $successToast.toast("show");
-        event.target.innerText = "GO TO CART";
     }
     else{
-        let index1 = 0;
-        for(let i = 0; i < cart.length; i++) {
-            if(cart[i].email===email){
-                index1 = i;
-                break;
+        try{
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            let index1 = 0;
+            for(let i = 0; i < cart.length; i++) {
+                if(cart[i].email===email){
+                    index1 = i;
+                    break;
+                }
             }
-        }
-        let items = cart[index1].items;
-        let flag = false;
-        let index2 = 0;
-        for(let i=0; i < items.length; i++) {
-            if(items[i].id===id){
-                flag = true;
-                index2 = i;
-                break;
+            let items = cart[index1].items;
+            let flag = false;
+            let index2 = 0;
+            for(let i=0; i < items.length; i++) {
+                if(items[i].id===id){
+                    flag = true;
+                    index2 = i;
+                    break;
+                }
             }
+            if(flag)
+            {
+                items[index2].quantity+=1;
+            }
+            else{
+                cart[index1].items.push({id:id,quantity:1});
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartItemCount(email);
+            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
+            $successToast.toast("show");
+            event.target.innerText = "GO TO CART";
+        }catch(error){
+            let cart = [];
+            cart.push({"email":email,"items":[]});
+            localStorage.setItem('cart',cart);
+            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorToast.show();
         }
-        if(flag)
-        {
-            items[index2].quantity+=1;
-        }
-        else{
-            cart[index1].items.push({id:id,quantity:1});
-        }
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartItemCount(email);
-        $successToast.find(".toast-body")[0].innerText = "Product added to cart";
-        $successToast.toast("show");
-        event.target.innerText = "GO TO CART";
     }
 }
 
-function closeModal(event){
-    $removeItemModal.modal('toggle')
-}
+function closeModal(){$removeItemModal.modal('toggle')}
