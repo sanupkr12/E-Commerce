@@ -3,7 +3,10 @@ $removeItemModal = $("#remove-item-modal"),
 $successToast = $("#success-toast"),
 $errorToast = $("#error-toast"),
 $brandForm = $("#brand-list-form"),
-$brandFormLg = $("#brand-list-form-lg");
+$brandFormLg = $("#brand-list-form-lg"),
+$brandFilters = $("#brand-filters"),
+$ratingFilters = $("#rating-filters"),
+$filterModal = $("#filterModal");
 
 $(document).ready(init);
 
@@ -29,7 +32,7 @@ function fetchProducts() {
         populateProducts(products);
     })
     .catch((error) => {
-        $errorToast.find(".toast-body").innerText = error.message;
+        $errorToast.find(".toast-body").innerText = "Unable to fetch products :" + error.message;
         $errorToast.show();
     });
 }
@@ -152,38 +155,46 @@ function populateProducts(products) {
     }
     $("#product-list")[0].innerHTML = productHtml;
     $(".page-link").click(handlePageClick);
+    $('[data-bs-toggle="tooltip"]').tooltip({
+        trigger : 'hover'
+      });
 }
 
 function appendFilters(){
-    let filter = JSON.parse(sessionStorage.getItem("filter"));
-    let brandFilters = filter["brand"];
-    let ratingFilters = filter["rating"];
-    $("#brand-filters")[0].innerHTML = "";
-    $("#rating-filters")[0].innerHTML = "";
-    if(brandFilters.length >0){
-        let brandHtml = "";
-        for(let i = 0; i < brandFilters.length; i++){
-            let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
-            brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold brand-badges hover-pointer">${brand} ×</p>`;
+    try{
+        let filter = JSON.parse(sessionStorage.getItem("filter"));
+        let brandFilters = filter["brand"];
+        let ratingFilters = filter["rating"];
+        $brandFilters[0].innerHTML = "";
+        $ratingFilters[0].innerHTML = "";
+        if(brandFilters.length >0){
+            let brandHtml = "";
+            for(let i = 0; i < brandFilters.length; i++){
+                let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
+                brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold brand-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${brandFilters[i]}">${brand} ×</p>`;
+            }
+            $brandFilters[0].innerHTML = brandHtml;
+            $("#brand-filter-box")[0].style.display = "block";
         }
-        $("#brand-filters")[0].innerHTML = brandHtml;
-        $("#brand-filter-box")[0].style.display = "block";
-    }
-    else{
-        $("#brand-filter-box")[0].style.display = "none";
-    }
-    if(ratingFilters.length > 0){
-        let ratingHtml = "";
-        for(let i = 0; i < ratingFilters.length; i++){
-            ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer">${ratingFilters[i]} ⭐ ×</p>`;
+        else{
+            $("#brand-filter-box")[0].style.display = "none";
         }
-        $("#rating-filters")[0].innerHTML = ratingHtml;
-        $("#rating-filter-box")[0].style.display = "block";
-        $(".brand-badges").click(removeBrandFilter);
-        $(".rating-badges").click(removeRatingFilter);  
-    }
-    else{
-        $("#rating-filter-box")[0].style.display = "none";  
+        if(ratingFilters.length > 0){
+            let ratingHtml = "";
+            for(let i = 0; i < ratingFilters.length; i++){
+                ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${ratingFilters[i]} ⭐ ">${ratingFilters[i]} ⭐ ×</p>`;
+            }
+            $ratingFilters[0].innerHTML = ratingHtml;
+            $("#rating-filter-box")[0].style.display = "block";
+            $(".brand-badges").click(removeBrandFilter);
+            $(".rating-badges").click(removeRatingFilter);  
+        }
+        else{
+            $("#rating-filter-box")[0].style.display = "none";  
+        }
+    }catch(error){
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
 }
 
@@ -219,84 +230,87 @@ function appendBrandFilters(brandFilters,brandList) {
 }
 
 function removeBrandFilter(event){
-    event.stopPropagation();
     event.preventDefault();
-    let brand = $(event.target)[0].innerText;
-    brand = brand.substring(0,brand.length-2);
-    let filter = JSON.parse(sessionStorage.getItem('filter'));
-    let brandFilter = filter["brand"];
-    let newBrandFilter = [];
-    for(let i=0;i<brandFilter.length;i++){
-        if(brandFilter[i]!=brand){
-            newBrandFilter.push(brandFilter[i]);
-        }
+    let brand = $(event.target)[0].dataset.bsTitle;
+    try{
+        let filter = JSON.parse(sessionStorage.getItem('filter'));
+        filter["brand"] = filter["brand"].filter((item)=>item.toLowerCase()!=brand.toLowerCase());
+        sessionStorage.setItem("filter",JSON.stringify(filter));
+        appendFilters();
+        fetchProducts();
+        $(this).tooltip('hide');
+    }catch(error){
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
-    filter["brand"] = newBrandFilter;
-    sessionStorage.setItem("filter",JSON.stringify(filter));
-    location.reload();
 }
 
 function removeRatingFilter(event){
-    event.stopPropagation();
     event.preventDefault();
-    let rating = $(event.target)[0].innerText;
-    rating = rating.substring(0,rating.length-4);
-    let filter = JSON.parse(sessionStorage.getItem('filter'));
-    let ratingFilter = filter["rating"];
-    let newRatingFilter = [];
-    for(let i=0;i<ratingFilter.length;i++){
-        if(ratingFilter[i]!=rating){
-            newRatingFilter.push(ratingFilter[i]);
-        }
+    let rating = $(event.target)[0].dataset.bsTitle;
+    rating = rating.substring(0,rating.length-2).trim();
+    try{
+        let filter = JSON.parse(sessionStorage.getItem('filter'));
+        filter["rating"] = filter["rating"].filter((item)=>item.toLowerCase()!=rating.toLowerCase());
+        sessionStorage.setItem("filter",JSON.stringify(filter));
+        appendFilters();
+        fetchProducts();
+        $(this).tooltip('hide');
     }
-    filter["rating"] = newRatingFilter;
-    sessionStorage.setItem("filter",JSON.stringify(filter));
-    location.reload();
+    catch(error){
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
+    }
 }
 
 function handleSortBy(event){
     let sortBasis = event.target.value;
-    let filter = JSON.parse(sessionStorage.getItem('filter'));
-    switch(sortBasis){
-        case 'phtl':{  
-            filter["sort"]["phtl"] = 1;
-            filter["sort"]["rhtl"] = 0;
-            break;
+    try{
+        let filter = JSON.parse(sessionStorage.getItem('filter'));
+        switch(sortBasis){
+            case 'phtl':{  
+                filter["sort"]["phtl"] = 1;
+                filter["sort"]["rhtl"] = 0;
+                break;
+            }
+            case 'plth':{
+                filter["sort"]["phtl"] = -1;
+                filter["sort"]["rhtl"] = 0;
+                break;
+            }
+            case 'rhtl':{
+                filter["sort"]["phtl"] = 0;
+                filter["sort"]["rhtl"] = 1;
+                break;
+            }
+            default:{
+                filter["sort"]["phtl"] = 0;
+                filter["sort"]["rhtl"] = 0;
+            }
         }
-        case 'plth':{
-            filter["sort"]["phtl"] = -1;
-            filter["sort"]["rhtl"] = 0;
-            break;
+        sessionStorage.setItem("filter", JSON.stringify(filter));
+        if(searchProducts.length > 0){
+            searchProducts = applyFilter(searchProducts);
+            searchProducts = applySort(searchProducts);
+            populateProducts(searchProducts);
         }
-        case 'rhtl':{
-            filter["sort"]["phtl"] = 0;
-            filter["sort"]["rhtl"] = 1;
-            break;
+        else{
+            fetch("../assets/data/products.json")
+            .then((response) => response.json())
+            .then((json) => {
+                let products = json.products;
+                totalItem = products.length;
+                products = applyFilter(products);
+                products = applySort(products);
+                populateProducts(products);
+            }).catch(error=>{
+                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorToast.show();
+            });
         }
-        default:{
-            filter["sort"]["phtl"] = 0;
-            filter["sort"]["rhtl"] = 0;
-        }
-    }
-    sessionStorage.setItem("filter", JSON.stringify(filter));
-    if(searchProducts.length > 0){
-        searchProducts = applyFilter(searchProducts);
-        searchProducts = applySort(searchProducts);
-        populateProducts(searchProducts);
-    }
-    else{
-        fetch("../assets/data/products.json")
-        .then((response) => response.json())
-        .then((json) => {
-            let products = json.products;
-            totalItem = products.length;
-            products = applyFilter(products);
-            products = applySort(products);
-            populateProducts(products);
-        }).catch(error=>{
-            $errorToast.find(".toast-body")[0].innerText = error.message;
-            $errorToast.show();
-        });
+    }catch(error){
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
 }
 
@@ -311,7 +325,7 @@ function handleFilter(event){
     let ratingFilters = Object.keys(ratingList);
     addFilter(brandFilters, ratingFilters,priceData);
     if(searchProducts.length > 0){
-        $("#filterModal").modal('toggle');
+        $filterModal.modal('toggle');
     }
 }
 
@@ -335,29 +349,39 @@ function handleFilterlarge(event){
 }
 
 function addFilter(brandFilters,ratingFilters,priceData){
-    let filter = JSON.parse(sessionStorage.getItem("filter"));
-    if(!filter){
-       filter = {};
-    }
-    filter["brand"] = [...brandFilters];
-    filter["rating"] = [...ratingFilters];
-    let minPrice = 0;
-    let maxPrice = 100000;
-    if(priceData["min"]!="")
-    {
-        minPrice = parseInt(priceData["min"]);
-    }
-    if(priceData["max"]!="")
-    {
-        maxPrice = parseInt(priceData["max"]);
-    }
-    filter["price"] = {"min":minPrice,"max":maxPrice};
-    sessionStorage.setItem("filter",JSON.stringify(filter));
-    if(searchProducts.length > 0){
-        populateProducts(searchProducts);
-    }
-    else{
-        location.reload();
+    try{
+        let filter = JSON.parse(sessionStorage.getItem("filter"));
+        if(!filter){
+        filter = {};
+        }
+        filter["brand"] = [...brandFilters];
+        filter["rating"] = [...ratingFilters];
+        let minPrice = 0;
+        let maxPrice = 100000;
+        if(priceData["min"]!="")
+        {
+            minPrice = parseInt(priceData["min"]);
+        }
+        if(priceData["max"]!="")
+        {
+            maxPrice = parseInt(priceData["max"]);
+        }
+        filter["price"] = {"min":minPrice,"max":maxPrice};
+        sessionStorage.setItem("filter",JSON.stringify(filter));
+        if(searchProducts.length > 0){
+            populateProducts(searchProducts);
+        }
+        else{
+            location.reload();
+        }
+    }catch(error){
+        let filter = {};
+        filter["brand"] = [];
+        filter["rating"] = [];
+        filter["price"] = {"min":0,"max":1000000};
+        sessionStorage.setItem('filter', JSON.stringify(filter));
+        $errorToast.find("toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
 }
 
@@ -428,33 +452,43 @@ function applyFilter(products){
 }
 
 function applySort(products){
-    const filter = JSON.parse(sessionStorage.getItem("filter"));
-    let phtl = filter["sort"]["phtl"];
-    let rhtl = filter["sort"]["rhtl"];
-    let flag = false;
-    if(phtl!=null){
-        if(phtl == 1){
-            products.sort(comparePricehtl);
-            $("#sort-by").val("phtl");
-            flag = true;
+    try{
+        const filter = JSON.parse(sessionStorage.getItem("filter"));
+        let phtl = filter["sort"]["phtl"];
+        let rhtl = filter["sort"]["rhtl"];
+        let flag = false;
+        if(phtl!=null){
+            if(phtl == 1){
+                products.sort(comparePricehtl);
+                $("#sort-by").val("phtl");
+                flag = true;
+            }
+            else if(phtl == -1){
+                products.sort(comparePricelth);
+                $("#sort-by").val("plth");
+                flag = true;
+            }
         }
-        else if(phtl == -1){
-            products.sort(comparePricelth);
-            $("#sort-by").val("plth");
-            flag = true;
+        if(rhtl!=null){
+            if(rhtl == 1){
+                products.sort(compareRatinghtl);
+                $("#sort-by").val("rhtl");
+                flag = true;
+            }
         }
-    }
-    if(rhtl!=null){
-        if(rhtl == 1){
-            products.sort(compareRatinghtl);
-            $("#sort-by").val("rhtl");
-            flag = true;
+        if(!flag){
+            $("#sort-by").val("relevance");
         }
+        return products;
+    }catch(error){
+        let filter = {};
+        filter["brand"] = [];
+        filter["rating"] = [];
+        filter["price"] = {"min":0,"max":1000000};
+        sessionStorage.setItem('filter', JSON.stringify(filter));
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
-    if(!flag){
-        $("#sort-by").val("relevance");
-    }
-    return products;
 }
 
 function getRatingRange(ratingFilter){

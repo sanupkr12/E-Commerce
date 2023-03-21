@@ -146,8 +146,11 @@ function addProduct(event){
     let id = parseInt(url.get('id'));
     if(event.target.innerText === "GO TO CART"){
         try{
-            let cartEntry = JSON.parse(localStorage.getItem("cart"));
             const email = localStorage.getItem("email");
+            if(!email){
+                window.location.href = "/html/cart/html";
+            }
+            let cartEntry = JSON.parse(localStorage.getItem("cart"));
             let index = 0;
             for(let i=0;i<cartEntry.length;i++){
                 if(cartEntry[i].email === email){
@@ -226,6 +229,8 @@ function addProduct(event){
                 }
             }
             if(quantity<=0){
+                $errorToast.find(".toast-body")[0].innerText = "Quantity must be greater than zero";
+                $errorToast.show();
                 return;
             }
             if(flag)
