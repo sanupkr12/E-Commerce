@@ -205,6 +205,8 @@ a:hover {
 
 #rating-filters::-webkit-scrollbar{display:none;}
 
+#no-product-img{height:60vh;}
+
 @media (max-width:520px) {
     .w-input {
         width: 25%;

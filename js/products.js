@@ -164,7 +164,7 @@ function appendFilters(){
         let brandHtml = "";
         for(let i = 0; i < brandFilters.length; i++){
             let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
-            brandHtml += `<p class="mx-1 my-auto bg-secondary badge fw-bold">${brand}</p>`;
+            brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold brand-badges hover-pointer">${brand} ×</p>`;
         }
         $("#brand-filters")[0].innerHTML = brandHtml;
         $("#brand-filter-box")[0].style.display = "block";
@@ -175,10 +175,12 @@ function appendFilters(){
     if(ratingFilters.length > 0){
         let ratingHtml = "";
         for(let i = 0; i < ratingFilters.length; i++){
-            ratingHtml += `<p class="mx-1 bg-secondary my-auto badge fw-bold">${ratingFilters[i]} ⭐</p>`;
+            ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer">${ratingFilters[i]} ⭐ ×</p>`;
         }
         $("#rating-filters")[0].innerHTML = ratingHtml;
-        $("#rating-filter-box")[0].style.display = "block";  
+        $("#rating-filter-box")[0].style.display = "block";
+        $(".brand-badges").click(removeBrandFilter);
+        $(".rating-badges").click(removeRatingFilter);  
     }
     else{
         $("#rating-filter-box")[0].style.display = "none";  
@@ -214,6 +216,42 @@ function appendBrandFilters(brandFilters,brandList) {
             $brandFormLg.append(addBrand(brand,false));
         }
     } 
+}
+
+function removeBrandFilter(event){
+    event.stopPropagation();
+    event.preventDefault();
+    let brand = $(event.target)[0].innerText;
+    brand = brand.substring(0,brand.length-2);
+    let filter = JSON.parse(sessionStorage.getItem('filter'));
+    let brandFilter = filter["brand"];
+    let newBrandFilter = [];
+    for(let i=0;i<brandFilter.length;i++){
+        if(brandFilter[i]!=brand){
+            newBrandFilter.push(brandFilter[i]);
+        }
+    }
+    filter["brand"] = newBrandFilter;
+    sessionStorage.setItem("filter",JSON.stringify(filter));
+    location.reload();
+}
+
+function removeRatingFilter(event){
+    event.stopPropagation();
+    event.preventDefault();
+    let rating = $(event.target)[0].innerText;
+    rating = rating.substring(0,rating.length-4);
+    let filter = JSON.parse(sessionStorage.getItem('filter'));
+    let ratingFilter = filter["rating"];
+    let newRatingFilter = [];
+    for(let i=0;i<ratingFilter.length;i++){
+        if(ratingFilter[i]!=rating){
+            newRatingFilter.push(ratingFilter[i]);
+        }
+    }
+    filter["rating"] = newRatingFilter;
+    sessionStorage.setItem("filter",JSON.stringify(filter));
+    location.reload();
 }
 
 function handleSortBy(event){
@@ -483,19 +521,21 @@ function handleSearch(event) {
                 results.push(products[i]);
             }
         }
+        let filter = JSON.parse(sessionStorage.getItem('filter'));
+        filter["brand"] = [];
+        filter["rating"] = [];
+        filter["price"] = {"min":0,"max":1000000};
+        sessionStorage.setItem('filter', JSON.stringify(filter));
+        appendFilters();
         if (results.length === 0) {
-            alert("No products to show");
-            // Add image instead of showing alert message
+            $("#product-list")[0].innerHTML = `<img src="/assets/images/no-products.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
+            return;
         }
         else {
             searchProducts = [...results];
-            let filter = JSON.parse(sessionStorage.getItem('filter'));
-            filter["brand"] = [];
-            filter["rating"] = [];
-            filter["price"] = {"min":0,"max":1000000};
-            sessionStorage.setItem('filter', JSON.stringify(filter));
             populateProducts(searchProducts);
         }
+        
     })
     .catch((error) => {
         $errorToast.find(".toast-body").innerText = error.message;

@@ -171,7 +171,7 @@ function uploadOrder(){
     }catch(error){
         let cart = [];
         cart.push({"email":email,"items":[]});
-        localStorage.setItem('cart',cart);
+        localStorage.setItem('cart',JSON.stringify(cart));
         $errorToast.find(".toast-body")[0].innerText = error.message;
         $errorToast.show();
     }   
