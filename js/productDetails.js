@@ -92,7 +92,7 @@ function showProductDetails(id) {
             }
         }
         $("#product-title")[0].innerText = product.title;
-        $("#product-price")[0].innerHTML = `<p class="fs-5 fw-normal">₹${product.price.toLocaleString('en-IN')} <span class="ms-2 opacity-75 p-1 bg-secondary text-white rounded-1 fs-6"> ${product.rating} ⭐</span></p>`;
+        $("#product-price")[0].innerHTML = `<p class="fs-5 fw-normal">₹${product.price.toLocaleString('en-IN')} <span class="ms-2 opacity-75 p-1 bg-secondary text-white rounded-1 fs-6"> ${product.rating} <i class="fa fa-solid fa-star text-warning"></i></span></p>`;
         $("#product-description")[0].innerText = product.description;
         $("#product-brand")[0].innerText = product.brand;
         const images = product.images;
@@ -125,7 +125,7 @@ function showProductDetails(id) {
                     <input type="number" value="0" min="0" id="input-quantity"
                         class="form-control d-inline num-input text-center mx-1">
                     <button class="btn btn-warning" id="increase-quantity">+</button>
-                    <button class="d-block btn btn-secondary mt-3 ms-3 mb-3 addToCart px-3">GO TO CART</button>`;
+                    <a class="d-block btn btn-secondary mt-3 ms-3 mb-3 px-3" href="../html/cart.html">GO TO CART</a>`;
                     flag = true;
                     quantity = cart[i].quantity;
                     break;
@@ -193,6 +193,7 @@ function addProduct(event){
     $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
     let title = $("#product-title")[0].innerText;
     $("#decrease-quantity").click((event)=>{decreaseQuantity(id,title,event)});
+    updateCartItemCount(email);
     $successBody[0].innerText = "Item added successfully";
     $successToast.show();
     setTimeout(()=>{$successToast.hide()},3000);

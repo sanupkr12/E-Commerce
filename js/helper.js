@@ -39,7 +39,7 @@ function generateProductHtml(product,quantity){
     <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
         <div class="card-header card-header-text position-relative p-0 hover-pointer" onclick="goToProduct(${product.id})">
         <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-        <span class="card-rating-box text-white position-absolute">${product.rating} ⭐</span>
+        <span class="card-rating-box text-white position-absolute">${product.rating} <i class="fa fa-solid fa-star text-warning"></i></span>
         </div>
         <div class="card-body">
             <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>

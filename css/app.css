@@ -139,7 +139,7 @@ a:hover {
 #filter-btn {width: fit-content;}
 
 #success-toast {
-    background-color: #82CD47;
+    background-color: var(--bs-teal);
     width: fit-content;
     position: absolute;
     z-index: 1001;
@@ -212,6 +212,17 @@ a:hover {
     #checkout-btn{
         width: auto;
         margin: auto;
+    }
+}
+
+@media (min-width:767px){
+    #bill-details{
+        position: sticky;
+        top: 6rem;
+    }
+
+    #filterModal,.modal-backdrop{
+        display:none !important;
     }
 }
 

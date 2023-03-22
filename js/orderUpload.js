@@ -165,7 +165,7 @@ function uploadOrder(){
         }
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartItemCount(email);
-        $successToast.find(".toast-body")[0].innerText = "Order placed successfully";
+        $successToast.find(".toast-body")[0].innerText = "Item added to cart successfully";
         $successToast.show();
         setTimeout(()=>{$successToast.hide()},3000);
         $orderList.hide();

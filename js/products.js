@@ -5,7 +5,7 @@ $successBody = $successToast.find(".toast-body"),
 $errorToast = $("#error-toast"),
 $errorBody = $errorToast.find(".toast-body"),
 $brandForm = $("#brand-list-form"),
-$brandFormLg = $("#brand-list-form-lg")
+$brandFormLg = $("#brand-list-form-lg"),
 $ratingForm = $("#rating-list-form"),
 $ratingFormLg = $("#rating-list-form-lg"),
 $brandFilters = $("#brand-filters"),
@@ -204,7 +204,7 @@ function appendFilters(){
         if(ratingFilters.length > 0){
             let ratingHtml = "";
             for(let i = 0; i < ratingFilters.length; i++){
-                ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${ratingFilters[i]} ⭐ ">${ratingFilters[i]} ⭐ ×</p>`;
+                ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${ratingFilters[i]}">${ratingFilters[i]} <i class=" text-warning fa-solid fa-star"></i> ×</p>`;
             }
             $ratingFilters[0].innerHTML = ratingHtml;
             $ratingFilterBox[0].style.display = "block";
@@ -270,7 +270,6 @@ function removeBrandFilter(event){
 function removeRatingFilter(event){
     event.preventDefault();
     let rating = $(event.target)[0].dataset.bsTitle;
-    rating = rating.substring(0,rating.length-2).trim();
     try{
         let filter = JSON.parse(sessionStorage.getItem('filter'));
         filter["rating"] = filter["rating"].filter((item)=>item.toLowerCase()!=rating.toLowerCase());

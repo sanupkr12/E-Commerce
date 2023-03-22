@@ -44,7 +44,7 @@ function manageCart(){
                 }
                 if (!results.length) {
                     $("#cart-div")[0].style.display = "none";
-                    $emptyCartImage[0].src = "./assets/images/empty-cart.png";
+                    $emptyCartImage[0].src = "../assets/images/empty-cart.png";
                     $("#bill-details")[0].style.display = "none";
                     $checkoutButton[0].style.display = "none";
                     return;
@@ -147,6 +147,7 @@ function updateCartQuantity(event){
     let newSubtotal = parseInt(price) * quantity;
     $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
     updateCart(id,quantity);
+    manageCart();
 }
 
 function downloadOrder(event){
@@ -383,7 +384,7 @@ function increaseQuantityOnCart(id,price,event){
             let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
             let cart = untrackedItems;
             for(let i=0; i < cart.length; i++) {
-                if(cart[i].id===id){
+                if(cart[i].id==id){
                     index2 = i;
                     break;
                 }
