@@ -154,10 +154,25 @@ function populateProducts(products) {
                 </nav>`;
     }
     $("#product-list")[0].innerHTML = productHtml;
+    $(".w-input-product-card").change(updateProductQuantity);
     $(".page-link").click(handlePageClick);
     $('[data-bs-toggle="tooltip"]').tooltip({
         trigger : 'hover'
       });
+}
+
+function updateProductQuantity(event){
+    let id = event.target.id.split("-")[1];
+    let quantity = parseInt(event.target.value);
+    if(quantity<=0){
+        $errorToast.find(".toast-body")[0].innerText = "quantity must be greater than zero";
+        $errorToast.show();
+        return;
+    }
+    updateCart(id,quantity);
+    $successToast.find(".toast-body")[0].innerText = "Quantity updated successfully";
+    $successToast.show();
+    setTimeout(()=>{$successToast.hide();},3000);
 }
 
 function appendFilters(){
@@ -346,6 +361,7 @@ function handleFilterlarge(event){
     let brandFilters = Object.keys(brandList);
     let ratingFilters = Object.keys(ratingList);
     addFilter(brandFilters,ratingFilters,priceData);
+    $("#offcanvasExample").offcanvas("toggle");
 }
 
 function addFilter(brandFilters,ratingFilters,priceData){
@@ -372,7 +388,8 @@ function addFilter(brandFilters,ratingFilters,priceData){
             populateProducts(searchProducts);
         }
         else{
-            location.reload();
+            appendFilters();
+            fetchProducts();
         }
     }catch(error){
         let filter = {};
@@ -438,6 +455,7 @@ function applyFilter(products){
                 }
             }
             for(let i=0;i<ratingFilters.length;i++){
+                ratingFilters[i] = ratingFilters[i].substring(0, ratingFilters[i].length-1);
                 $(`#rating-${ratingFilters[i]}`).prop("checked",true);
                 $(`#rating-${ratingFilters[i]}-lg`).prop("checked",true);
             }
@@ -493,20 +511,20 @@ function applySort(products){
 
 function getRatingRange(ratingFilter){
     switch(ratingFilter){
-        case "0-1":{
-            return {min:0,max:1};
+        case "1+":{
+            return {min:1,max:5};
         }
-        case "1-2":{
-            return {min:1,max:2};
+        case "2+":{
+            return {min:2,max:5};
         }
-        case "2-3":{
-            return {min:2,max:3};
+        case "3+":{
+            return {min:3,max:5};
         }
-        case "3-4":{
-            return {min:3,max:4};
+        case "4+":{
+            return {min:4,max:5};
         }
         default:{
-            return {min:4,max:5};
+            return {min:0,max:5};
         }
     }
 }
@@ -562,7 +580,7 @@ function handleSearch(event) {
         sessionStorage.setItem('filter', JSON.stringify(filter));
         appendFilters();
         if (results.length === 0) {
-            $("#product-list")[0].innerHTML = `<img src="/assets/images/no-products.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
+            $("#product-list")[0].innerHTML = `<img src="../assets/images/noProducts.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
             return;
         }
         else {

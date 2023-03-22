@@ -57,11 +57,11 @@ function init() {
     .then(data => {
         $("footer")[0].innerHTML = data;
         let date = new Date();
-        $("#footer-text")[0].innerText = "Copyright @Increff 2023, " + String(date).substr(0, 25);
+        $("#footer-text")[0].innerText = "Copyright Increff 2023, " + String(date).substr(0, 25);
         setInterval(() => {
             let date = new Date();
-            $("#footer-text")[0].innerText = "Copyright @Increff 2023, " + String(date).substr(0, 25);
-        }, 5000);   
+            $("#footer-text")[0].innerText = "Copyright Increff 2023, " + String(date).substr(0, 25);
+        }, 1000);   
     });   
 }
 
@@ -149,7 +149,21 @@ function updateCartItemCount(email){
                         results.push({id:cart[i].id,quantity:cart[i].quantity});
                     }
                 }
-                untrackedItems = results;
+                let uniqueItems = [];
+                for(let i=0;i<results.length;i++){
+                    let flag = false;
+                    for(let j=0;j<uniqueItems.length;j++){
+                        if(uniqueItems[j].id == results[i].id){
+                            uniqueItems[j].quantity += results[i].quantity;
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if(flag===false){
+                        uniqueItems.push(results[i]);
+                    }
+                }
+                untrackedItems = [...uniqueItems];
                 localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
                 $("#cart-text")[0].innerText = results.length;
             })
@@ -196,7 +210,21 @@ function updateCartItemCount(email){
                         results.push({id:cart[i].id,quantity:cart[i].quantity});
                     }
                 }
-                cartEntry[index].items = results;
+                let uniqueItems = [];
+                for(let i=0;i<results.length;i++){
+                    let flag = false;
+                    for(let j=0;j<uniqueItems.length;j++){
+                        if(uniqueItems[j].id == results[i].id){
+                            uniqueItems[j].quantity += results[i].quantity;
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if(flag===false){
+                        uniqueItems.push(results[i]);
+                    }
+                }
+                cartEntry[index].items = [...uniqueItems];
                 localStorage.setItem("cart", JSON.stringify(cartEntry));
                 $("#cart-text")[0].innerText = results.length;
             })
@@ -664,10 +692,10 @@ function updateCart(id,quantity){
                 }
             }
             if(flag === false){
-                cart.push({id,quantity});
+                cart.push({"id":parseInt(id),quantity});
             }
             else{
-                cart[index2] = {id,quantity};
+                cart[index2] = {"id":parseInt(id),quantity};
             }
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
         }catch(error){
@@ -690,18 +718,17 @@ function updateCart(id,quantity){
             let flag = false;
             let cart = cartEntry[index1].items;
             for(let i=0; i < cart.length; i++) {
-                if(cart[i].id===id){
+                if(cart[i].id==id){
                     index2 = i;
                     flag = true;
                     break;
                 }
             }
             if(flag === false){
-                cart.push({id,quantity});
-                return;
+                cart.push({"id":parseInt(id),quantity});
             }
             else{
-                cart[index2] = {id,quantity};
+                cart[index2] = {"id":parseInt(id),quantity};
             }
             localStorage.setItem("cart", JSON.stringify(cartEntry));
         }catch(error){
@@ -712,6 +739,7 @@ function updateCart(id,quantity){
             $errorToast.show();
         }
     }
+    
     updateCartItemCount(email);
 }
 

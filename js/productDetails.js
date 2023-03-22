@@ -87,7 +87,7 @@ function showProductDetails(id) {
             }
         }
         $("#product-title")[0].innerText = product.title;
-        $("#product-price")[0].innerText = "₹ " + product.price;
+        $("#product-price")[0].innerHTML = `<p class="fs-5 fw-normal">₹${product.price.toLocaleString('en-IN')} <span class="ms-2 opacity-75 p-1 bg-secondary text-white rounded-1 fs-6"> ${product.rating} ⭐</span></p>`;
         $("#product-description")[0].innerText = product.description;
         $("#product-brand")[0].innerText = product.brand;
         const images = product.images;

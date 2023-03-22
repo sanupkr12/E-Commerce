@@ -29,7 +29,7 @@
                         </button>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <form id="search-form" class="my-3">
+                        <form id="search-form" class="my-3 ms-1">
                             <div class="input-group" id="search-box">
                                 <input type="text" required="true" class="form-control font-control-sm shadow-none p-2"
                                     id="search-input" placeholder="Search...">
@@ -103,33 +103,27 @@
                     <p><strong>Rating:</strong></p>
                     <form id="rating-list-form">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="0-1" id="rating-0-1">
-                            <label class="form-check-label" for="rating-0-1">
-                                0 to 1 ⭐
+                            <input class="form-check-input" type="checkbox" name="1+" id="rating-1">
+                            <label class="form-check-label" for="rating-1">
+                                1+ 
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="1-2" id="rating-1-2">
-                            <label class="form-check-label" for="rating-1-2">
-                                1 to 2 ⭐
+                            <input class="form-check-input" type="checkbox" name="2+" id="rating-2">
+                            <label class="form-check-label" for="rating-2">
+                                2+ 
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="2-3" id="rating-2-3">
-                            <label class="form-check-label" for="rating-2-3">
-                                2 to 3 ⭐
+                            <input class="form-check-input" type="checkbox" name="3+" id="rating-3">
+                            <label class="form-check-label" for="rating-3">
+                                3+ 
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="3-4" id="rating-3-4">
-                            <label class="form-check-label" for="rating-3-4">
-                                3 to 4 ⭐
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="4-5" id="rating-4-5">
-                            <label class="form-check-label" for="rating-4-5">
-                                4 to 5 ⭐
+                            <input class="form-check-input" type="checkbox" name="4+" id="rating-4">
+                            <label class="form-check-label" for="rating-4">
+                                4+ 
                             </label>
                         </div>
                     </form>
@@ -150,7 +144,7 @@
             </div>
         </div>
     </div>
-    <div class="toast text-white bg-success px-3 py-1" id="success-toast">
+    <div class="toast text-white bg-success px-3 py-1" id="success-toast" data-bs-autohide="true">
         <div class="toast-body p-1">
         </div>
     </div>
@@ -172,9 +166,7 @@
             </div>
             <div id="filter-box">
                 <div class="my-2 d-flex justify-content-between">
-                    <button type="button" class="btn btn-sm btn-warning mr-auto px-2" id="reset-filter-lg"
-                        data-bs-title="Reset filter" data-bs-toggle="tooltip" data-bs-placement="bottom"><i
-                            class="fa-sharp fa-solid fa-rotate-right"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-danger mr-auto border-0" id="reset-filter-lg">Clear All</button>
                     <button type="button" class="btn btn-sm btn-primary my-1" id="apply-filter-lg">Apply</button>
                 </div>
                 <p class="border-top pt-1"><strong>Price:</strong></p>
@@ -197,38 +189,32 @@
                 <p class="border-top"><strong>Rating:</strong></p>
                 <form id="rating-list-form-lg">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="0-1" id="rating-0-1-lg">
-                        <label class="form-check-label" for="rating-0-1">
-                            0 to 1 ⭐
+                        <input class="form-check-input" type="checkbox" name="1+" id="rating-1-lg">
+                        <label class="form-check-label" for="rating-1-lg">
+                            1+ 
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="1-2" id="rating-1-2-lg">
-                        <label class="form-check-label" for="rating-1-2">
-                            1 to 2 ⭐
+                        <input class="form-check-input" type="checkbox" name="2+" id="rating-2-lg">
+                        <label class="form-check-label" for="rating-2-lg">
+                            2+
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="2-3" id="rating-2-3-lg">
-                        <label class="form-check-label" for="rating-2-3-lg">
-                            2 to 3 ⭐
+                        <input class="form-check-input" type="checkbox" name="3+" id="rating-3-lg">
+                        <label class="form-check-label" for="rating-3-lg">
+                            3+ 
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="3-4" id="rating-3-4-lg">
-                        <label class="form-check-label" for="rating-3-4-lg">
-                            3 to 4 ⭐
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="4-5" id="rating-4-5-lg">
-                        <label class="form-check-label" for="rating-4-5-lg">
-                            4 to 5 ⭐
+                        <input class="form-check-input" type="checkbox" name="4+" id="rating-4-lg">
+                        <label class="form-check-label" for="rating-4-lg">
+                            4+ 
                         </label>
                     </div>
                 </form>
                 <p class="border-top"><strong>Brand:</strong></p>
-                <form id="brand-list-form-lg" class="overflow-scroll px-1">
+                <form id="brand-list-form-lg" class="px-1">
 
                 </form>
             </div>

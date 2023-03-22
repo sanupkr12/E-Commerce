@@ -131,6 +131,7 @@ a:hover {
 }
 
 #error-toast {
+    z-index:2000;
     width: fit-content;
     position: absolute;
     top: 5rem;

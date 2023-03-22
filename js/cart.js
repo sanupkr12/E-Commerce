@@ -1,8 +1,6 @@
 const $clearCartModal = $("#clear-cart-modal"),
 $removeItemModal = $("#remove-item-modal"),
-$errorToast = $("#error-toast"),
-$totalBill = $("$total-bill"),
-$totalCost = $("#total-cost");
+$errorToast = $("#error-toast");
 
 $(document).ready(init);
 
@@ -50,8 +48,8 @@ function manageCart(){
                     price += results[i].product.price * results[i].quantity;
                 }
                 $("#empty-cart-box")[0].style.display = "none";
-                $totalBill[0].innerText = price;
-                $totalCost[0].innerText = parseInt(price + 100);
+                $("#total-bill")[0].innerText = price.toLocaleString('en-IN');
+                $("#total-cost")[0].innerText = parseInt(price + 100).toLocaleString('en-IN');
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
                 $('#checkout-btn').click(downloadOrder);
@@ -106,10 +104,11 @@ function manageCart(){
                     price += results[i].product.price * results[i].quantity;
                 }
                 $("#empty-cart-box")[0].style.display = "none";
-                $totalBill[0].innerText = price;
-                $totalCost[0].innerText = parseInt(price + 100);
+                $("#total-bill")[0].innerText = price.toLocaleString('en-IN');
+                $("#total-cost")[0].innerText = parseInt(price + 100).toLocaleString('en-IN');
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
+                $(".cart-input").change(updateCartQuantity);
                 $('#checkout-btn').click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -126,6 +125,20 @@ function manageCart(){
             $errorToast.show();
         }   
     }
+}
+
+function updateCartQuantity(event){
+    let id = event.target.id.split("-")[1];
+    let quantity = parseInt(event.target.value);
+    if(quantity<=0){
+        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorToast.show();
+        return;
+    }
+    let price = $(event.target).closest(".card").find(".product-price")[0].dataset.price;
+    let newSubtotal = parseInt(price) * quantity;
+    $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
+    updateCart(id,quantity);
 }
 
 function downloadOrder(event){
@@ -225,8 +238,8 @@ function removeFromCart(){
                     break;
                 }
             }
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
             cart = cart.filter(item => item.id!== id);
             localStorage.setItem('untrackedItems', JSON.stringify(cart));
             updateCartItemCount(email);
@@ -255,8 +268,8 @@ function removeFromCart(){
                     break;
                 }
             }
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
             cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
             localStorage.setItem('cart', JSON.stringify(cartEntry));
             updateCartItemCount(email);
@@ -296,9 +309,9 @@ function decreaseQuantityOnCart(id,price,event){
                 $removeItemModal.modal('toggle');
                 return;
             }
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill.text(orgPrice - parseInt(price));
-            $totalCost.text(orgPrice - parseInt(price) + 100);
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice - parseInt(price));
+            $("#total-cost").text(orgPrice - parseInt(price) + 100);
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
@@ -334,9 +347,9 @@ function decreaseQuantityOnCart(id,price,event){
                 $removeItemModal.modal('toggle');
                 return;
             }
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill[0].innerText = (orgPrice - parseInt(price));
-            $totalCost.text(orgPrice - parseInt(price) + 100);
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
+            $("#total-cost").text(orgPrice - parseInt(price) + 100);
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
@@ -364,9 +377,9 @@ function increaseQuantityOnCart(id,price,event){
                 }
             }
             cart[index2].quantity+=1;
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill.text(orgPrice + parseInt(price));
-            $totalCost.text(orgPrice + parseInt(price) + 100);
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice + parseInt(price));
+            $("#total-cost").text(orgPrice + parseInt(price) + 100);
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
@@ -394,9 +407,9 @@ function increaseQuantityOnCart(id,price,event){
                 }
             }
             cart[index2].quantity+=1;
-            let orgPrice = parseInt($totalBill[0].innerText);
-            $totalBill.text(orgPrice + parseInt(price));
-            $totalCost.text(orgPrice + parseInt(price) + 100);
+            let orgPrice = parseInt($("#total-bill")[0].innerText);
+            $("#total-bill").text(orgPrice + parseInt(price));
+            $("#total-cost").text(orgPrice + parseInt(price) + 100);
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
