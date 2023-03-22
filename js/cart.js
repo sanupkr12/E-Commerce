@@ -59,6 +59,7 @@ function manageCart(){
                 $totalCost[0].innerText = parseInt(price + 100);
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
+                $(".cart-input").keyup(updateCartQuantity);
                 $checkoutButton.click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -115,7 +116,7 @@ function manageCart(){
                 $totalCost[0].innerText = parseInt(price + 100);
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
-                $(".cart-input").change(updateCartQuantity);
+                $(".cart-input").keyup(updateCartQuantity);
                 $checkoutButton.click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));

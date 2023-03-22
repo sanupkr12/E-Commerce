@@ -114,7 +114,7 @@ function readFileDataCallback(results){
         }
         $orderList.find("tbody")[0].innerHTML = "";
         for(let i=0;i<validOrderItems.length;i++){
-            $orderList.find("tbody").append(`<tr class="bg-white"><td>${validOrderItems[i].sku_id}</td><td><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank" class="text-decoration-underline text-primary">${validOrderItems[i].title}</a></td><td>${validOrderItems[i].quantity}</td></tr>`)
+            $orderList.find("tbody").append(`<tr class="bg-white"><td>${validOrderItems[i].sku_id}</td><td><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank">${validOrderItems[i].title}</a></td><td>${validOrderItems[i].quantity}</td></tr>`)
         }
         $orderFile.val(null);
     }).catch(error=>{

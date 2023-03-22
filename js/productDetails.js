@@ -66,6 +66,9 @@ function handleInputQuantityChange(event){
     }
     else{
         updateCart(id,quantity);
+        $successBody[0].innerText = "Quantity successfully updated";
+        $successToast.show();
+        setTimeout(()=>{$successToast.hide()},3000);
     }
 }
 
@@ -118,7 +121,6 @@ function showProductDetails(id) {
             let cart = JSON.parse(localStorage.getItem("untrackedItems"));
             for (let i = 0; i < cart.length; i++) {
                 if (cart[i].id == id) {
-                    
                     $("#btn-group")[0].innerHTML = `<button class="btn btn-warning" id="decrease-quantity">-</button>
                     <input type="number" value="0" min="0" id="input-quantity"
                         class="form-control d-inline num-input text-center mx-1">
@@ -147,6 +149,7 @@ function showProductDetails(id) {
         }
         if(flag) {
             $("#input-quantity").val(quantity);
+            $("#input-quantity").keyup(handleInputQuantityChange);
             $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
             $("#decrease-quantity").click((event)=>{decreaseQuantity(id,product.title,event)});
         }
@@ -186,6 +189,7 @@ function addProduct(event){
     <a class="d-block btn btn-secondary mt-3 ms-3 mb-3 px-3" href="../html/cart.html">GO TO CART</a>`;
 
     $("#input-quantity").val(1);
+    $("#input-quantity").keyup(handleInputQuantityChange);
     $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
     let title = $("#product-title")[0].innerText;
     $("#decrease-quantity").click((event)=>{decreaseQuantity(id,title,event)});

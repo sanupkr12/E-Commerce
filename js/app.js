@@ -361,6 +361,9 @@ function increaseQuantity(id,event) {
             }
             cart[index2].quantity+=1;
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+            $successBody[0].innerText = "Updated successfully";
+            $successToast.show();
+            setTimeout(()=>{$successToast.hide();},3000);
         }catch(error){
             localStorage.setItem("untrackedItems", JSON.stringify([]));
             $errorToast.find(".toast-body")[0].innerText = error.message;
@@ -387,6 +390,9 @@ function increaseQuantity(id,event) {
             }
             cart[index2].quantity+=1;
             localStorage.setItem("cart", JSON.stringify(cartEntry));
+            $successBody[0].innerText = "Updated successfully";
+            $successToast.show();
+            setTimeout(()=>{$successToast.hide();},3000);
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
@@ -425,6 +431,9 @@ function decreaseQuantity(id,title,event) {
             }
             $("#input-quantity")[0].value = quantity - 1;
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
+            $successBody[0].innerText = "Updated successfully";
+            $successToast.show();
+            setTimeout(()=>{$successToast.hide();},3000);
         }catch(error){
             localStorage.setItem("untrackedItems", JSON.stringify([]));
             $errorToast.find(".toast-body")[0].innerText = error.message;
@@ -458,6 +467,9 @@ function decreaseQuantity(id,title,event) {
             }
             $("#input-quantity")[0].value = quantity - 1;
             localStorage.setItem("cart", JSON.stringify(cartEntry));
+            $successBody[0].innerText = "Updated successfully";
+            $successToast.show();
+            setTimeout(()=>{$successToast.hide();},3000);
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
