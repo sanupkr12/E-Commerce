@@ -1,12 +1,19 @@
 const $searchForm = $("#search-form"),
 $removeItemModal = $("#remove-item-modal"),
 $successToast = $("#success-toast"),
+$successBody = $successToast.find(".toast-body"),
 $errorToast = $("#error-toast"),
+$errorBody = $errorToast.find(".toast-body"),
 $brandForm = $("#brand-list-form"),
-$brandFormLg = $("#brand-list-form-lg"),
+$brandFormLg = $("#brand-list-form-lg")
+$ratingForm = $("#rating-list-form"),
+$ratingFormLg = $("#rating-list-form-lg"),
 $brandFilters = $("#brand-filters"),
 $ratingFilters = $("#rating-filters"),
-$filterModal = $("#filterModal");
+$filterModal = $("#filterModal"),
+$productList = $("#product-list"),
+$brandFilterBox = $("#brand-filter-box"),
+$ratingFilterBox = $("#rating-filter-box");
 
 $(document).ready(init);
 
@@ -25,14 +32,14 @@ function init(){
 
 function fetchProducts() {
     fetch("../assets/data/products.json")
-    .then((response) => response.json())
+    .then(response => response.json())
     .then((json) => {
         const products = json.products;
         totalItem = products.length;
         populateProducts(products);
     })
     .catch((error) => {
-        $errorToast.find(".toast-body").innerText = "Unable to fetch products :" + error.message;
+        $errorBody[0].innerText = "Unable to fetch products :" + error.message;
         $errorToast.show();
     });
 }
@@ -70,7 +77,7 @@ function populateProducts(products) {
             $brandFormLg[0].innerHTML = "";
             appendBrandFilters(filter["brand"],brandList); 
         }).catch(error=>{
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         })
     }
@@ -96,7 +103,7 @@ function populateProducts(products) {
                     productHtml += generateProductHtml(product,0);
                 }
             }catch(error){
-                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorBody[0].innerText = error.message;
                 $errorToast.show();
                 localStorage.setItem("untrackedItems",JSON.stringify([]));
             } 
@@ -131,7 +138,7 @@ function populateProducts(products) {
                 let cart = [];
                 cart.push({"email":email,"items":[]});
                 localStorage.setItem('cart',JSON.stringify(cart));
-                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorBody[0].innerText = error.message;
                 $errorToast.show();
             }   
         }  
@@ -153,8 +160,8 @@ function populateProducts(products) {
                 </ul>
                 </nav>`;
     }
-    $("#product-list")[0].innerHTML = productHtml;
-    $(".w-input-product-card").change(updateProductQuantity);
+    $productList[0].innerHTML = productHtml;
+    $(".w-input-product-card").keyup(updateProductQuantity);
     $(".page-link").click(handlePageClick);
     $('[data-bs-toggle="tooltip"]').tooltip({
         trigger : 'hover'
@@ -165,12 +172,12 @@ function updateProductQuantity(event){
     let id = event.target.id.split("-")[1];
     let quantity = parseInt(event.target.value);
     if(quantity<=0){
-        $errorToast.find(".toast-body")[0].innerText = "quantity must be greater than zero";
+        $errorBody[0].innerText = "quantity must be greater than zero";
         $errorToast.show();
         return;
     }
     updateCart(id,quantity);
-    $successToast.find(".toast-body")[0].innerText = "Quantity updated successfully";
+    $successBody[0].innerText = "Quantity updated successfully";
     $successToast.show();
     setTimeout(()=>{$successToast.hide();},3000);
 }
@@ -189,10 +196,10 @@ function appendFilters(){
                 brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold brand-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${brandFilters[i]}">${brand} ×</p>`;
             }
             $brandFilters[0].innerHTML = brandHtml;
-            $("#brand-filter-box")[0].style.display = "block";
+            $brandFilterBox[0].style.display = "block";
         }
         else{
-            $("#brand-filter-box")[0].style.display = "none";
+            $brandFilterBox[0].style.display = "none";
         }
         if(ratingFilters.length > 0){
             let ratingHtml = "";
@@ -200,15 +207,15 @@ function appendFilters(){
                 ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${ratingFilters[i]} ⭐ ">${ratingFilters[i]} ⭐ ×</p>`;
             }
             $ratingFilters[0].innerHTML = ratingHtml;
-            $("#rating-filter-box")[0].style.display = "block";
+            $ratingFilterBox[0].style.display = "block";
             $(".brand-badges").click(removeBrandFilter);
             $(".rating-badges").click(removeRatingFilter);  
         }
         else{
-            $("#rating-filter-box")[0].style.display = "none";  
+            $ratingFilterBox[0].style.display = "none";  
         }
     }catch(error){
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -255,7 +262,7 @@ function removeBrandFilter(event){
         fetchProducts();
         $(this).tooltip('hide');
     }catch(error){
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -273,7 +280,7 @@ function removeRatingFilter(event){
         $(this).tooltip('hide');
     }
     catch(error){
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -319,12 +326,12 @@ function handleSortBy(event){
                 products = applySort(products);
                 populateProducts(products);
             }).catch(error=>{
-                $errorToast.find(".toast-body")[0].innerText = error.message;
+                $errorBody[0].innerText = error.message;
                 $errorToast.show();
             });
         }
     }catch(error){
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -332,16 +339,13 @@ function handleSortBy(event){
 function handleFilter(event){
     event.preventDefault();
     let brandList = JSON.parse(toJson($brandForm));
-    let $ratingForm = $("#rating-list-form");
     let ratingList = JSON.parse(toJson($ratingForm));
     let $priceForm = $("#price-form");
     let priceData = JSON.parse(toJson($priceForm));
     let brandFilters = Object.keys(brandList);
     let ratingFilters = Object.keys(ratingList);
     addFilter(brandFilters, ratingFilters,priceData);
-    if(searchProducts.length > 0){
-        $filterModal.modal('toggle');
-    }
+    $filterModal.modal('toggle');
 }
 
 function resetFilter(event){
@@ -354,8 +358,7 @@ function resetFilter(event){
 function handleFilterlarge(event){
     event.preventDefault();
     let brandList = JSON.parse(toJson($brandFormLg));
-    let $ratingForm = $("#rating-list-form-lg");
-    let ratingList = JSON.parse(toJson($ratingForm));
+    let ratingList = JSON.parse(toJson($ratingFormLg));
     let $priceForm = $("#price-form-lg");
     let priceData = JSON.parse(toJson($priceForm));
     let brandFilters = Object.keys(brandList);
@@ -462,8 +465,8 @@ function applyFilter(products){
             products = [...res];
         }
         else{
-            $("#rating-list-form").find("input[type=checkbox").prop("checked",false);
-            $("#rating-list-form-lg").find("input[type=checkbox").prop("checked",false);
+            $ratingForm.find("input[type=checkbox").prop("checked",false);
+            $ratingFormLg.find("input[type=checkbox").prop("checked",false);
         }
         return products;
     }
@@ -504,7 +507,7 @@ function applySort(products){
         filter["rating"] = [];
         filter["price"] = {"min":0,"max":1000000};
         sessionStorage.setItem('filter', JSON.stringify(filter));
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -580,7 +583,7 @@ function handleSearch(event) {
         sessionStorage.setItem('filter', JSON.stringify(filter));
         appendFilters();
         if (results.length === 0) {
-            $("#product-list")[0].innerHTML = `<img src="../assets/images/noProducts.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
+            $productList[0].innerHTML = `<img src="../assets/images/noProducts.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
             return;
         }
         else {
@@ -590,7 +593,7 @@ function handleSearch(event) {
         
     })
     .catch((error) => {
-        $errorToast.find(".toast-body").innerText = error.message;
+        $errorBody.innerText = error.message;
         $errorToast.show();
     });
 }
@@ -621,6 +624,18 @@ function addProduct(id,event){
         window.location.href="/html/cart.html";
         return;
     }
+    appendToCart(id);
+    event.target.innerText = "GO TO CART";
+}
+
+function addProductInCart(id,event){
+    event.stopPropagation();
+    appendToCart(id);
+    updateCartItemCount();
+    fetchProducts();
+}
+
+function appendToCart(id){
     const email = localStorage.getItem('email');
     if(!email){
         try{
@@ -643,11 +658,10 @@ function addProduct(id,event){
             }
             localStorage.setItem('untrackedItems', JSON.stringify(items));
             updateCartItemCount(email);
-            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
+            $successBody[0].innerText = "Product added to cart";
             $successToast.toast("show");
-            event.target.innerText = "GO TO CART";
         }catch(error){
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
             localStorage.setItem('untrackedItems', JSON.stringify([]));
         }
@@ -681,14 +695,14 @@ function addProduct(id,event){
             }
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartItemCount(email);
-            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
+            $successBody[0].innerText = "Product added to cart";
             $successToast.toast("show");
-            event.target.innerText = "GO TO CART";
+            
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }

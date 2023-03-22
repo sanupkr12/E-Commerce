@@ -240,6 +240,7 @@ function updateCartItemCount(email){
             $errorToast.show();
         }
     }
+    $errorToast.hide();
 }
 
 function handleLogoClick() {window.location.href= "/html/products.html";}
@@ -536,7 +537,7 @@ function increaseQuantityOnProduct(id,event) {
             $errorToast.show();
         }
     }
-    $("#success-toast .toast-body")[0].innerText = 'Item added successfully';
+    $("#success-toast").find(".toast-body")[0].innerText = 'Item added successfully';
     $("#success-toast").toast('show');
     updateCartItemCount(email);
 }
@@ -622,6 +623,9 @@ function decreaseQuantityOnProduct(id,event) {
         }
     }
     updateCartItemCount(email);
+    $successToast.find(".toast-body")[0].innerText = "Quantity updated successfully";
+    $successToast.show();
+    setTimeout(()=>{$successToast.hide()},3000);
 }
 
 function removeItemFromCart(event){

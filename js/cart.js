@@ -1,6 +1,12 @@
 const $clearCartModal = $("#clear-cart-modal"),
 $removeItemModal = $("#remove-item-modal"),
-$errorToast = $("#error-toast");
+$errorToast = $("#error-toast"),
+$errorBody = $errorToast.find(".toast-body"),
+$checkoutButton = $("#checkout-btn"),
+$totalCost = $("#total-cost"),
+$totalBill = $("#total-bill"),
+$emptyCartBox = $("#empty-cart-box"),
+$emptyCartImage = $("#empty-cart-image");
 
 $(document).ready(init);
 
@@ -18,6 +24,7 @@ function init(){
 function manageCart(){
     let results = [];
     const email = localStorage.getItem("email");
+    updateCartItemCount(email);
     if(!email){
         try{
             let cart = JSON.parse(localStorage.getItem("untrackedItems"));
@@ -37,9 +44,9 @@ function manageCart(){
                 }
                 if (!results.length) {
                     $("#cart-div")[0].style.display = "none";
-                    $("#empty-cart-image")[0].src = "./assets/images/empty-cart.png";
+                    $emptyCartImage[0].src = "./assets/images/empty-cart.png";
                     $("#bill-details")[0].style.display = "none";
-                    $("#checkout-btn")[0].style.display = "none";
+                    $checkoutButton[0].style.display = "none";
                     return;
                 }
                 let price = 0;
@@ -47,21 +54,21 @@ function manageCart(){
                 for(let i=0;i<results.length;i++){
                     price += results[i].product.price * results[i].quantity;
                 }
-                $("#empty-cart-box")[0].style.display = "none";
-                $("#total-bill")[0].innerText = price.toLocaleString('en-IN');
-                $("#total-cost")[0].innerText = parseInt(price + 100).toLocaleString('en-IN');
+                $emptyCartBox[0].style.display = "none";
+                $totalBill[0].innerText = price;
+                $totalCost[0].innerText = parseInt(price + 100);
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
-                $('#checkout-btn').click(downloadOrder);
+                $checkoutButton.click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 })
                 .catch(error=>{
-                    $errorToast.find(".toast-body").innerText = error.message;
+                    $errorBody[0].innerText = error.message;
                     $errorToast.show();
                 });
         }catch(error){
-            $errorToast.find(".toast-body").innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
             localStorage.setItem('untrackedItems',JSON.stringify([]));
         } 
@@ -93,9 +100,9 @@ function manageCart(){
                 }
                 if (!results.length) {
                     $("#cart-div")[0].style.display = "none";
-                    $("#empty-cart-image")[0].src = "../assets/images/empty-cart.png";
+                    $emptyCartImage[0].src = "../assets/images/empty-cart.png";
                     $("#bill-details")[0].style.display = "none";
-                    $("#checkout-btn")[0].style.display = "none";
+                    $checkoutButton[0].style.display = "none";
                     return;
                 }
                 let price = 0;
@@ -103,25 +110,25 @@ function manageCart(){
                 for(let i=0;i<results.length;i++){
                     price += results[i].product.price * results[i].quantity;
                 }
-                $("#empty-cart-box")[0].style.display = "none";
-                $("#total-bill")[0].innerText = price.toLocaleString('en-IN');
-                $("#total-cost")[0].innerText = parseInt(price + 100).toLocaleString('en-IN');
+                $emptyCartBox[0].style.display = "none";
+                $totalBill[0].innerText = price;
+                $totalCost[0].innerText = parseInt(price + 100);
                 $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
                 $(".cart-input").change(updateCartQuantity);
-                $('#checkout-btn').click(downloadOrder);
+                $checkoutButton.click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
                 [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
                 })
                 .catch(error=>{
-                    $errorToast.find(".toast-body").innerText = error.message;
+                    $errorBody[0].innerText = error.message;
                     $errorToast.show();
             });
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body").innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }   
     }
@@ -131,7 +138,7 @@ function updateCartQuantity(event){
     let id = event.target.id.split("-")[1];
     let quantity = parseInt(event.target.value);
     if(quantity<=0){
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = "Quantity must be greater than zero";
         $errorToast.show();
         return;
     }
@@ -207,7 +214,7 @@ function downloadOrder(event){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body").innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         } 
     }
@@ -238,15 +245,15 @@ function removeFromCart(){
                     break;
                 }
             }
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
             cart = cart.filter(item => item.id!== id);
             localStorage.setItem('untrackedItems', JSON.stringify(cart));
             updateCartItemCount(email);
             location.reload();
         }catch(error){
             localStorage.setItem('untrackedItems', JSON.stringify([]));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -268,8 +275,8 @@ function removeFromCart(){
                     break;
                 }
             }
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill")[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill[0].innerText = (orgPrice - cart[index2].quantity * parseInt(price));
             cartEntry[index1].items = cartEntry[index1].items.filter(item => item.id!== id);
             localStorage.setItem('cart', JSON.stringify(cartEntry));
             updateCartItemCount(email);
@@ -278,7 +285,7 @@ function removeFromCart(){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -309,14 +316,16 @@ function decreaseQuantityOnCart(id,price,event){
                 $removeItemModal.modal('toggle');
                 return;
             }
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill").text(orgPrice - parseInt(price));
-            $("#total-cost").text(orgPrice - parseInt(price) + 100);
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill.text(orgPrice - parseInt(price));
+            $totalCost.text(orgPrice - parseInt(price) + 100);
+            let newSubtotal = parseInt(price) * cart[index2].quantity;
+            $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
             localStorage.setItem('untrackedItems', JSON.stringify([]));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -347,16 +356,18 @@ function decreaseQuantityOnCart(id,price,event){
                 $removeItemModal.modal('toggle');
                 return;
             }
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill")[0].innerText = (orgPrice - parseInt(price));
-            $("#total-cost").text(orgPrice - parseInt(price) + 100);
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill[0].innerText = (orgPrice - parseInt(price));
+            $totalCost.text(orgPrice - parseInt(price) + 100);
+            let newSubtotal = parseInt(price) * cart[index2].quantity;
+            $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -377,14 +388,16 @@ function increaseQuantityOnCart(id,price,event){
                 }
             }
             cart[index2].quantity+=1;
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill").text(orgPrice + parseInt(price));
-            $("#total-cost").text(orgPrice + parseInt(price) + 100);
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill.text(orgPrice + parseInt(price));
+            $totalCost.text(orgPrice + parseInt(price) + 100);
+            let newSubtotal = parseInt(price) * cart[index2].quantity;
+            $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
             localStorage.setItem('untrackedItems', JSON.stringify([]));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -407,16 +420,18 @@ function increaseQuantityOnCart(id,price,event){
                 }
             }
             cart[index2].quantity+=1;
-            let orgPrice = parseInt($("#total-bill")[0].innerText);
-            $("#total-bill").text(orgPrice + parseInt(price));
-            $("#total-cost").text(orgPrice + parseInt(price) + 100);
+            let orgPrice = parseInt($totalBill[0].innerText);
+            $totalBill.text(orgPrice + parseInt(price));
+            $totalCost.text(orgPrice + parseInt(price) + 100);
+            let newSubtotal = parseInt(price) * cart[index2].quantity;
+            $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }
@@ -446,7 +461,7 @@ function clearCart(event){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         }
     }

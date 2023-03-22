@@ -1,6 +1,7 @@
 let validOrderItems = [];
 const $orderForm = $("#order-upload-form"),
 $errorToast = $("#error-toast"),
+$errorBody = $errorToast.find(".toast-body"),
 $successToast = $("#success-toast"),
 $orderList = $("#order-list"),
 $errorList = $("#error-list"),
@@ -21,12 +22,12 @@ function handleOrderUpload(event){
     event.preventDefault();
     let file = $orderFile[0].files[0];
     if(!file){
-        $errorToast.find(".toast-body")[0].innerText = "No file selected";
+        $errorBody[0].innerText = "No file selected";
         $errorToast.show();
         return;
     }
     if(file.type != "text/tab-separated-values"){
-        $errorToast.find(".toast-body")[0].innerText = "Please upload correct file";
+        $errorBody[0].innerText = "Please upload correct file";
         $errorToast.show();
         return;
     }
@@ -117,7 +118,7 @@ function readFileDataCallback(results){
         }
         $orderFile.val(null);
     }).catch(error=>{
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     });
 }
@@ -172,7 +173,7 @@ function uploadOrder(){
         let cart = [];
         cart.push({"email":email,"items":[]});
         localStorage.setItem('cart',JSON.stringify(cart));
-        $errorToast.find(".toast-body")[0].innerText = error.message;
+        $errorBody[0].innerText = error.message;
         $errorToast.show();
     }   
 }

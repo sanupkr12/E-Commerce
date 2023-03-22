@@ -1,6 +1,10 @@
+:root{
+    --color-bg : #EEF2E6;
+}
+
 body {
     margin-bottom: 67px;
-    background-color: #EEF2E6;
+    background-color: var(--color-bg);
 }
 
 html {
@@ -14,19 +18,21 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
+a:hover {
+    cursor: pointer;
+    color: blue;
+}
+
 .login-box,
 .signup-box {
     min-height: 80vh;
 }
 
-#login-img {height: fit-content;}
+.warning-img {width: 1.25rem;}
 
-#image-box {background-color: #008080;}
-
-#login-form {border-radius: 1rem;}
+.offcanvas-header {min-height: 4.5rem;}
 
 .footer-box {
-    position: absolute;
     bottom: 0;
     height: 7vh;
     width: 100%;
@@ -47,31 +53,12 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .card-header-text {
-    position: relative;
     min-height: 5rem;
 }
 
 .redirect-image {height: 40vh;}
 
-a {
-    text-decoration: none;
-    color: black;
-}
-
-a:hover {
-    cursor: pointer;
-    color: blue;
-}
-
-#carouselExampleControls {
-    width: 35rem;
-    height: 35rem;
-}
-
-.carousel-image {
-    width: 100%;
-    height: 35rem;
-}
+.w-input-product-card {width: 30%;}
 
 .product-box:hover {transform: scale(1.01);}
 
@@ -94,24 +81,54 @@ a:hover {
 
 .carousel-control-next {margin-right: -4rem;}
 
-#bill-details {height: fit-content;}
+.carousel-box {
+    height: fit-content;
+    width: 90%;
+}
+
+.carousel-indicators {margin-bottom: -3rem;}
+
+.dropdown-menu {
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 35rem;
+}
+
+.contact-text {
+    border-bottom: 0.1rem solid;
+    border-top: 0.1rem solid;
+    border-bottom-color: #DFFFD8;
+    border-top-color: #DFFFD8;
+}
 
 .card-rating-box {
-    position: absolute;
     bottom: 0.3rem;
     left: 0.3rem;
-    color: white;
     background-color: grey;
     border-radius: 0.2rem;
     padding: 0.4rem;
 }
 
-#go-to-cart-btn,
-#file-upload-btn,
-#logout-btn,
 .hover-pointer {
     cursor: pointer;
 }
+
+#login-img {height: fit-content;}
+
+#image-box {background-color: #008080;}
+
+#login-form {border-radius: 1rem;}
+
+#carouselExampleControls {
+    width: 35rem;
+    height: 35rem;
+}
+
+#bill-details {height: fit-content;}
 
 #input-quantity {width: 4rem;}
 
@@ -125,36 +142,17 @@ a:hover {
     background-color: #82CD47;
     width: fit-content;
     position: absolute;
-    z-index: 200;
+    z-index: 1001;
     top: 5rem;
     right: 3rem;
 }
 
 #error-toast {
-    z-index:2000;
+    z-index:1001;
     width: fit-content;
     position: absolute;
     top: 5rem;
     right: 3rem;
-}
-
-.contact-text {
-    border-bottom: 0.1rem solid;
-    border-top: 0.1rem solid;
-    border-bottom-color: #DFFFD8;
-    border-top-color: #DFFFD8;
-}
-
-.carousel-box {
-    height: fit-content;
-    width: 90%;
-}
-
-.carousel-indicators {margin-bottom: -3rem;}
-
-.dropdown-menu {
-    max-height: 16rem;
-    overflow-y: auto;
 }
 
 #shopping-cart-text {margin-left: -1rem;}
@@ -164,17 +162,6 @@ a:hover {
     bottom: 4rem;
     z-index: 2;
 }
-
-#product-header {
-    top: 4rem;
-    z-index: 2;
-}
-
-.w-input {width: 15%;}
-
-.w-input-product-card {width: 30%;}
-
-#checkout-btn {width: 100%;}
 
 #clear-cart-box {text-align: right;}
 
@@ -187,12 +174,9 @@ a:hover {
 
 #sticky-search-box {
     top: 4rem;
-    z-index: 100;
-    background-color: #EEF2E6;
+    z-index: 1000;
+    background-color: var(--color-bg);
 }
-.warning-img {width: 1.25rem;}
-
-.offcanvas-header {min-height: 4.5rem;}
 
 #search-input {min-width: 6rem;}
 
@@ -202,21 +186,32 @@ a:hover {
 
 #profile-btn {width: max-content;}
 
-#brand-filters::-webkit-scrollbar {display: none;}
-
-#rating-filters::-webkit-scrollbar{display:none;}
+#brand-filters::-webkit-scrollbar,
+#rating-filters::-webkit-scrollbar{
+    display:none;
+}
 
 #no-product-img{height:60vh;}
 
-@media (max-width:520px) {
-    .w-input {
-        width: 25%;
-    }
+.w-input {
+    width: 15%;
 }
 
-@media (max-width:576px) {
-    #clear-cart-box {
-        text-align: left;
+
+#checkout-btn {
+    width: 100%;
+}
+
+@media (max-width:520px) {
+    .w-input{
+        width: 25%;
+    } 
+}
+
+@media screen and (max-width:980px) {
+    #checkout-btn{
+        width: auto;
+        margin: auto;
     }
 }
 
@@ -232,11 +227,13 @@ a:hover {
         right: 0.5rem;
         position: fixed;
     }
-}
 
-@media (max-width:980px) {
-    #checkout-btn {
-        width: auto;
-        margin: auto;
+    #offcanvasExample{
+        display:none;
+    }
+
+    .offcanvas-backdrop{
+        display:none;
     }
 }
+

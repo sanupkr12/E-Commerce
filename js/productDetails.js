@@ -1,6 +1,8 @@
 const $removeItemModal = $("#remove-item-modal"),
 $successToast = $("#success-toast"),
-$errorToast = $("#error-toast");
+$successBody = $successToast.find(".toast-body"),
+$errorToast = $("#error-toast"),
+$errorBody = $errorToast.find(".toast-body");
 
 $(document).ready(init);
 
@@ -46,7 +48,7 @@ function removeItem(event){
             let cart = [];
             cart.push({"email":email,"items":[]});
             localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
+            $errorBody[0].innerText = error.message;
             $errorToast.show();
         } 
     }
@@ -58,7 +60,7 @@ function handleInputQuantityChange(event){
     let id = url.get('id');
     const quantity = parseInt(event.target.value);
     if(quantity < 0){
-        $errorToast.find(".toast-body")[0].innerText = "Quantity cannot be negative.";
+        $errorBody[0].innerText = "Quantity cannot be negative.";
         $errorToast.show();
         return;
     }
@@ -109,33 +111,48 @@ function showProductDetails(id) {
         }
         $("#product-images")[0].innerHTML = imageHtml;
         $(".carousel-indicators")[0].innerHTML = carouselIndicatorHtml;
-        $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
-        $("#decrease-quantity").click((event)=>{decreaseQuantity(id,product.title,event)});
-        $(".addToCart").click(addProduct);
         $("#product-id")[0].value = id;
+        let flag = false;
+        let quantity = 0;
         if(!email){
             let cart = JSON.parse(localStorage.getItem("untrackedItems"));
             for (let i = 0; i < cart.length; i++) {
                 if (cart[i].id == id) {
-                    $("#input-quantity").val(cart[i].quantity);
-                    $(".addToCart")[0].innerText = "GO TO CART";
+                    
+                    $("#btn-group")[0].innerHTML = `<button class="btn btn-warning" id="decrease-quantity">-</button>
+                    <input type="number" value="0" min="0" id="input-quantity"
+                        class="form-control d-inline num-input text-center mx-1">
+                    <button class="btn btn-warning" id="increase-quantity">+</button>
+                    <button class="d-block btn btn-secondary mt-3 ms-3 mb-3 addToCart px-3">GO TO CART</button>`;
+                    flag = true;
+                    quantity = cart[i].quantity;
                     break;
                 }
             }
-            return;
         }
         else{
             let cart = cartEntry[index];
             for (let i = 0; i < cart.items.length; i++) {
                 if (cart.items[i].id == id) {
-                    $("#input-quantity").val(cart.items[i].quantity);
-                    $(".addToCart")[0].innerText = "GO TO CART";
+                    $("#btn-group")[0].innerHTML = `<button class="btn btn-warning" id="decrease-quantity">-</button>
+                    <input type="number" value="0" min="0" id="input-quantity"
+                        class="form-control d-inline num-input text-center mx-1">
+                    <button class="btn btn-warning" id="increase-quantity">+</button>
+                    <a class="d-block btn btn-secondary mt-3 ms-3 mb-3 px-3" href="../html/cart.html">GO TO CART</a>`;
+                    flag = true;
+                    quantity = cart.items[i].quantity;
                     break;
                 }
             }
-        }   
+        }
+        if(flag) {
+            $("#input-quantity").val(quantity);
+            $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
+            $("#decrease-quantity").click((event)=>{decreaseQuantity(id,product.title,event)});
+        }
+        $(".addToCart").click(addProduct); 
     }).catch(error=>{
-        $errorToast.find(".toast-body").innerText = error.message;
+        $errorBody.innerText = error.message;
         $errorToast.show();
     });
 }
@@ -144,113 +161,35 @@ function addProduct(event){
     event.stopPropagation();
     let url = new URLSearchParams(window.location.search);
     let id = parseInt(url.get('id'));
-    if(event.target.innerText === "GO TO CART"){
-        try{
-            const email = localStorage.getItem("email");
-            if(!email){
-                window.location.href = "/html/cart/html";
-            }
-            let cartEntry = JSON.parse(localStorage.getItem("cart"));
-            let index = 0;
-            for(let i=0;i<cartEntry.length;i++){
-                if(cartEntry[i].email === email){
-                    index = i;
-                    break;
-                }
-            }
-            let cart = cartEntry[index];
-            let index2 = 0;
-            for (let i = 0; i < cart.items.length; i++) {
-                if (cart.items[i].id == id) {
-                    index2 = i;
-                    break;
-                }
-            }
-            let newQuantity = parseInt($("#input-quantity")[0].value);
-            cart.items[index2].quantity = newQuantity;
-            localStorage.setItem("cart",JSON.stringify(cartEntry));
-            window.location.href="/html/cart.html";
-            return;
-        }catch(error){
-            $errorToast.find(".toast-body")[0].innerText = error.message;
-            $errorToast.show();
-        } 
-    }
     const email = localStorage.getItem('email');
-    const quantity = parseInt($("#input-quantity")[0].value);
     if(!email){
-        try{
-            let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
-            let cart = untrackedItems;
-            let flag = false;
-            let index = -1;
-            for(let i=0;i<untrackedItems.length;i++){
-                if(untrackedItems[i].id==id){
-                    flag = true;
-                    index = i;
-                    break;
-                }
-            }
-            if(flag===false){
-                cart.push({"id":id,"quantity":quantity});
-            }
-            else{
-                cart[index].quantity += quantity;
-            }
-            localStorage.setItem("untrackedItems", JSON.stringify(cart));
-            updateCartItemCount(email);
-            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
-            $successToast.toast("show");
-            event.target.innerText = "GO TO CART";
-        }catch(error){
-            $errorToast.find(".toast-body")[0].innerText = error.message;
-            $errorToast.show();
-            localStorage.setItem("untrackedItems", JSON.stringify([]));
-        }
+        let untrackedItems = JSON.parse(localStorage.getItem('untrackedItems'));
+        untrackedItems.push({"id":parseInt(id),"quantity":1});
+        localStorage.setItem('untrackedItems',JSON.stringify(untrackedItems));
     }
     else{
-        try{
-            let cart = JSON.parse(localStorage.getItem('cart'));
-            let index1 = 0;
-            for(let i = 0; i < cart.length; i++) {
-                if(cart[i].email===email){
-                    index1 = i;
-                    break;
-                }
+        let cart = JSON.parse(localStorage.getItem('cart'));
+        let index = -1;
+        for(let i=0;i<cart.length;i++){
+            if(cart[i].email === email){
+                index = i;
+                break;
             }
-            let items = cart[index1].items;
-            let flag = false;
-            let index2 = 0;
-            for(let i=0; i < items.length; i++) {
-                if(items[i].id==id){
-                    flag = true;
-                    index2 = i;
-                    break;
-                }
-            }
-            if(quantity<=0){
-                $errorToast.find(".toast-body")[0].innerText = "Quantity must be greater than zero";
-                $errorToast.show();
-                return;
-            }
-            if(flag)
-            {
-                items[index2].quantity+=quantity;
-            }
-            else{
-                items.push({id:id,quantity:quantity});
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartItemCount(email);
-            $successToast.find(".toast-body")[0].innerText = "Product added to cart";
-            $successToast.toast("show");
-            event.target.innerText = "GO TO CART";
-        } catch(error){
-            let cart = [];
-            cart.push({"email":email,"items":[]});
-            localStorage.setItem('cart',JSON.stringify(cart));
-            $errorToast.find(".toast-body")[0].innerText = error.message;
-            $errorToast.show();
         }
+        cart[index].items.push({"id":parseInt(id),"quantity":1});
+        localStorage.setItem('cart', JSON.stringify(cart));
     }
+    $("#btn-group")[0].innerHTML = `<button class="btn btn-warning" id="decrease-quantity">-</button>
+    <input type="number" value="0" min="0" id="input-quantity"
+        class="form-control d-inline num-input text-center mx-1">
+    <button class="btn btn-warning" id="increase-quantity">+</button>
+    <a class="d-block btn btn-secondary mt-3 ms-3 mb-3 px-3" href="../html/cart.html">GO TO CART</a>`;
+
+    $("#input-quantity").val(1);
+    $("#increase-quantity").click((event)=>{increaseQuantity(id,event)});
+    let title = $("#product-title")[0].innerText;
+    $("#decrease-quantity").click((event)=>{decreaseQuantity(id,title,event)});
+    $successBody[0].innerText = "Item added successfully";
+    $successToast.show();
+    setTimeout(()=>{$successToast.hide()},3000);
 }
