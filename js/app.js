@@ -27,7 +27,7 @@ function init() {
             }
         }
         else{
-            fetch("../assets/data/credentials.json")
+            fetch("../assets/json/credentials.json")
             .then(res=>res.json())
             .then(data=>{
                 const credentials = data.credentials;
@@ -60,16 +60,16 @@ function init() {
     .then(data => {
         $("footer")[0].innerHTML = data;
         let date = new Date();
-        $("#footer-text")[0].innerText = "Copyright Increff 2023, " + String(date).substr(0, 25);
+        $("#footer-text")[0].innerText = "Ⓒ Increff 2023, " + String(date).substr(0, 25);
         setInterval(() => {
             let date = new Date();
-            $("#footer-text")[0].innerText = "Copyright Increff 2023, " + String(date).substr(0, 25);
+            $("#footer-text")[0].innerText = "Ⓒ Increff 2023, " + String(date).substr(0, 25);
         }, 1000);   
     });   
 }
 
 function validateUser(){
-    fetch("../assets/data/credentials.json")
+    fetch("../assets/json/credentials.json")
     .then(res=>res.json())
     .then(json=>{
         const users = json.credentials;
@@ -132,7 +132,7 @@ function updateCartItemCount(email){
         try{
             let untrackedItems = JSON.parse(localStorage.getItem("untrackedItems"));
             let cart = untrackedItems!=null ? untrackedItems : []; 
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then(res=>res.json())
             .then(data=>{
                 let products = data.products;
@@ -194,7 +194,7 @@ function updateCartItemCount(email){
                 index = cartEntry.length - 1;
             }
             let cart = cartEntry[index].items;
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then(res=>res.json())
             .then(data=>{
                 let products = data.products;
@@ -506,7 +506,9 @@ function increaseQuantityOnProduct(id,event) {
             else{
                 cart[index2].quantity+=1;
                 localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-                
+                $successBody[0].innerText = "Quantity updated successfully";
+                $successToast.show();
+                setTimeout(()=>{$successToast.hide()},3000);
             }
         }catch(error){
             localStorage.setItem("untrackedItems", JSON.stringify([]));
@@ -541,6 +543,9 @@ function increaseQuantityOnProduct(id,event) {
             else{
                 cart[index2].quantity+=1;
                 localStorage.setItem("cart", JSON.stringify(cartEntry));
+                $successBody[0].innerText = "Quantity updated successfully";
+                $successToast.show();
+                setTimeout(()=>{$successToast.hide()},3000);
             } 
         }catch(error){
             let cart = [];
@@ -550,8 +555,6 @@ function increaseQuantityOnProduct(id,event) {
             $errorToast.show();
         }
     }
-    $("#success-toast").find(".toast-body")[0].innerText = 'Item added successfully';
-    $("#success-toast").toast('show');
     updateCartItemCount(email);
 }
 
@@ -642,9 +645,6 @@ function decreaseQuantityOnProduct(id,event) {
         }
     }
     updateCartItemCount(email);
-    $successToast.find(".toast-body")[0].innerText = "Quantity updated successfully";
-    $successToast.show();
-    setTimeout(()=>{$successToast.hide()},3000);
 }
 
 function removeItemFromCart(event){

@@ -3,7 +3,7 @@ function generateCartHtml(results){
     for (let i = 0; i < results.length; i++) {
             productHtml +=  `<div class="card mb-3 border-0 shadow-sm">
         <div class="card-body row no-gutters py-2">
-            <div class="col-md-4 p-2">
+            <div class="col-md-4 p-2 cart-item-image">
             <a href="../html/productDetails.html?id=${results[i].product.id}">
             <img src=${results[i].product.thumbnail} class="h-100 w-100 rounded" alt="...">
             </a>
@@ -36,12 +36,12 @@ function generateProductHtml(product,quantity){
     <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>`;
 
     return `<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-    <div class="card rounded-1 shadow-sm border-0 product-box mx-auto" >
-        <div class="card-header card-header-text position-relative p-0 hover-pointer" onclick="goToProduct(${product.id})">
+    <div class="card rounded-1 border-0 shadow-sm product-box mx-auto" >
+        <div class="card-header card-header-text position-relative p-0 hover-pointer border-bottom-0" onclick="goToProduct(${product.id})">
         <img src="${product.thumbnail}" class="card-img-top img-fluid card-image-size">
-        <span class="card-rating-box text-white position-absolute">${product.rating} <i class="fa fa-solid fa-star text-warning"></i></span>
+        <small class="card-rating-box text-white position-absolute text-small">${product.rating} <i class="fa fa-solid fa-star text-warning"></i></small>
         </div>
-        <div class="card-body">
+        <div class="card-body py-4 px-2">
             <h5 class="card-title mt-1 card-title-text hover-pointer fw-normal text-muted" onclick="goToProduct(${product.id})">${product.title}</h5>
             <p class="card-text card-description-text">${product.description}</p>
             <div class="d-flex align-items-center justify-content-between">

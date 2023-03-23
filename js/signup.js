@@ -9,7 +9,7 @@ function handleSignupSubmit(event){
     let $form = $("#signup-form");
     let email = $form.find("#email").val();
     let password = $form.find("#password").val();
-    fetch("./assets/data/credentials.json")
+    fetch("../assets/json/credentials.json")
     .then(res=>res.json())
     .then(data=>{
         let credentials = data.credentials;

@@ -31,7 +31,7 @@ function init(){
 }
 
 function fetchProducts() {
-    fetch("../assets/data/products.json")
+    fetch("../assets/json/products.json")
     .then(response => response.json())
     .then((json) => {
         const products = json.products;
@@ -65,7 +65,7 @@ function populateProducts(products) {
         appendBrandFilters(filter["brand"],brandList); 
     }
     else{
-        fetch("../assets/data/products.json")
+        fetch("../assets/json/products.json")
         .then(res=>res.json())
         .then(data=>{
             for(let i=0;i<data.products.length;i++){
@@ -165,7 +165,7 @@ function populateProducts(products) {
     $(".page-link").click(handlePageClick);
     $('[data-bs-toggle="tooltip"]').tooltip({
         trigger : 'hover'
-      });
+    });
 }
 
 function updateProductQuantity(event){
@@ -215,6 +215,7 @@ function appendFilters(){
             $ratingFilterBox[0].style.display = "none";  
         }
     }catch(error){
+        restoreFilterToNormal();
         $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
@@ -262,6 +263,7 @@ function removeBrandFilter(event){
         fetchProducts();
         $(this).tooltip('hide');
     }catch(error){
+        restoreFilterToNormal();
         $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
@@ -269,7 +271,8 @@ function removeBrandFilter(event){
 
 function removeRatingFilter(event){
     event.preventDefault();
-    let rating = $(event.target)[0].dataset.bsTitle;
+    event.stopPropagation();
+    let rating = $(event.target)[0].innerText.substring(0,2);
     try{
         let filter = JSON.parse(sessionStorage.getItem('filter'));
         filter["rating"] = filter["rating"].filter((item)=>item.toLowerCase()!=rating.toLowerCase());
@@ -316,7 +319,7 @@ function handleSortBy(event){
             populateProducts(searchProducts);
         }
         else{
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then((response) => response.json())
             .then((json) => {
                 let products = json.products;
@@ -330,7 +333,8 @@ function handleSortBy(event){
             });
         }
     }catch(error){
-        $errorBody[0].innerText = error.message;
+        restoreFilterToNormal();
+        $errorToast.find("toast-body")[0].innerText = error.message;
         $errorToast.show();
     }
 }
@@ -394,81 +398,79 @@ function addFilter(brandFilters,ratingFilters,priceData){
             fetchProducts();
         }
     }catch(error){
-        let filter = {};
-        filter["brand"] = [];
-        filter["rating"] = [];
-        filter["price"] = {"min":0,"max":1000000};
-        sessionStorage.setItem('filter', JSON.stringify(filter));
+        restoreFilterToNormal();
         $errorToast.find("toast-body")[0].innerText = error.message;
         $errorToast.show();
     }
 }
 
 function applyFilter(products){
-    let filterObj = sessionStorage.getItem("filter");
-    if(filterObj===null){
-        let filter = {};
-        filter["brand"] = [];
-        filter["rating"] = [];
-        filter["price"] = {"min":0,"max":100000};
-        filter["sort"] = {"phtl":0,"rhtl":0};
-        sessionStorage.setItem("filter",JSON.stringify(filter));
-        return products;
-    }
-    else{
-        let filter = JSON.parse(sessionStorage.getItem("filter"));
-        let brandFilters  = filter["brand"];
-        let priceRangeFilters = filter["price"];
-        let ratingFilters = filter["rating"];
-        let res = [];
-        if(brandFilters.length>0){
-            for(let i=0;i<products.length;i++){
-                for(let j=0;j<brandFilters.length;j++){
-                    if(products[i].brand.toLowerCase()==brandFilters[j].toLowerCase()){
-                        res.push(products[i]);
-                        break;
-                    }
-                }
-            }
-            products = [...res];
-        }
-        res = [];
-        if(priceRangeFilters!=null){
-                for(let i=0;i<products.length;i++){
-                    if(products[i].price >= priceRangeFilters["min"] && products[i].price<priceRangeFilters["max"]){
-                        res.push(products[i]);
-                    }
-                }
-                $("#min-price").val(priceRangeFilters["min"]);
-                $("#max-price").val(priceRangeFilters["max"]);
-                $("#min-price-lg").val(priceRangeFilters["min"]);
-                $("#max-price-lg").val(priceRangeFilters["max"]);
-                products = [...res];
-        } 
-        res = [];
-        if(ratingFilters.length>0){
-            for(let i=0;i<products.length;i++){
-                for(let j=0;j<ratingFilters.length;j++){
-                    let ratingRange = getRatingRange(ratingFilters[j]);
-                    if(products[i].rating >= ratingRange["min"] && products[i].rating<ratingRange["max"]){
-                        res.push(products[i]);
-                        break;
-                    }
-                }
-            }
-            for(let i=0;i<ratingFilters.length;i++){
-                ratingFilters[i] = ratingFilters[i].substring(0, ratingFilters[i].length-1);
-                $(`#rating-${ratingFilters[i]}`).prop("checked",true);
-                $(`#rating-${ratingFilters[i]}-lg`).prop("checked",true);
-            }
-            products = [...res];
+    try{
+        let filterObj = sessionStorage.getItem("filter");
+        if(filterObj===null){
+            restoreFilterToNormal();
+            return products;
         }
         else{
-            $ratingForm.find("input[type=checkbox").prop("checked",false);
-            $ratingFormLg.find("input[type=checkbox").prop("checked",false);
+            let filter = JSON.parse(sessionStorage.getItem("filter"));
+            let brandFilters  = filter["brand"];
+            let priceRangeFilters = filter["price"];
+            let ratingFilters = filter["rating"];
+            let res = [];
+            if(brandFilters.length>0){
+                for(let i=0;i<products.length;i++){
+                    for(let j=0;j<brandFilters.length;j++){
+                        if(products[i].brand.toLowerCase()==brandFilters[j].toLowerCase()){
+                            res.push(products[i]);
+                            break;
+                        }
+                    }
+                }
+                products = [...res];
+            }
+            res = [];
+            if(priceRangeFilters!=null){
+                    for(let i=0;i<products.length;i++){
+                        if(products[i].price >= priceRangeFilters["min"] && products[i].price<priceRangeFilters["max"]){
+                            res.push(products[i]);
+                        }
+                    }
+                    $("#min-price").val(priceRangeFilters["min"]);
+                    $("#max-price").val(priceRangeFilters["max"]);
+                    $("#min-price-lg").val(priceRangeFilters["min"]);
+                    $("#max-price-lg").val(priceRangeFilters["max"]);
+                    products = [...res];
+            } 
+            res = [];
+            if(ratingFilters.length>0){
+                for(let i=0;i<products.length;i++){
+                    for(let j=0;j<ratingFilters.length;j++){
+                        let ratingRange = getRatingRange(ratingFilters[j]);
+                        if(products[i].rating >= ratingRange["min"] && products[i].rating<ratingRange["max"]){
+                            res.push(products[i]);
+                            break;
+                        }
+                    }
+                }
+                for(let i=0;i<ratingFilters.length;i++){
+                    ratingFilters[i] = ratingFilters[i].substring(0, ratingFilters[i].length-1);
+                    $(`#rating-${ratingFilters[i]}`).prop("checked",true);
+                    $(`#rating-${ratingFilters[i]}-lg`).prop("checked",true);
+                }
+                products = [...res];
+            }
+            else{
+                $ratingForm.find("input[type=checkbox").prop("checked",false);
+                $ratingFormLg.find("input[type=checkbox").prop("checked",false);
+            }
+            return products;
         }
-        return products;
+    }catch(error){
+        restoreFilterToNormal();
+        $errorToast.find("toast-body")[0].innerText = error.message;
+        $errorToast.show();
     }
+    
 }
 
 function applySort(products){
@@ -488,6 +490,9 @@ function applySort(products){
                 $("#sort-by").val("plth");
                 flag = true;
             }
+            else if(phtl!=0){
+                restoreFilterToNormal();
+            }
         }
         if(rhtl!=null){
             if(rhtl == 1){
@@ -495,17 +500,16 @@ function applySort(products){
                 $("#sort-by").val("rhtl");
                 flag = true;
             }
+            else if(rhtl!=0){
+                restoreFilterToNormal();
+            }
         }
         if(!flag){
             $("#sort-by").val("relevance");
         }
         return products;
     }catch(error){
-        let filter = {};
-        filter["brand"] = [];
-        filter["rating"] = [];
-        filter["price"] = {"min":0,"max":1000000};
-        sessionStorage.setItem('filter', JSON.stringify(filter));
+        restoreFilterToNormal();
         $errorBody[0].innerText = error.message;
         $errorToast.show();
     }
@@ -513,21 +517,11 @@ function applySort(products){
 
 function getRatingRange(ratingFilter){
     switch(ratingFilter){
-        case "1+":{
-            return {min:1,max:5};
-        }
-        case "2+":{
-            return {min:2,max:5};
-        }
-        case "3+":{
-            return {min:3,max:5};
-        }
-        case "4+":{
-            return {min:4,max:5};
-        }
-        default:{
-            return {min:0,max:5};
-        }
+        case "1+":{return {min:1,max:5};}
+        case "2+":{return {min:2,max:5};}
+        case "3+":{return {min:3,max:5};}
+        case "4+":{return {min:4,max:5};}
+        default:{return {min:0,max:5};}
     }
 }
 
@@ -565,7 +559,7 @@ function handleSearch(event) {
     event.preventDefault();
     page = 1;
     let query = $("#search-input")[0].value.toLowerCase();
-    fetch("../assets/data/products.json")
+    fetch("../assets/json/products.json")
     .then((response) => response.json())
     .then((json) => {
         let products = json.products;
@@ -575,11 +569,7 @@ function handleSearch(event) {
                 results.push(products[i]);
             }
         }
-        let filter = JSON.parse(sessionStorage.getItem('filter'));
-        filter["brand"] = [];
-        filter["rating"] = [];
-        filter["price"] = {"min":0,"max":1000000};
-        sessionStorage.setItem('filter', JSON.stringify(filter));
+        restoreFilterToNormal();
         appendFilters();
         if (results.length === 0) {
             $productList[0].innerHTML = `<img src="../assets/images/noProducts.png" class="img-fluid w-auto mx-auto" id="no-product-img"/>`;  
@@ -708,3 +698,12 @@ function appendToCart(id){
 }
 
 function closeModal(){$removeItemModal.modal('toggle')}
+
+function restoreFilterToNormal(){
+    let filter = {};
+    filter["brand"] = [];
+    filter["rating"] = [];
+    filter["price"] = {"min":0,"max":100000};
+    filter["sort"] = {"phtl":0,"rhtl":0};
+    sessionStorage.setItem("filter",JSON.stringify(filter));
+}

@@ -77,7 +77,7 @@ function showProductDetails(id) {
         window.location.href = "/html/products.html";
         return;
     }
-    fetch("../assets/data/products.json")
+    fetch("../assets/json/products.json")
     .then((response) => response.json())
     .then((json) => {
         const products = json.products;

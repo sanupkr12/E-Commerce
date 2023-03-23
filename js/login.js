@@ -15,7 +15,7 @@ function handleLogin(event) {
     if(!email || !password){
         return;
     }
-    fetch('../assets/data/credentials.json')
+    fetch('../assets/json/credentials.json')
     .then(
         (response) => response.json()
     )

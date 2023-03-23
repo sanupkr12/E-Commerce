@@ -58,7 +58,7 @@ function readFileDataCallback(results){
         handleError(errorHtml);
         return;
     }
-    fetch("../assets/data/products.json")
+    fetch("../assets/json/products.json")
     .then(res=>res.json())
     .then((json)=>{
         const products = json.products;
@@ -67,10 +67,12 @@ function readFileDataCallback(results){
             let flag = false;
             let id = -1;
             let title = "";
+            let thumbnail = "";
             products.forEach(p=>{
                 if(p.sku_id == data[i].sku_id){
                     id = p.id;
                     title = p.title;
+                    thumbnail = p.thumbnail;
                     flag = true;
                 }
             });
@@ -89,7 +91,7 @@ function readFileDataCallback(results){
                         }
                     }
                     if(flag===false){
-                        validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title});
+                        validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title,thumbnail});
                     }
                     else{
                         validOrderItems[index].quantity = parseInt(validOrderItems[index].quantity) +  parseInt(data[i].quantity);
@@ -114,7 +116,7 @@ function readFileDataCallback(results){
         }
         $orderList.find("tbody")[0].innerHTML = "";
         for(let i=0;i<validOrderItems.length;i++){
-            $orderList.find("tbody").append(`<tr class="bg-white"><td>${validOrderItems[i].sku_id}</td><td><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank">${validOrderItems[i].title}</a></td><td>${validOrderItems[i].quantity}</td></tr>`)
+            $orderList.find("tbody").append(`<tr class="bg-white"><td><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank"><img src="${validOrderItems[i].thumbnail}" class="preview-thumbnail" /></a></td><td class="align-middle fw-bold">${validOrderItems[i].sku_id}</td><td class="align-middle"><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank">${validOrderItems[i].title}</a></td><td class="align-middle fw-bold">${validOrderItems[i].quantity}</td></tr>`)
         }
         $orderFile.val(null);
     }).catch(error=>{

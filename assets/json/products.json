@@ -6,15 +6,16 @@
             "brand": "Apple",
             "price": 54900,
             "images": [
+                "https://i.gadgets360cdn.com/products/large/1536782676_635_iphone_xs_max.jpg",
                 "https://i.dummyjson.com/data/products/1/1.jpg",
                 "https://i.dummyjson.com/data/products/1/2.jpg",
                 "https://i.dummyjson.com/data/products/1/3.jpg",
-                "https://i.dummyjson.com/data/products/1/4.jpg",
-                "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
+                "https://i.dummyjson.com/data/products/1/4.jpg"
+                
             ],
             "description": "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "iPhone 9",
-            "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+            "thumbnail": "https://i.gadgets360cdn.com/products/large/1536782676_635_iphone_xs_max.jpg",
             "rating":4.2
         },
         {
@@ -23,6 +24,7 @@
             "brand": "Apple",
             "price": 89900,
             "images": [
+                "https://shop4deal.in/uploads/products/1604050705.5f9bdf11f4112.jpeg",
                 "https://i.dummyjson.com/data/products/2/1.jpg",
                 "https://i.dummyjson.com/data/products/2/2.jpg",
                 "https://i.dummyjson.com/data/products/2/3.jpg",
@@ -30,7 +32,7 @@
             ],
             "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ... ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "iPhone X",
-            "thumbnail": "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
+            "thumbnail": "https://shop4deal.in/uploads/products/1604050705.5f9bdf11f4112.jpeg",
             "rating":4.3
         },
         {
@@ -39,11 +41,12 @@
             "brand": "Samsung",
             "price": 12490,
             "images": [
+                "https://s3b.cashify.in/gpro/uploads/2022/09/29123751/samsung-galaxy-s9-plus-extra.jpg",
                 "https://i.dummyjson.com/data/products/3/1.jpg"
             ],
             "description": "Samsung's new variant which goes beyond Galaxy to the Universe ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "Samsung Universe 9",
-            "thumbnail": "https://i.dummyjson.com/data/products/3/thumbnail.jpg",
+            "thumbnail": "https://s3b.cashify.in/gpro/uploads/2022/09/29123751/samsung-galaxy-s9-plus-extra.jpg",
             "rating":4.1
         },
         {
@@ -52,15 +55,18 @@
             "brand": "OPPO",
             "price": 28000,
             "images": [
-                "https://i.dummyjson.com/data/products/4/1.jpg",
+                "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/71crCF+ogwL._SL1500_.jpg",
+                "https://www.gizmochina.com/wp-content/uploads/2019/10/Oppo-A11.jpeg",
+                "https://i.dummyjson.com/data/products/4/thumbnail.jpg",
+                "https://www.oppo.com/content/dam/oppo/common/mkt/v2-2/elsa/f19-pro-plus/navigation/F19-navigation-gray-v2.png",
                 "https://i.dummyjson.com/data/products/4/2.jpg",
                 "https://i.dummyjson.com/data/products/4/3.jpg",
-                "https://i.dummyjson.com/data/products/4/4.jpg",
-                "https://i.dummyjson.com/data/products/4/thumbnail.jpg"
+                "https://i.dummyjson.com/data/products/4/4.jpg"
+                
             ],
             "description": "OPPO F19 is officially announced on April 2021. ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "OPPO F19",
-            "thumbnail": "https://i.dummyjson.com/data/products/4/thumbnail.jpg",
+            "thumbnail": "https://www.gizmochina.com/wp-content/uploads/2019/10/Oppo-A11.jpeg",
             "rating":4.0
         },
         {
@@ -69,13 +75,15 @@
             "brand": "Huawei",
             "price": 49900,
             "images": [
+                "https://i.gadgets360cdn.com/products/large/1553612275_635_huawei_p30.jpg?downsize=*:360",
                 "https://i.dummyjson.com/data/products/5/1.jpg",
                 "https://i.dummyjson.com/data/products/5/2.jpg",
-                "https://i.dummyjson.com/data/products/5/3.jpg"
+                "https://i.dummyjson.com/data/products/5/3.jpg",
+                "https://i.gadgets360cdn.com/products/large/1553612275_635_huawei_p30.jpg?downsize=*:360"
             ],
             "description": "Huawei’s re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK. ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "Huawei P30",
-            "thumbnail": "https://i.dummyjson.com/data/products/5/thumbnail.jpg",
+            "thumbnail": "https://i.gadgets360cdn.com/products/large/1553612275_635_huawei_p30.jpg?downsize=*:360",
             "rating":4.6
         },
         {
@@ -84,6 +92,7 @@
             "brand": "Apple",
             "price": 174900,
             "images": [
+                "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/61bX2AoGj2L._SL1500_.jpg",
                 "https://i.dummyjson.com/data/products/6/1.png",
                 "https://i.dummyjson.com/data/products/6/2.jpg",
                 "https://i.dummyjson.com/data/products/6/3.png",
@@ -91,7 +100,7 @@
             ],
             "description": "MacBook Pro 2021 with mini-LED display may launch between September, November ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "MacBook Pro",
-            "thumbnail": "https://i.dummyjson.com/data/products/6/thumbnail.png",
+            "thumbnail": "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202111/macbookpro_22102021.png",
             "rating":3.5
         },
         {
@@ -100,6 +109,7 @@
             "brand": "Samsung",
             "price": 14990,
             "images": [
+                "https://images.hothardware.com/contentimages/article/3136/content/small_samsung_galaxy_book_pro_360_open_angled2.jpg",
                 "https://i.dummyjson.com/data/products/7/1.jpg",
                 "https://i.dummyjson.com/data/products/7/2.jpg",
                 "https://i.dummyjson.com/data/products/7/3.jpg",
@@ -107,7 +117,7 @@
             ],
             "description": "Samsung Galaxy Book S (2020) Laptop With Intel Lakefield Chip, 8GB of RAM Launched ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "Samsung Galaxy Book",
-            "thumbnail": "https://i.dummyjson.com/data/products/7/thumbnail.jpg",
+            "thumbnail": "https://images.hothardware.com/contentimages/article/3136/content/small_samsung_galaxy_book_pro_360_open_angled2.jpg",
             "rating":3.8
         },
         {
@@ -133,6 +143,7 @@
             "brand": "Infinix",
             "price": 10990,
             "images": [
+                "https://www.themobileindian.com/wp-content/uploads/2021/10/Infinix-INBook-X1.jpg",
                 "https://i.dummyjson.com/data/products/9/1.jpg",
                 "https://i.dummyjson.com/data/products/9/2.png",
                 "https://i.dummyjson.com/data/products/9/3.png",
@@ -141,7 +152,7 @@
             ],
             "description": "Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "Infinix INBOOK",
-            "thumbnail": "https://i.dummyjson.com/data/products/9/thumbnail.jpg",
+            "thumbnail": "https://www.themobileindian.com/wp-content/uploads/2021/10/Infinix-INBook-X1.jpg",
             "rating":3.9
         },
         {
@@ -150,6 +161,8 @@
             "brand": "HP Pavilion",
             "price": 70990,
             "images": [
+                "https://laptopmedia.com/wp-content/uploads/2020/06/hp-pavilion-gaming-16-a0000-285331-scaled.jpg",
+                "https://cdn.filestackcontent.com/JxETkYlT0qhks2Vhfu7W",
                 "https://i.dummyjson.com/data/products/10/1.jpg",
                 "https://i.dummyjson.com/data/products/10/2.jpg",
                 "https://i.dummyjson.com/data/products/10/3.jpg",
@@ -157,7 +170,7 @@
             ],
             "description": "HP Pavilion 15-DK1056WM Gaming Laptop 10th Gen Core i5, 8GB, 256GB SSD, GTX 1650 4GB, Windows 10 ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "HP Pavilion 15-DK1056WM",
-            "thumbnail": "https://i.dummyjson.com/data/products/10/thumbnail.jpeg",
+            "thumbnail": "https://laptopmedia.com/wp-content/uploads/2020/06/hp-pavilion-gaming-16-a0000-285331-scaled.jpg",
             "rating":4.9
         },
         {
@@ -466,14 +479,12 @@
             "price": 600,
             "images": [
                 "https://i.dummyjson.com/data/products/29/1.jpg",
-                "https://i.dummyjson.com/data/products/29/2.jpg",
                 "https://i.dummyjson.com/data/products/29/3.webp",
-                "https://i.dummyjson.com/data/products/29/4.webp",
-                "https://i.dummyjson.com/data/products/29/thumbnail.webp"
+                "https://i.dummyjson.com/data/products/29/4.webp"
             ],
             "description": "Handcraft Chinese style art luxury palace hotel villa mansion home decor ceramic vase with brass fruit plate ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "Handcraft Chinese style",
-            "thumbnail": "https://i.dummyjson.com/data/products/29/thumbnail.webp",
+            "thumbnail": "https://i.dummyjson.com/data/products/29/2.jpg",
             "rating":4.5
         },
         {

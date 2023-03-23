@@ -28,7 +28,7 @@ function manageCart(){
     if(!email){
         try{
             let cart = JSON.parse(localStorage.getItem("untrackedItems"));
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then((response) => response.json())
             .then((json) => {
                 const products = json.products;
@@ -85,7 +85,7 @@ function manageCart(){
                 }
             }
             let cart = cartEntry[index].items;
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then((response) => response.json())
             .then((json) => {
                 const products = json.products;
@@ -169,7 +169,7 @@ function downloadOrder(event){
                 }
             }
             let order = [];
-            fetch("../assets/data/products.json")
+            fetch("../assets/json/products.json")
             .then(res=>res.json())
             .then(json=>{
                 const products = json.products;
