@@ -36,6 +36,15 @@ function fetchProducts() {
     .then((json) => {
         const products = json.products;
         totalItem = products.length;
+        try{
+            const searchState = sessionStorage.getItem("searchState");
+            if(searchState==1){
+                restoreFilterToNormal();
+            }
+            sessionStorage.setItem("searchState",0);
+        }catch(error){
+            sessionStorage.setItem("searchState",0);
+        }
         populateProducts(products);
     })
     .catch((error) => {
@@ -577,9 +586,9 @@ function handleSearch(event) {
         }
         else {
             searchProducts = [...results];
+            sessionStorage.setItem('searchState',1);
             populateProducts(searchProducts);
         }
-        
     })
     .catch((error) => {
         $errorBody.innerText = error.message;

@@ -18,11 +18,6 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-a:hover {
-    cursor: pointer;
-    color: blue;
-}
-
 .login-box,
 .signup-box {
     min-height: 80vh;
@@ -188,6 +183,8 @@ a:hover {
 #no-product-img{height:60vh;}
 
 #filter-btn {display: none;}
+
+#preview-img{height:10rem;}
 
 .w-input {
     width: 15%;

@@ -14,7 +14,6 @@ function init(){
     $orderForm.submit(handleOrderUpload);
     $("#download-sample").click(downloadSample);
     $("#upload-order").click(uploadOrder);
-    $errorList.hide();
     $errorToast.click(()=>{$errorToast.hide()});
 }
 
@@ -98,7 +97,7 @@ function readFileDataCallback(results){
                     }
                 }
                 else{
-                    errorFields.push("Row no. " + (+i+1) + " : Invalid quantity for sku id " + data[i].sku_id);
+                    errorFields.push("Row " + (+i+1) + " : Invalid quantity for sku id " + data[i].sku_id);
                 }
             }
         }
