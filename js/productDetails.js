@@ -82,6 +82,9 @@ function showProductDetails(id) {
     .then((json) => {
         const products = json.products;
         let product = products.find(product => product.id == id);
+        if(!product){
+            window.location.href = "/html/products.html";
+        }
         let cartEntry = JSON.parse(localStorage.getItem("cart"));
         const email = localStorage.getItem("email");
         let index = 0;

@@ -39,7 +39,7 @@
                     <div class="card-header">
                         <h4 class=" mb-1">Order Summary</h4>
                     </div>
-                    <div class="mb-1 py-3 card-body">
+                    <div class="mb-1 py-3 card-body" id="address-box">
                         <p class="mb-0"><strong>Address: </strong></p>
                         <address class="mb-1">1,2,3, Ashoka Indl Est, Village Valiv, nr Golani Complex, Vasai(e),
                             Mumbai, Maharashtra, 401506.</address>
@@ -77,10 +77,13 @@
         </div>
         <div class="row mx-0" id="empty-cart-box">
             <div class="col-md-12 d-flex flex-column align-items-center justify-content-center">
-                <img src="#" id="empty-cart-image" class="mx-3" />
+                <div id="empty-cart-image" class="mx-3 mb-2"><svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" fill="currentColor" class="bi bi-cart-x" viewBox="0 0 16 16">
+                    <path d="M7.354 5.646a.5.5 0 1 0-.708.708L7.793 7.5 6.646 8.646a.5.5 0 1 0 .708.708L8.5 8.207l1.146 1.147a.5.5 0 0 0 .708-.708L9.207 7.5l1.147-1.146a.5.5 0 0 0-.708-.708L8.5 6.793 7.354 5.646z"/>
+                    <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                  </svg></div>
                 <h4>Hey, it feels so light!</h4>
                 <p>There is nothing in your cart. Let's add some items.</p>
-                <a class="btn btn-primary mx-3" href="/html/products.html">Click to add items</a>
+                <a class="btn btn-primary mx-3" href="/html/products.html">Continue Shopping</a>
             </div>
         </div>
     </div>
@@ -113,11 +116,11 @@
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" role="dialog" id="remove-item-modal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="remove-item-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content shadow-sm">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove Item <i class="fa-solid fa-triangle-exclamation text-warning"></i></h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-triangle-exclamation text-warning"></i> Remove Item</h5>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="item-id"></input>
@@ -125,18 +128,18 @@
                     <p id="item-title" class="mb-1"></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="close-modal">Cancel</button>
                     <button type="button" class="btn btn-danger" id="remove-item">Remove</button>
+                    <button type="button" class="btn btn-secondary" id="close-modal">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" role="dialog" id="clear-cart-modal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="clear-cart-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content shadow-sm">
                 <div class="modal-header">
-                    <h5 class="modal-title">Clear Cart <i class="fa fa-solid fa-triangle-exclamation text-warning"></i></h5>
+                    <h5 class="modal-title"><i class="fa fa-solid fa-triangle-exclamation text-warning"></i> Clear Cart </h5>
                 </div>
                 <div class="modal-body">
                     <p class="mb-1">Are you sure you want to clear the cart?</p>

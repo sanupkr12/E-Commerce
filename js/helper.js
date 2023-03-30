@@ -31,7 +31,7 @@ function generateCartHtml(results){
 }
 
 function generateProductHtml(product,quantity){
-    let btnGroup = quantity ===0 ? `<button class="btn btn-sm btn-warning" onclick="addProductInCart(${product.id},event)">ADD TO CART</button>`:`<button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
+    let btnGroup = quantity <= 0 ? `<button class="btn btn-sm btn-warning" onclick="addProductInCart(${product.id},event)">ADD TO CART</button>`:`<button class="btn btn-warning py-1"  onclick="decreaseQuantityOnProduct(${product.id},event)">-</button>
     <input type="number" step="1" min="0" class="w-input-product-card p-1 form-control d-inline num-input text-center mx-1" id="${"input-" + product.id}" value=${quantity}>
     <button class="btn btn-warning py-1"  onclick="increaseQuantityOnProduct(${product.id},event)">+</button>`;
 

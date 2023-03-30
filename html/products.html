@@ -29,8 +29,8 @@
                         </button>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
-                        <form id="search-form" class="my-3 ms-1">
-                            <div class="input-group" id="search-box">
+                        <form id="search-form" class="my-3 ms-1" novalidate>
+                            <div class="input-group ms-3" id="search-box">
                                 <input type="text" required="true" class="form-control font-control-sm shadow-none p-2"
                                     id="search-input" placeholder="Search...">
                                 <button type="submit" class="btn btn-sm btn-secondary"><i
@@ -142,7 +142,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-sm p-2 btn-outline-danger mr-auto" id="reset-filter">Clear
-                        all</button>
+                        All</button>
                     <div>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" id="apply-filter">Apply</button>
@@ -152,7 +152,7 @@
             </div>
         </div>
     </div>
-    <div class="toast position-absolute text-white px-3 py-1" id="success-toast" data-bs-autohide="true">
+    <div class="toast position-absolute text-white bg-success px-3 py-1" id="success-toast" data-bs-autohide="true">
         <div class="toast-body p-1">
         </div>
     </div>
@@ -160,10 +160,10 @@
         data-bs-autohide="false">
         <div class="toast-body"></div>
     </div>
-    <button type="button" class="btn btn-info text-white rounded-circle p-3 border-0 shadow-none" data-bs-toggle="modal"
+    <button type="button" class="btn btn-info text-white rounded-circle p-3 border-0 shadow" data-bs-toggle="modal"
         data-bs-target="#filterModal" id="filter-btn">
         <span data-bs-toggle="tooltip" data-bs-title="Filter" data-bs-placement="bottom"><i
-                class="fa-solid fa-filter"></i></span>
+                class="fa-solid fa-filter text-dark"></i></span>
     </button>
     <div class="offcanvas offcanvas-start bg-transparent" tabindex="-1" id="offcanvasExample"
         aria-labelledby="offcanvasExampleLabel">
@@ -235,12 +235,12 @@
         </div>
     </div>
     </div>
-    <div class="modal" tabindex="-1" role="dialog" id="remove-item-modal">
+    <div class="modal fade" tabindex="-1" role="dialog" id="remove-item-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content shadow-sm">
                 <div class="modal-header">
-                    <h5 class="modal-title">Remove item <span><img src="../assets/images/warning.png"
-                                class="warning-img"></img></span></h5>
+                    <h5 class="align-items-center d-flex modal-title"><span class="mx-1"><img src="../assets/images/warning.png"
+                        class="warning-img"></img></span>Remove item</h5>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="item-id"></input>

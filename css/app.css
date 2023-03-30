@@ -154,11 +154,17 @@ input[type="number"]::-webkit-inner-spin-button {
     right: 3rem;
     bottom: 4rem;
     z-index: 2;
+    box-shadow:5px 5px 20px grey;
 }
 
 #brand-list-form-lg {
-    height: 40vh;
+    height: 30vh;
     overflow-x: hidden;
+}
+
+#brand-list-form{
+    height:25vh;
+    overflow-x:hidden;
 }
 
 #sticky-search-box {
@@ -179,6 +185,8 @@ input[type="number"]::-webkit-inner-spin-button {
 #rating-filters::-webkit-scrollbar{
     display:none;
 }
+
+#product-images{width:95%;}
 
 #no-product-img{height:60vh;}
 
@@ -218,7 +226,7 @@ input[type="number"]::-webkit-inner-spin-button {
         top: 6rem;
     }
 
-    #filterModal,.modal-backdrop{
+    #filterModal{
         display:none !important;
     }
 }

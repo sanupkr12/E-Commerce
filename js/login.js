@@ -1,11 +1,40 @@
 const $form = $("#login-form"),
-$errorToast = $("#error-toast");
+$errorToast = $("#error-toast"),
+$errorBody = $errorToast.find(".toast-body");
 
 $(document).ready(init);
 
 function init(){
+    validateIsLoggedIn();
     $form.submit(handleLogin);
     $errorToast.click($errorToast.hide());
+}
+
+function validateIsLoggedIn(){
+    try{
+        const email = localStorage.getItem('email');
+        fetch("../assets/json/credentials.json")
+        .then(res=>res.json())
+        .then(json=>{
+            const users = json.credentials;
+            let flag = false;
+            for(let i=0;i<users.length;i++){
+                if(users[i].email === email){
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                window.location.href = "/html/products.html";
+            }
+        })
+        .catch((error)=>{
+            $errorBody[0].innerText = error.message;
+            $errorToast.show();
+        });
+    }catch(error){
+        localStorage.removeItem('email');
+    }
 }
 
 function handleLogin(event) {

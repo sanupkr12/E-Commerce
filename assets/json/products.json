@@ -13,7 +13,7 @@
                 "https://i.dummyjson.com/data/products/1/4.jpg"
                 
             ],
-            "description": "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+            "description": "Apple iPhone 9 has been launched officially. The smartphone comes packed with a 5.2 inches (13.21 cm)OLED Display and offers 750 x 1334 ,lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
             "title": "iPhone 9",
             "thumbnail": "https://i.gadgets360cdn.com/products/large/1536782676_635_iphone_xs_max.jpg",
             "rating":4.2
@@ -92,6 +92,7 @@
             "brand": "Apple",
             "price": 174900,
             "images": [
+                "https://akm-img-a-in.tosshub.com/indiatoday/images/story/202111/macbookpro_22102021.png",
                 "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/61bX2AoGj2L._SL1500_.jpg",
                 "https://i.dummyjson.com/data/products/6/1.png",
                 "https://i.dummyjson.com/data/products/6/2.jpg",

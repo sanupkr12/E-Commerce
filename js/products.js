@@ -104,7 +104,7 @@ function populateProducts(products) {
                 for(let i = 0; i < (untrackedItems!=null?untrackedItems.length:0);i++){
                     if(untrackedItems[i].id === product.id){ 
                         productHtml += generateProductHtml(product,untrackedItems[i].quantity);
-                            flag = true;
+                        flag = true;
                         break;
                     }
                 }
@@ -162,12 +162,16 @@ function populateProducts(products) {
         else{
             productHtml+=`<li class="page-item"><a class="page-link" href="#">Previous</a></li>`;
         }
+        productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>`;
         for (let i = 0; i < itemCount; i++) {
-            productHtml += `<li class="page-item"><a class="page-link" href="#">${+i + 1}</a></li>`
+            if(i===0){
+                productHtml += `<li class="page-item"><a class="page-link" id="page-${+i+1}" href="#">${+i + 1}</a></li>`
+            }
+            else{
+                productHtml += `<li class="page-item"><a class="page-link" id="page-${+i+1}" href="#">${+i + 1}</a></li>`
+            }
         }
-        productHtml += `<li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-                </nav>`;
+        productHtml+=`</ul></nav>`;
     }
     $productList[0].innerHTML = productHtml;
     $(".w-input-product-card").keyup(updateProductQuantity);
@@ -198,31 +202,60 @@ function appendFilters(){
         let ratingFilters = filter["rating"];
         $brandFilters[0].innerHTML = "";
         $ratingFilters[0].innerHTML = "";
-        if(brandFilters.length >0){
-            let brandHtml = "";
-            for(let i = 0; i < brandFilters.length; i++){
-                let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
-                brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold brand-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${brandFilters[i]}">${brand} ×</p>`;
+        fetch("../assets/json/products.json")
+        .then(res=>res.json())
+        .then(json=>{
+            const products = json.products;
+            let validFilters = [];
+            if(brandFilters.length >0){
+                let brandHtml = "";
+                for(let i = 0; i < brandFilters.length; i++){
+                    let flag = false;
+                    for(let j=0;j<products.length;j++){
+                        if(products[j].brand.toLowerCase() === brandFilters[i])
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if(flag){
+                        validFilters.push(brandFilters[i]);
+                        let brand = brandFilters[i].length > 10 ? (brandFilters[i].substring(0,10) + "...") : brandFilters[i];
+                        brandHtml += `<p class="mx-1 my-auto bg-secondary badge rounded-pill fw-bold" data-bs-toggle="tooltip" data-bs-title="Remove ${brandFilters[i]}" data-bs-placement="top">${brand} <i class="fa fa-light fa-xmark brand-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${brandFilters[i]}"></i></p>`;
+                    }
+                }
+                if(validFilters.length > 0){
+                    $brandFilters[0].innerHTML = brandHtml;
+                    $brandFilterBox[0].style.display = "block";
+                }
+                else{
+                    $brandFilterBox[0].style.display = "none";
+                }
+
+                filter["brand"] = [...validFilters];
+                sessionStorage.setItem("filter",JSON.stringify(filter));
             }
-            $brandFilters[0].innerHTML = brandHtml;
-            $brandFilterBox[0].style.display = "block";
-        }
-        else{
-            $brandFilterBox[0].style.display = "none";
-        }
-        if(ratingFilters.length > 0){
-            let ratingHtml = "";
-            for(let i = 0; i < ratingFilters.length; i++){
-                ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold rating-badges hover-pointer" data-bs-toggle="tooltip" data-bs-title="${ratingFilters[i]}">${ratingFilters[i]} <i class=" text-warning fa-solid fa-star"></i> ×</p>`;
+            else{
+                $brandFilterBox[0].style.display = "none";
             }
-            $ratingFilters[0].innerHTML = ratingHtml;
-            $ratingFilterBox[0].style.display = "block";
-            $(".brand-badges").click(removeBrandFilter);
-            $(".rating-badges").click(removeRatingFilter);  
-        }
-        else{
-            $ratingFilterBox[0].style.display = "none";  
-        }
+            if(ratingFilters.length > 0){
+                let ratingHtml = "";
+                for(let i = 0; i < ratingFilters.length; i++){
+                    ratingHtml += `<p class="mx-1 bg-secondary my-auto badge rounded-pill fw-bold" data-bs-toggle="tooltip" data-bs-title="Remove ${ratingFilters[i]}" data-bs-placement="top">${ratingFilters[i]} <i class=" text-warning fa-solid fa-star"></i> <i class="fa fa-light fa-xmark rating-badges hover-pointer" data-bs-title="Remove ${ratingFilters[i]}"></i></p>`;
+                }
+                $ratingFilters[0].innerHTML = ratingHtml;
+                $ratingFilterBox[0].style.display = "block";
+                $(".brand-badges").click(removeBrandFilter);
+                $(".rating-badges").click(removeRatingFilter);  
+            }
+            else{
+                $ratingFilterBox[0].style.display = "none";  
+            }
+        })
+        .catch(error=>{
+            $errorBody[0].innerText = error.message;
+            $errorToast.show();
+        });
     }catch(error){
         restoreFilterToNormal();
         $errorBody[0].innerText = error.message;
@@ -281,7 +314,7 @@ function removeBrandFilter(event){
 function removeRatingFilter(event){
     event.preventDefault();
     event.stopPropagation();
-    let rating = $(event.target)[0].innerText.substring(0,2);
+    let rating = $(event.target)[0].dataset.bsTitle.split(' ')[1].substring(0,2);
     try{
         let filter = JSON.parse(sessionStorage.getItem('filter'));
         filter["rating"] = filter["rating"].filter((item)=>item.toLowerCase()!=rating.toLowerCase());
@@ -373,6 +406,11 @@ function handleFilterlarge(event){
     let ratingList = JSON.parse(toJson($ratingFormLg));
     let $priceForm = $("#price-form-lg");
     let priceData = JSON.parse(toJson($priceForm));
+    if(priceData["min"]>priceData["max"]){
+        $errorBody[0].innerText = "Minimum price cannot be greater than Maximum price";
+        $errorToast.show();
+        return;
+    }
     let brandFilters = Object.keys(brandList);
     let ratingFilters = Object.keys(ratingList);
     addFilter(brandFilters,ratingFilters,priceData);
@@ -383,7 +421,7 @@ function addFilter(brandFilters,ratingFilters,priceData){
     try{
         let filter = JSON.parse(sessionStorage.getItem("filter"));
         if(!filter){
-        filter = {};
+            filter = {};
         }
         filter["brand"] = [...brandFilters];
         filter["rating"] = [...ratingFilters];
@@ -600,6 +638,7 @@ function goToProduct(id){window.location.href = `/html/productDetails.html?id=${
 
 function handlePageClick(event) {
     const val = event.target.innerText;
+    console.log(val);
     if (val == "Previous") {
         if (page >= 2) {
             page -= 1;
@@ -613,6 +652,8 @@ function handlePageClick(event) {
     else {
         page = parseInt(val);
     }
+    console.log($(`#page-${page}`));
+    $(`#page-${page}`)[0].classList.add('active');
     fetchProducts();
 }
 

@@ -44,21 +44,23 @@ function manageCart(){
                 }
                 if (!results.length) {
                     $("#cart-div")[0].style.display = "none";
-                    $emptyCartImage[0].src = "../assets/images/empty-cart.png";
                     $("#bill-details")[0].style.display = "none";
                     $checkoutButton[0].style.display = "none";
                     return;
                 }
                 let price = 0;
                 let productHtml = generateCartHtml(results);
+                let totalItemCount = 0;
                 for(let i=0;i<results.length;i++){
                     price += results[i].product.price * results[i].quantity;
+                    totalItemCount+=results[i].quantity;
                 }
                 $emptyCartBox[0].style.display = "none";
                 $totalBill[0].innerText = price;
                 $totalCost[0].innerText = parseInt(price + 100);
-                $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
+                $("#cart-quantity")[0].innerHTML = totalItemCount > 1 ? `(${totalItemCount} items)` : `(${totalItemCount} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
+                $("#address-box")[0].style.display = "none";
                 $(".cart-input").keyup(updateCartQuantity);
                 $checkoutButton.click(downloadOrder);
                 const tooltipTriggerList = $('[data-bs-toggle="tooltip"]');
@@ -101,20 +103,21 @@ function manageCart(){
                 }
                 if (!results.length) {
                     $("#cart-div")[0].style.display = "none";
-                    $emptyCartImage[0].src = "../assets/images/empty-cart.png";
                     $("#bill-details")[0].style.display = "none";
                     $checkoutButton[0].style.display = "none";
                     return;
                 }
                 let price = 0;
                 let productHtml = generateCartHtml(results);
+                let totalItemCount = 0;
                 for(let i=0;i<results.length;i++){
                     price += results[i].product.price * results[i].quantity;
+                    totalItemCount += results[i].quantity;
                 }
                 $emptyCartBox[0].style.display = "none";
                 $totalBill[0].innerText = price;
                 $totalCost[0].innerText = parseInt(price + 100);
-                $("#cart-quantity")[0].innerHTML = results.length > 1 ? `(${results.length} items)` : `(${results.length} item)`;
+                $("#cart-quantity")[0].innerHTML = totalItemCount > 1 ? `(${totalItemCount} items)` : `(${totalItemCount} item)`;
                 $("#cart-items")[0].innerHTML = productHtml;
                 $(".cart-input").keyup(updateCartQuantity);
                 $checkoutButton.click(downloadOrder);
@@ -153,9 +156,8 @@ function updateCartQuantity(event){
 function downloadOrder(event){
     const email = localStorage.getItem("email");
     if(!email){
-        $("#redirect-box")[0].style.display = "block";
         $("#cart-box")[0].style.display = "none";
-        setTimeout(()=>{window.location.href = "/html/login.html";},2500); 
+        window.location.href = "/html/login.html";
         return;
     }
     else{
@@ -325,6 +327,7 @@ function decreaseQuantityOnCart(id,price,event){
             $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
+            updateCartItemCount(email);
         }catch(error){
             localStorage.setItem('untrackedItems', JSON.stringify([]));
             $errorBody[0].innerText = error.message;
@@ -365,6 +368,7 @@ function decreaseQuantityOnCart(id,price,event){
             $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
+            updateCartItemCount(email);
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});
@@ -397,6 +401,7 @@ function increaseQuantityOnCart(id,price,event){
             $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
             $(`#input-`+id)[0].value = cart[index2].quantity;
+            updateCartItemCount(email);
         }catch(error){
             localStorage.setItem('untrackedItems', JSON.stringify([]));
             $errorBody[0].innerText = error.message;
@@ -429,6 +434,7 @@ function increaseQuantityOnCart(id,price,event){
             $(event.target).closest(".card").find(".item-subtotal")[0].innerText = (newSubtotal.toLocaleString('en-IN'));
             localStorage.setItem("cart", JSON.stringify(cartEntry));
             $(`#input-`+id)[0].value = cart[index2].quantity;
+            updateCartItemCount(email);
         }catch(error){
             let cart = [];
             cart.push({"email":email,"items":[]});

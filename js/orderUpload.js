@@ -35,12 +35,6 @@ function handleOrderUpload(event){
 
 function readFileDataCallback(results){
     const fields = results.meta.fields;
-    if(fields.length != 2)
-    {
-        let errorHtml = "<p class='fw-bold'>Errors:</p><li class='text-danger'>Incorrect Number of fields</li>";
-        handleError(errorHtml);
-        return;
-    }
     if(fields[0]!= 'sku_id' || fields[1]!= 'quantity'){
         let errorHtml = "<p class='fw-bold'>Errors:</p><li class='text-danger'>Incorrect headers</li>";
         handleError(errorHtml);
@@ -76,35 +70,40 @@ function readFileDataCallback(results){
                 }
             });
             if(!flag){
-                errorFields.push("Row no. " + (+i+1) + " : product with sku id " + data[i].sku_id + " does not exist");
+                errorFields.push({"row":(+i+1),"message":`Product with SKU ID <span class='fw-bold'>${data[i].sku_id}</span> does not exist`});
             }
             else{
-                if(parseInt(data[i].quantity) > 0){
-                    let flag = false;
-                    let index = -1;
-                    for(let j=0;j<validOrderItems.length;j++){
-                        if(validOrderItems[j].sku_id === data[i].sku_id){
-                            flag = true;
-                            index = j;
-                            break;
-                        }
-                    }
-                    if(flag===false){
-                        validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title,thumbnail});
-                    }
-                    else{
-                        validOrderItems[index].quantity = parseInt(validOrderItems[index].quantity) +  parseInt(data[i].quantity);
-                    }
+                if(!data[i].quantity){
+                    errorFields.push({"row":(+i+1),"message":`Quantity for SKU ID <span class="fw-bold">${data[i].sku_id}</span> is missing`});
                 }
                 else{
-                    errorFields.push("Row " + (+i+1) + " : Invalid quantity for sku id " + data[i].sku_id);
+                    if(parseInt(data[i].quantity) > 0){
+                        let flag = false;
+                        let index = -1;
+                        for(let j=0;j<validOrderItems.length;j++){
+                            if(validOrderItems[j].sku_id === data[i].sku_id){
+                                flag = true;
+                                index = j;
+                                break;
+                            }
+                        }
+                        if(flag===false){
+                            validOrderItems.push({id,quantity:data[i].quantity,sku_id:data[i].sku_id,title,thumbnail});
+                        }
+                        else{
+                            validOrderItems[index].quantity = parseInt(validOrderItems[index].quantity) +  parseInt(data[i].quantity);
+                        }
+                    }
+                    else{
+                        errorFields.push({"row":(+i+1),"message":`Quantity for SKU ID <span class="fw-bold">${data[i].sku_id}</span> is negative`});
+                    }
                 }
             }
         }
         if(errorFields.length > 0){
             let errorHtml = "<p class='fw-bold'>Errors:</p>";
             for(let i=0;i<errorFields.length;i++){
-                errorHtml+=`<li class="text-danger">${errorFields[i]}</li>`;
+                errorHtml+=`<li class="text-danger"><span class="fw-bold">Row ${errorFields[i].row}:</span>${errorFields[i].message}</li>`;
             }
             handleError(errorHtml);
             return;
@@ -115,7 +114,7 @@ function readFileDataCallback(results){
         }
         $orderList.find("tbody")[0].innerHTML = "";
         for(let i=0;i<validOrderItems.length;i++){
-            $orderList.find("tbody").append(`<tr class="bg-white"><td><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank"><img src="${validOrderItems[i].thumbnail}" class="preview-thumbnail" /></a></td><td class="align-middle fw-bold">${validOrderItems[i].sku_id}</td><td class="align-middle"><a href="/html/productDetails.html?id=${validOrderItems[i].id}" target="_blank">${validOrderItems[i].title}</a></td><td class="align-middle fw-bold">${validOrderItems[i].quantity}</td></tr>`)
+            $orderList.find("tbody").append(`<tr class="bg-white"><td><a href="../html/productDetails.html?id=${validOrderItems[i].id}" target="_blank"><img src="${validOrderItems[i].thumbnail}" class="preview-thumbnail" /><span>${validOrderItems[i].title}</span></a></td><td class="align-middle fw-bold">${validOrderItems[i].sku_id}</td><td class="align-middle fw-bold">${validOrderItems[i].quantity}</td></tr>`)
         }
         $orderFile.val(null);
     }).catch(error=>{

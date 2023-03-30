@@ -137,11 +137,13 @@ function updateCartItemCount(email){
             .then(data=>{
                 let products = data.products;
                 let results = [];
+                let totalQuantity = 0;
                 for(let i=0; i < cart.length; i++) {
                     let flag = false;
                     for(let j=0;j<products.length;j++) {
                         if(products[j].id === cart[i].id && cart[i].quantity > 0) {
                             flag = true;
+                            totalQuantity+=cart[i].quantity;
                             break;
                         }     
                     }
@@ -165,7 +167,7 @@ function updateCartItemCount(email){
                 }
                 untrackedItems = [...uniqueItems];
                 localStorage.setItem("untrackedItems", JSON.stringify(untrackedItems));
-                $("#cart-text")[0].innerText = results.length;
+                $("#cart-text")[0].innerText = totalQuantity;
             })
             .catch((error) => {
                 $errorToast.find(".toast-body").innerText = error.message;
@@ -194,6 +196,7 @@ function updateCartItemCount(email){
                 index = cartEntry.length - 1;
             }
             let cart = cartEntry[index].items;
+            let totalQuantity = 0;
             fetch("../assets/json/products.json")
             .then(res=>res.json())
             .then(data=>{
@@ -204,6 +207,7 @@ function updateCartItemCount(email){
                     for(let j=0;j<products.length;j++) {
                         if(products[j].id === cart[i].id && cart[i].quantity > 0) {
                             flag = true;
+                            totalQuantity+=cart[i].quantity;
                         }     
                     }
                     if(flag){
@@ -226,7 +230,7 @@ function updateCartItemCount(email){
                 }
                 cartEntry[index].items = [...uniqueItems];
                 localStorage.setItem("cart", JSON.stringify(cartEntry));
-                $("#cart-text")[0].innerText = results.length;
+                $("#cart-text")[0].innerText = totalQuantity;
             })
             .catch((error) => {
                 $errorToast.find(".toast-body").innerText = error.message;
@@ -346,6 +350,11 @@ function increaseQuantity(id,event) {
     event.preventDefault();
     event.stopPropagation();
     let quantity = parseInt($("#input-quantity")[0].value);
+    if(quantity <0){
+        $errorBody[0].innerText = "Quantity cannot be negative";
+        $errorToast.show();
+        return;
+    }
     $("#input-quantity")[0].value = parseInt(quantity) + 1;
     const email = localStorage.getItem('email');
     if(!email){
@@ -401,6 +410,7 @@ function increaseQuantity(id,event) {
             $errorToast.show();
         }
     }
+    updateCartItemCount(email);
 }
 
 function decreaseQuantity(id,title,event) {
@@ -408,6 +418,8 @@ function decreaseQuantity(id,title,event) {
     event.stopPropagation();
     let quantity = parseInt($("#input-quantity")[0].value);
     if(quantity<=0){
+        $errorBody[0].innerText = "Quantity cannot be negative";
+        $errorToast.show();
         return;
     }
     const email = localStorage.getItem("email");
@@ -478,12 +490,18 @@ function decreaseQuantity(id,title,event) {
             $errorToast.show();
         }
     }
+    updateCartItemCount(email);
 }
 
 function increaseQuantityOnProduct(id,event) {
     event.preventDefault();
     event.stopPropagation();
     let quantity = parseInt($(`#input-${id}`)[0].value);
+    if(quantity <0){
+        $errorBody[0].innerText = "Quantity is negative";
+        $errorToast.show();
+        return;
+    }
     $(`#input-${id}`)[0].value = quantity + 1;
     const email = localStorage.getItem('email');
     if(!email){
@@ -564,6 +582,8 @@ function decreaseQuantityOnProduct(id,event) {
     let quantity = parseInt($(`#input-${id}`)[0].value);
     let title = $(event.target).closest('.card').find('.card-title')[0].innerText;
     if(quantity<=0){
+        $errorBody[0].innerText = "Quantity is negative";
+        $errorToast.show();
         return;
     }
     const email = localStorage.getItem("email");
